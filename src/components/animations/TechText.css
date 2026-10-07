@@ -1,0 +1,3 @@
+﻿.tech-text{position:relative;width:100%;height:100%;touch-action:pan-y;user-select:none;outline:none}
+.tech-text:focus-visible{outline:1px dashed currentColor;outline-offset:-12px}
+.tech-text-canvas{display:block;width:100%;height:100%}

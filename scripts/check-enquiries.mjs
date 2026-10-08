@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import ts from 'typescript';
+const root=new URL('../',import.meta.url);
+const source=await fs.readFile(new URL('src/lib/enquiries.ts',root),'utf8');
+await fs.mkdir(new URL('.cms-check/',root),{recursive:true});
+const target=new URL('.cms-check/enquiries.mjs',root);
+await fs.writeFile(target,ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText);
+const {validateEnquiry}=await import(target.href+'?v='+Date.now());
+const valid={id:'8cc1cc80-917f-4c98-a544-e45fd18a5d14',kind:'offer',email:'Visitor@Example.com',name:'',message:'',mode:false,consent:true,website:''};
+assert.equal(validateEnquiry(valid).email,'visitor@example.com');
+assert.equal(validateEnquiry({...valid,kind:'contact',name:' Ada ',message:'Build an application.'}).name,'Ada');
+for(const edit of [{email:'bad'},{consent:false},{website:'spam'},{kind:'unknown'},{id:'bad'},{kind:'contact'},{message:'x'.repeat(4001)}]) assert.throws(()=>validateEnquiry({...valid,...edit}));
+console.log('Enquiry validation: 9 checks passed.');

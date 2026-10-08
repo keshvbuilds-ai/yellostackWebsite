@@ -1,4 +1,4 @@
-export type ContentSection = { title: string; body: string; items?: string[] };
+export type ContentSection = { title: string; body: string; items?: string[]; image?: string; imageAlt?: string };
 export type InnerPage = {
   slug: string; title: string; eyebrow: string; intro: string;
   kind: 'company' | 'service' | 'directory' | 'contact' | 'portfolio';

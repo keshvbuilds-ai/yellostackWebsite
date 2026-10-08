@@ -1,14 +1,16 @@
 "use client";
+import { CmsText } from "@/components/cms/ContentProvider";
 
 import { Component, useCallback, useEffect, useRef, useState, type ReactNode, type PointerEvent } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import Image from "next/image";
+import { CmsImage as Image } from "@/components/cms/ContentProvider";
 import type { Journey } from "./WebGLTunnelExperience";
-import { yellostackData } from "@/content/yellostack";
+import { useSiteData } from "@/components/cms/ContentProvider";
 import DecryptedText from "../animations/DecryptedText";
+import EasterEgg from "../engagement/Rewards";
 import HeroAtmosphere from "./HeroAtmosphere";
 
 const JourneyCanvas = dynamic(() => import("./WebGLTunnelExperience"), { ssr: false });
@@ -22,6 +24,7 @@ const clamp = (n: number) => Math.max(0, Math.min(1, n));
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
+  const yellostackData = useSiteData();
   const container = useRef<HTMLElement>(null);
   const journey = useRef<Journey>({ progress: 0, active: false, reduced: false, scroll: 0, pointerX: 0, pointerY: 0 });
   const ring = useRef<SVGCircleElement>(null);
@@ -63,7 +66,7 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
     const x = e.clientX - rect.left, y = e.clientY - rect.top;
     journey.current.pointerX = clamp(x / rect.width) * 2 - 1;
     journey.current.pointerY = 1 - clamp(y / rect.height) * 2;
-    overLink.current = !journey.current.active && !!(e.target as HTMLElement).closest("a, .journey-end button");
+    overLink.current = !journey.current.active && !!(e.target as HTMLElement).closest("a, button, [data-hero-interactive]");
     if (e.pointerType === "mouse" || journey.current.active) {
       // Keep the entire ring and its label inside the hero, even during capture.
       const radius = (holdControl.current?.offsetWidth ?? 130) / 2;
@@ -145,7 +148,7 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
     onPointerMove={followPointer}
     onPointerLeave={() => { journey.current.pointerX = 0; journey.current.pointerY = 0; overLink.current = false; if (container.current) delete container.current.dataset.cursor; }}
     onPointerDown={e => {
-      if (!e.isPrimary || e.pointerType !== "mouse" || e.button !== 0 || (e.target as HTMLElement).closest("a, button")) return;
+      if (!e.isPrimary || e.pointerType !== "mouse" || e.button !== 0 || (e.target as HTMLElement).closest("a, button, input, textarea, [data-hero-interactive]")) return;
       e.currentTarget.setPointerCapture(e.pointerId); start(); followPointer(e);
     }} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop}>
     <div className="journey-ambient" />
@@ -156,7 +159,7 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
     <div className="journey-shade" /><div className="journey-grain" />
     <HeroAtmosphere />
     <div className="journey-copy" ref={copy}>
-      <div className="journey-heading"><p className="journey-eyebrow"><span /> STRATEGY. DESIGN. DEVELOPMENT.</p><h1>Digital products<br />that people<br /><em>love to use.</em></h1></div>
+      <div className="journey-heading"><p className="journey-eyebrow"><span /> <CmsText id="hero.Hero.text.0" fallback=" STRATEGY. DESIGN. DEVELOPMENT."/></p><h1><CmsText id="hero.Hero.text.1" fallback="Digital products"/><br /><CmsText id="hero.Hero.text.2" fallback="that people"/><br /><em><CmsText id="hero.Hero.text.3" fallback="love to use."/></em></h1></div>
       <div className="journey-support"><p>{yellostackData.hero.description}</p><div className="journey-actions"><a className="journey-primary" href="#contact"><DecryptedText text="LET’S BUILD" /><span aria-hidden="true">↗</span></a><a className="journey-secondary" href="#work"><DecryptedText text="OUR WORK" /><span aria-hidden="true">↗</span></a></div></div>
     </div>
     <button ref={holdControl} className={`journey-hold ${holding ? "is-holding" : ""}`} disabled={!ready || done} aria-label={reduced || failed ? "Reveal Yellostack symbol" : "Hold to explore Yellostack. Hold Space or Enter on keyboard."}
@@ -170,9 +173,10 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
       </motion.span>
       <span className="journey-hold-label">{!ready ? "PREPARING EXPERIENCE" : reduced || failed ? "REVEAL THE STACK" : holding ? "KEEP HOLDING" : "CLICK AND HOLD"}</span>
     </button>
-    <div className="journey-words" aria-hidden="true">{yellostackData.hero.words.map((word, i) => <div key={word} ref={el => { words.current[i] = el; }}><span>0{i + 1} / THE YELLOSTACK APPROACH</span><strong>{word}<b>.</b></strong></div>)}</div>
-    <div ref={end} className="journey-end" inert={!done}><p>EVERY LAYER. ONE VISION.</p><h2>Yellostack<span>®</span></h2><div><a href="#services"><DecryptedText text="EXPLORE WHAT WE BUILD" /> ↗</a><button onClick={reset}><DecryptedText text="REPLAY" /> ↺</button></div></div>
-    <div className="journey-bottom"><span>BUILT ON IDEAS. ENGINEERED FOR IMPACT.</span><a href="#about">SCROLL TO DISCOVER <span>↓</span></a></div>
-    <span className="sr-only" role="status">{done ? "Yellostack symbol revealed. Explore our services or replay the experience." : ""}</span>
+    <div className="journey-words" aria-hidden="true">{yellostackData.hero.words.map((word, i) => <div key={word} ref={el => { words.current[i] = el; }}><span>0{i + 1} <CmsText id="hero.Hero.text.4" fallback=" / THE YELLOSTACK APPROACH"/></span><strong>{word}<b>.</b></strong></div>)}</div>
+    <div ref={end} className="journey-end" inert={!done}><p><CmsText id="hero.Hero.text.5" fallback="EVERY LAYER. ONE VISION."/></p><h2><CmsText id="hero.Hero.text.6" fallback="Yellostack"/><span>®</span></h2><div><a href="#services"><DecryptedText text="EXPLORE WHAT WE BUILD" /> ↗</a><button onClick={reset}><DecryptedText text="REPLAY" /> ↺</button></div></div>
+    {done && <EasterEgg />}
+    <div className="journey-bottom"><span><CmsText id="hero.Hero.text.7" fallback="BUILT ON IDEAS. ENGINEERED FOR IMPACT."/></span><a href="#about"><CmsText id="hero.Hero.text.8" fallback="SCROLL TO DISCOVER "/><span>↓</span></a></div>
+    <span className="sr-only" role="status">{done ? "You found the Yellostack Easter egg and unlocked a 15% offer. Tear the reward ticket to claim it." : ""}</span>
   </section>;
 }

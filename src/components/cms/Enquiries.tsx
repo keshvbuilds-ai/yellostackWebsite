@@ -1,0 +1,8 @@
+'use client';
+import { useState } from 'react';
+type Enquiry={id:string;kind:string;email:string;name:string;message:string;mode:boolean;offer_code:string|null;created_at:string};
+export default function Enquiries(){
+ const [rows,setRows]=useState<Enquiry[]>([]);const [status,setStatus]=useState('');const [busy,setBusy]=useState(false);const [offset,setOffset]=useState(0);const [more,setMore]=useState(false);
+ async function load(start=0){setBusy(true);setStatus('');try{const response=await fetch('/api/cms/enquiries?offset='+start);const result=await response.json();if(!response.ok)throw new Error(result.error);setRows(start?[...rows,...result.rows]:result.rows);setOffset(start+result.rows.length);setMore(result.rows.length===50);setStatus(result.rows.length?'':'No enquiries yet.');}catch(error){setStatus((error as Error).message);}finally{setBusy(false);}}
+ return <details className="cms-item" onToggle={e=>{if(e.currentTarget.open&&!rows.length&&!busy)void load();}}><summary>Inbox · Project enquiries & 15% offer claims</summary><div className="cms-item-body"><button disabled={busy} onClick={()=>load()}>Refresh inbox</button><p role="status">{busy?'Loading…':status}</p>{rows.map(row=><article key={row.id} className="my-5 border-t border-black/20 py-5"><p className="font-mono text-xs">{row.kind==='offer'?'15% OFFER / '+row.offer_code:'PROJECT ENQUIRY'} · {new Date(row.created_at).toLocaleString()}{row.mode?' · YELLOSTACK MODE':''}</p><h3 className="my-3 text-xl">{row.name||'Easter egg discovery'}</h3><a href={'mailto:'+row.email} className="break-all underline">{row.email}</a><p className="mt-3 whitespace-pre-wrap">{row.message}</p></article>)}{more&&<button disabled={busy} onClick={()=>load(offset)}>Load more</button>}</div></details>;
+}

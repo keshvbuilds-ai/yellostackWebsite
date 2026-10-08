@@ -1,123 +1,18 @@
-"use client";
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useContent, CmsImage as Image } from '@/components/cms/ContentProvider';
+import DecryptedText from './animations/DecryptedText';
+import './navigation.css';
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import DecryptedText from "./animations/DecryptedText";
-
-export default function Navigation() {
-    const [scrolled, setScrolled] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { scrollY } = useScroll();
-
-    useMotionValueEvent(scrollY, "change", (latest) => {
-        setScrolled(latest > 50);
-    });
-
-    const navLinks = [
-        { name: "Services", href: "/#services" },
-        { name: "Work", href: "/#work" },
-        { name: "About", href: "/#about" },
-        { name: "Careers", href: "/careers" },
-    ];
-
-    return (
-        <>
-            <motion.nav
-                initial={{ y: -100 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: .3 }}
-                className={`site-navigation fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? "bg-black/80 backdrop-blur-md py-4 border-b border-white/5" : "bg-transparent py-6"
-                    }`}
-            >
-                <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between">
-                    <Link href="/" className="relative z-50">
-                        <Image
-                            src="/logoyelostack.png"
-                            alt="Yellostack Logo"
-                            width={140}
-                            height={40}
-                            className="w-auto h-8 lg:h-10"
-                            priority
-                        />
-                    </Link>
-
-                    <div className="hidden md:flex items-center gap-8 bg-[#171710]/90 rounded-md px-7 py-5 backdrop-blur-md">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                className="text-[11px] uppercase font-mono text-neutral-300 hover:text-yello transition-colors"
-                            >
-                                <DecryptedText text={link.name} />
-                            </Link>
-                        ))}
-                    </div>
-
-                    <div className="hidden md:flex items-center gap-4">
-                        <Link
-                            href="/#contact"
-                            className="bg-yello text-black px-6 py-5 hover:bg-white rounded-md text-[11px] font-mono uppercase transition-colors"
-                        >
-                            <DecryptedText text="Let’s talk" /> <span aria-hidden="true">↗</span>
-                        </Link>
-                    </div>
-
-                    <button
-                        aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
-                        aria-expanded={mobileMenuOpen}
-                        className="md:hidden relative z-50 text-white"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    >
-                        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                </div>
-            </motion.nav>
-
-            {/* Mobile Menu */}
-            <AnimatePresence>
-                {mobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: "-100%" }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: "-100%" }}
-                        transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-                        className="fixed inset-0 z-30 bg-black flex flex-col justify-center items-center gap-8"
-                    >
-                        {navLinks.map((link, i) => (
-                            <motion.div
-                                key={link.name}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1, duration: 0.5 }}
-                            >
-                                <Link
-                                    href={link.href}
-                                    className="text-3xl font-semibold text-white/80 hover:text-white"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    <DecryptedText text={link.name} />
-                                </Link>
-                            </motion.div>
-                        ))}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3, duration: 0.5 }}
-                        >
-                            <Link
-                                href="/#contact"
-                                className="bg-white text-black px-8 py-3 rounded-full text-lg font-semibold hover:bg-yello transition-colors mt-4"
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                <DecryptedText text="Get in touch" />
-                            </Link>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </>
-    );
+export default function Navigation({ solid = false }: { solid?: boolean }) {
+ const content=useContent(); const servicePages=content.pages.filter(page=>page.kind==='service'); const groups=[...new Set(servicePages.map(page=>page.group||'Services'))];
+ const [open,setOpen]=useState(false); const [scrolled,setScrolled]=useState(false);
+ const ref=useRef<HTMLElement>(null); const toggle=useRef<HTMLButtonElement>(null); const pathname=usePathname();
+ function close(){setOpen(false);ref.current?.querySelectorAll('details[open]').forEach(el=>el.removeAttribute('open'));}
+ useEffect(()=>{const update=()=>setScrolled(window.scrollY>40);update();window.addEventListener('scroll',update,{passive:true});return()=>window.removeEventListener('scroll',update);},[]);
+ useEffect(()=>{function outside(e:PointerEvent){if(!ref.current?.contains(e.target as Node))close();}function escape(e:KeyboardEvent){if(e.key==='Escape'){close();toggle.current?.focus();}}document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};},[]);
+ const link=(label:string,href:string)=><Link href={href} onClick={close} aria-current={pathname===href?'page':undefined}><DecryptedText text={label}/></Link>;
+ return <header ref={ref} className={'site-navigation ys-nav '+(solid||scrolled||open?'ys-nav-solid':'')}><div className="ys-nav-bar"><Link href="/" onClick={close} aria-label="Yellostack home" className="ys-nav-logo"><Image src="/logoyelostack.png" alt="Yellostack" width={140} height={60} priority/></Link><button ref={toggle} type="button" className="ys-nav-toggle" aria-expanded={open} aria-controls="ys-main-menu" onClick={()=>setOpen(!open)}>{open?'CLOSE −':'MENU +'}</button><nav id="ys-main-menu" aria-label="Main navigation" className={'ys-main-menu '+(open?'is-open':'')} data-lenis-prevent><div className="ys-nav-links">{link('Home','/')}<details name="ys-navigation-group" className="ys-nav-services"><summary><DecryptedText text="Services"/> <span aria-hidden="true">+</span></summary><div className="ys-mega"><div className="ys-mega-intro"><span>WHAT WE DO</span><Link href="/services" onClick={close}>Every capability.<br/>Connected. ↗</Link></div><div className="ys-mega-grid">{groups.map(group=><div key={group}><p>{group}</p>{servicePages.filter(page=>(page.group||'Services')===group).map(page=><Link href={'/'+page.slug} key={page.slug} onClick={close}>{page.title} <span aria-hidden="true">↗</span></Link>)}</div>)}</div></div></details>{link('Work','/portfolio')}<details name="ys-navigation-group" className="ys-nav-company"><summary><DecryptedText text="About"/> <span aria-hidden="true">+</span></summary><div className="ys-company-panel">{link('About us','/about-us')}{link('Our team','/team')}{link('Clients','/clients')}</div></details>{link('Careers','/careers')}{link('Blog','/blog')}{link('Contact us','/contact')}</div><Link href="/contact" className="ys-nav-contact" onClick={close}><DecryptedText text="Let’s talk"/> <span aria-hidden="true">↗</span></Link></nav></div></header>;
 }

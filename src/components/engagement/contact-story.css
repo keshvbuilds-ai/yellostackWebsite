@@ -1,0 +1,23 @@
+.contact-story{position:relative;height:340svh;background:#fff;color:#171a14;margin-inline:calc((100% - 100vw)/2);isolation:isolate}
+.contact-story-stage{position:sticky;top:0;height:100svh;min-height:640px;overflow:hidden;background:#fff}
+.contact-story-top,.contact-story-bottom{position:absolute;left:5%;right:5%;display:flex;justify-content:space-between;align-items:center;gap:20px;font:10px/1.5 var(--font-geist-mono),monospace;letter-spacing:.08em;z-index:4}
+.contact-story-top{top:115px;padding-bottom:18px;border-bottom:1px solid #171a141c;color:#676a60}
+.contact-story-top span:first-child{display:flex;align-items:center;gap:10px;color:#171a14}.contact-story-top i{width:7px;height:7px;border-radius:50%;background:#edc000}
+.contact-story-headings{position:absolute;top:calc(115px + 6vh);left:8%;right:8%;height:240px;z-index:3;text-align:center}
+.contact-story-copy{position:absolute;inset:0}.contact-story-copy:not(:first-child){visibility:hidden}
+.contact-story-step{font:10px/1.5 var(--font-geist-mono),monospace;letter-spacing:.12em;color:#65695f}
+.contact-story-copy h2{font-size:clamp(36px,4.25vw,72px);line-height:1.06;letter-spacing:-.05em;font-weight:500;margin:17px 0}
+.contact-story-copy h2 em{font-style:normal;position:relative;white-space:nowrap;background:linear-gradient(transparent 66%,#ffcf00 66%,#ffcf00 92%,transparent 92%)}
+.contact-story-copy p{font-size:clamp(14px,1.15vw,18px);line-height:1.6;color:#696c64}
+.contact-story-art{position:absolute;left:0;right:0;top:48%;bottom:10%;overflow:hidden;mix-blend-mode:multiply;pointer-events:none}
+.contact-story-art>div{position:absolute;top:50%;height:auto;overflow:hidden;transform:translateY(-50%);will-change:transform,opacity}
+.contact-customer{right:-1%;width:57%;visibility:hidden}.contact-employee{left:-1%;width:57%;visibility:hidden}.contact-handshake{left:0;width:100%;visibility:hidden}
+.contact-story-seal{position:absolute;z-index:3;bottom:16%;left:50%;transform:translateX(-50%) scale(.9);visibility:hidden;background:#ffcf00;border-radius:50%;width:106px;height:106px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:9px/1.8 var(--font-geist-mono),monospace;letter-spacing:.04em;box-shadow:0 12px 35px #171a1408}.contact-story-seal strong{font-size:11px;letter-spacing:-.02em}
+.contact-story-bottom{bottom:28px}.contact-story-bottom>span{color:#777b70}.contact-story-bottom a{border-bottom:2px solid #ffcf00;padding:12px 0;min-height:44px}.contact-story-bottom a:hover{color:#716000}.contact-story-bottom a:focus-visible{outline:2px solid #171a14;outline-offset:5px}
+.contact-story-progress{position:absolute;bottom:0;left:0;width:100%;height:3px;background:#f0f0e9}.contact-story-progress span{display:block;width:100%;height:100%;background:#ffcf00;transform:scaleX(0);transform-origin:left}
+@media(min-width:1101px) and (max-width:1400px){.ys-nav-links{gap:18px;padding-inline:20px}.ys-main-menu{gap:30px}}
+@media(max-width:700px){.contact-story{height:290svh}.contact-story-stage{min-height:600px}.contact-story-top{top:90px;left:6%;right:6%;font-size:9px}.contact-story-top>span:last-child{display:none}.contact-story-headings{top:148px;left:5%;right:5%}.contact-story-copy h2{font-size:clamp(32px,7.8vw,48px);margin-block:18px}.contact-story-copy p{font-size:14px;padding-inline:12px}.contact-story-art{top:50%;bottom:14%;left:-15%;right:-15%}.contact-customer,.contact-employee{width:66%}.contact-story-seal{width:80px;height:80px;bottom:12%;font-size:8px}.contact-story-seal strong{font-size:9px}.contact-story-bottom{left:6%;right:6%;font-size:9px;bottom:18px}.contact-story-bottom>span{max-width:75px}.contact-story-bottom a{max-width:180px;text-align:right}}
+@media(max-height:720px) and (min-width:701px){.contact-story-top{top:95px}.contact-story-headings{top:145px}.contact-story-copy h2{font-size:40px}.contact-story-art{top:49%;bottom:7%}.contact-story-seal{bottom:10%;width:76px;height:76px;font-size:8px}.contact-story-seal strong{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.contact-story{height:auto}.contact-story-stage{position:relative;height:850px;max-height:none}.contact-story-copy:first-child{visibility:hidden}.contact-story-copy:last-child{visibility:visible}.contact-handshake{visibility:visible}.contact-story-seal{visibility:visible}.contact-story-bottom>span{display:none}.contact-story-art>div{will-change:auto}}
+
+.contact-story-art svg{display:block;width:100%;height:auto;overflow:hidden}

@@ -1,4 +1,5 @@
 "use client";
+import { CmsText, useEditedList } from "@/components/cms/ContentProvider";
 import { Component, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Lightformer, RoundedBox } from "@react-three/drei";
@@ -9,7 +10,7 @@ import GlobeSection from "./Globe";
 
 
 gsap.registerPlugin(ScrollTrigger);
-const stories = [
+const defaultstories = [
   { title: "Designed around people.", tag: "01 / BRAND & EXPERIENCE", body: "Yellostack brings brand identity, UI/UX and mobile experiences together. Every interaction starts with the people who will use it.", image: "/layer-experience.svg", detail: "UI/UX · BRAND IDENTITY · MOBILE DESIGN" },
   { title: "Ideas become working products.", tag: "02 / APPLICATIONS & AI", body: "From mobile apps and ecommerce to AI assistants and workflow automation, we connect your ideas to the way your business works.", image: "/layer-intelligence.svg", detail: "APPLICATIONS · AI · AUTOMATION" },
   { title: "Connected behind the scenes.", tag: "03 / SOFTWARE & HEALTHCARE", body: "Enterprise software, cloud services and medical coding workflows. Connected capabilities that support your teams and your next stage of growth.", image: "/layer-operations.svg", detail: "ENTERPRISE · CLOUD · MEDICAL CODING" },
@@ -17,6 +18,7 @@ const stories = [
 type Playhead = { progress: number; active: number; x: number; y: number };
 const ease = (x: number) => { const t = THREE.MathUtils.clamp(x, 0, 1); return t * t * (3 - 2 * t); };
 function Cards({ playhead, destination }: { playhead: RefObject<Playhead>; destination: RefObject<HTMLDivElement | null> }) {
+  const stories = useEditedList("LayerGallery.stories", defaultstories);
   const cards = useRef<(THREE.Group | null)[]>([]);
   const assembled = useRef<THREE.Group>(null);
   const glow = useRef<THREE.ShaderMaterial>(null);
@@ -33,7 +35,7 @@ function Cards({ playhead, destination }: { playhead: RefObject<Playhead>; desti
       textures[i] = texture;
     });
     return () => { alive = false; textures.forEach(texture => texture.dispose()); };
-  }, []);
+  }, [stories]);
   useFrame(({ viewport, size, gl }, delta) => {
     const state = playhead.current;
     const p = state.progress;
@@ -94,9 +96,10 @@ function Cards({ playhead, destination }: { playhead: RefObject<Playhead>; desti
 }
 class GalleryBoundary extends Component<{children: ReactNode}, {failed:boolean}> {
   state={failed:false}; static getDerivedStateFromError(){return {failed:true};}
-  render(){return this.state.failed ? <div className="layer-gallery-fallback">{stories.map(story=><img key={story.tag} src={story.image} alt=""/>)}</div> : this.props.children;}
+  render(){return this.state.failed ? <div className="layer-gallery-fallback">{defaultstories.map(story=><img key={story.tag} src={story.image} alt=""/>)}</div> : this.props.children;}
 }
 export default function LayerGallery() {
+ const stories = useEditedList("LayerGallery.stories", defaultstories);
   const root=useRef<HTMLElement>(null);
   const stage=useRef<HTMLDivElement>(null);
   const destination=useRef<HTMLDivElement>(null);
@@ -128,11 +131,11 @@ export default function LayerGallery() {
   },[]);
   return <section ref={root} className="layer-gallery" aria-label="Three layers of Yellostack">
     <div ref={stage} className="layer-gallery-stage">
-      <header><span>YELLOSTACK / INSIDE EVERY LAYER</span><a href="#contact">LET’S MAKE IT HAPPEN ↗</a></header>
-      <div className="layer-gallery-intro"><span>ONE SYMBOL. MANY POSSIBILITIES.</span><h2>There’s more<br/>inside every layer.</h2><p>Scroll to unfold the story →</p></div>
+      <header><span><CmsText id="LayerGallery.text.0" fallback="YELLOSTACK / INSIDE EVERY LAYER"/></span><a href="#contact"><CmsText id="LayerGallery.text.1" fallback="LET’S MAKE IT HAPPEN ↗"/></a></header>
+      <div className="layer-gallery-intro"><span><CmsText id="LayerGallery.text.2" fallback="ONE SYMBOL. MANY POSSIBILITIES."/></span><h2><CmsText id="LayerGallery.text.3" fallback="There’s more"/><br/><CmsText id="LayerGallery.text.4" fallback="inside every layer."/></h2><p><CmsText id="LayerGallery.text.5" fallback="Scroll to unfold the story →"/></p></div>
       <div className="layer-gallery-canvas" aria-hidden="true"><GalleryBoundary>{animated && <Canvas camera={{position:[0,0,10],fov:42}} dpr={[1,1.5]} frameloop={visible?"always":"never"} style={{touchAction:"pan-y"}}><Cards playhead={playhead} destination={destination}/></Canvas>}</GalleryBoundary></div>
       <div className="layer-gallery-track">{stories.map(story=><article key={story.tag} className="layer-gallery-panel"><img src={story.image} alt="Yellostack capability illustration"/><div><span>{story.tag}</span><h3>{story.title}</h3><p>{story.body}</p><small>{story.detail}</small></div></article>)}</div>
-      <div className="layer-gallery-bottom"><span>THREE LAYERS / ONE CONNECTED PARTNER</span><span>SCROLL TO EXPLORE ←</span><div className="layer-gallery-progress"><i/></div></div>
+      <div className="layer-gallery-bottom"><span><CmsText id="LayerGallery.text.6" fallback="THREE LAYERS / ONE CONNECTED PARTNER"/></span><span><CmsText id="LayerGallery.text.7" fallback="SCROLL TO EXPLORE ←"/></span><div className="layer-gallery-progress"><i/></div></div>
       <div ref={destination} className="layer-gallery-destination"><GlobeSection handoff={animated ? playhead : undefined} externalScene={animated}/></div>
     </div>
   </section>;

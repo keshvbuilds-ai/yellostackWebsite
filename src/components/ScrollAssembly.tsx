@@ -1,4 +1,5 @@
 ﻿"use client";
+import { CmsText, useEditedList } from "@/components/cms/ContentProvider";
 
 import { Component, useEffect, useRef, useState, type MutableRefObject, type ReactNode } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -11,7 +12,7 @@ import DecryptedText from "./animations/DecryptedText";
 
 gsap.registerPlugin(ScrollTrigger);
 // Adapted from https://www.yellostack.com/services and the published company homepage.
-const chapters = [
+const defaultchapters = [
   { label: "EXPERIENCE", title: "Your brand.\nBrought to life.", description: "Yellostack brings together brand identity, UI/UX, responsive web design and mobile app design to shape how people experience your business.", detail: "LAYER 01 / BRAND IDENTITY + UI/UX" },
   { label: "APPLICATIONS", title: "Your business.\nIn their hands.", description: "Connect with customers through mobile applications and web experiences. Bring AI assistants and automation into the workflows that support your business.", detail: "LAYER 02 / MOBILE + WEB + AI" },
   { label: "SOFTWARE", title: "Your operations.\nConnected.", description: "Connect enterprise software, cloud services and healthcare workflows, including medical coding and documentation review, around the way your teams work.", detail: "LAYER 03 / SOFTWARE + CLOUD + MEDICAL CODING" },
@@ -60,6 +61,7 @@ function AssemblyScene({ journey }: {journey: MutableRefObject<SceneState>}) {
   </>;
 }
 export default function ScrollAssembly() {
+ const chapters = useEditedList("ScrollAssembly.chapters", defaultchapters);
   const section = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const journey = useRef<SceneState>({progress:0,reduced:false,pointerX:0});
@@ -98,11 +100,11 @@ export default function ScrollAssembly() {
   };
   return <section ref={section} id="inside-the-stack" className="scroll-assembly" aria-label="How Yellostack builds digital experiences">
     <div ref={stage} className="build-stage">
-      <div className="build-oversized-word" aria-hidden="true">EVERY LAYER MATTERS</div>
+      <div className="build-oversized-word" aria-hidden="true"><CmsText id="ScrollAssembly.text.0" fallback="EVERY LAYER MATTERS"/></div>
       <div className="build-scene" aria-hidden="true"><SceneBoundary><Canvas style={{touchAction:"pan-y"}} dpr={[1,1.5]} frameloop={visible?"always":"never"} camera={{position:[0,5.4,12],fov:40}} gl={{alpha:true,antialias:true}}><AssemblyScene journey={journey}/></Canvas></SceneBoundary></div>
-      <header className="build-header"><span>YELLOSTACK / THE MAKING OF YOUR NEXT</span><a href="#work"><DecryptedText text="EXPLORE OUR WORK"/><span aria-hidden="true">↗</span></a></header>
+      <header className="build-header"><span><CmsText id="ScrollAssembly.text.1" fallback="YELLOSTACK / THE MAKING OF YOUR NEXT"/></span><a href="#work"><DecryptedText text="EXPLORE OUR WORK"/><span aria-hidden="true">↗</span></a></header>
       <div className="build-chapters">{chapters.map((chapter,i)=><article key={chapter.label} id={`build-chapter-${i}`} className="build-chapter" aria-hidden={!reducedMotion && active!==i ? true : undefined}><span className="build-eyebrow">0{i+1} / {chapter.label}</span><h2>{chapter.title}</h2><p>{chapter.description}</p><span className="build-detail">{chapter.detail}</span></article>)}</div>
-      <div className="build-bottom"><nav aria-label="Build sequence">{chapters.map((chapter,i)=><button key={chapter.label} onClick={()=>goTo(i)} aria-current={active===i?"step":undefined}><span>0{i+1}</span>{chapter.label}</button>)}</nav><span className="build-scroll-hint">SCROLL TO EXPLORE EACH LAYER ↓</span><div className="build-progress"><div className="build-progress-fill"/></div></div>
+      <div className="build-bottom"><nav aria-label="Build sequence">{chapters.map((chapter,i)=><button key={chapter.label} onClick={()=>goTo(i)} aria-current={active===i?"step":undefined}><span>0{i+1}</span>{chapter.label}</button>)}</nav><span className="build-scroll-hint"><CmsText id="ScrollAssembly.text.2" fallback="SCROLL TO EXPLORE EACH LAYER ↓"/></span><div className="build-progress"><div className="build-progress-fill"/></div></div>
     </div>
   </section>;
 }

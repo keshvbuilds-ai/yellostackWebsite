@@ -1,20 +1,22 @@
 ﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useContent } from "@/components/cms/ContentProvider";
 import { motion } from "framer-motion";
 
 /** Adapted from the supplied DecryptedText: stable layout, parent hover and focus. */
-export default function DecryptedText({ text, speed = 38, maxIterations = 14, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>_", className = "", parentClassName = "", encryptedClassName = "", animateOn = "hover" }: {
+export default function DecryptedText({ text: originalText, speed = 38, maxIterations = 14, characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>_", className = "", parentClassName = "", encryptedClassName = "", animateOn = "hover" }: {
   text: string; speed?: number; maxIterations?: number; characters?: string;
   className?: string; parentClassName?: string; encryptedClassName?: string;
   animateOn?: "hover" | "view" | "inViewHover";
 }) {
+  const text = useContent().copy["label:"+originalText] ?? originalText;
   const root = useRef<HTMLSpanElement>(null);
   const [display, setDisplay] = useState(text);
   useEffect(() => {
     const element = root.current;
     if (!element) return;
-    const target = element.closest("a, button") ?? element;
+    const target = element.closest("a, button, summary") ?? element;
     const preference = matchMedia("(prefers-reduced-motion: reduce)");
     let timer: ReturnType<typeof setTimeout> | undefined;
     let hovered = false, focused = false, alive = true;

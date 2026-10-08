@@ -12,6 +12,7 @@ import Portfolio from "@/components/Portfolio";
 import WhyYellostack from "@/components/WhyYellostack";
 
 import CTA from "@/components/CTA";
+import Blogs from "@/components/Blogs";
 import Footer from "@/components/Footer";
 import { AnimatePresence } from "framer-motion";
 import HomeChoreography from "@/components/animations/HomeChoreography";
@@ -36,6 +37,7 @@ export default function Home() {
         <Introduction />
         <Portfolio />
         <WhyYellostack />
+        <Blogs />
         <CTA />
       </main>
       <Footer />

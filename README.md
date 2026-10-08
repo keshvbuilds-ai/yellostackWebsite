@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Yellostack
 
-## Getting Started
+Next.js website with GSAP scroll sequences, Three.js scenes, responsive inner pages and a Supabase-backed content studio.
 
-First, run the development server:
+## Run locally
 
-```bash
+```sh
+npm ci
+npm run check:cms
+npm run build
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The website works with bundled content without CMS credentials.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## CMS and Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open /admin for the content studio. Follow [CMS deployment instructions](docs/CMS-DEPLOYMENT.md) to create the Supabase tables, storage bucket and editor account, then add the two environment variables to Vercel. See [.env.example](.env.example).
 
-## Learn More
+GitHub and Vercel host the website and admin interface; Supabase provides persistent content, uploaded images and authentication. Importing the GitHub repo does not automatically provision Supabase.
 
-To learn more about Next.js, take a look at the following resources:
+Save draft keeps edits private. Publish updates public content without a new deployment. Refresh public pages to see changes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Validation status
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+TypeScript and CMS data-validation checks passed in the editing workspace. Production build, browser visual testing and live Supabase publishing remain unverified because the workspace could not start shell processes or connect to a browser, and no Supabase credentials were supplied.

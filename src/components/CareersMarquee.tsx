@@ -1,4 +1,5 @@
 "use client";
+import { CmsText } from "@/components/cms/ContentProvider";
 
 import { useEffect } from "react";
 import gsap from "gsap";
@@ -20,8 +21,7 @@ export default function CareersMarquee() {
                     {[...Array(4)].map((_, i) => (
                         <div key={i} className="flex items-center">
                             <span className="text-6xl md:text-[8rem] font-black tracking-tighter uppercase leading-none px-8">
-                                Join the Team
-                            </span>
+                                <CmsText id="CareersMarquee.text.0" fallback="Join the Team"/></span>
                             <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="mx-4 md:mx-8">
                                 <circle cx="20" cy="20" r="20" fill="black" />
                                 <path d="M12 20h16M28 20l-6 6M28 20l-6-6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

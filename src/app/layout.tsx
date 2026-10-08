@@ -1,3 +1,5 @@
+import { getSiteContent } from '@/lib/cms/server';
+import { ContentProvider } from '@/components/cms/ContentProvider';
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -19,20 +21,23 @@ const geistMono = localFont({
   display: "swap",
 });
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Yellostack — Digital experiences that move business forward",
   description: "Strategy, design, and development for websites, apps, and digital products. Build your next digital experience with Yellostack.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const content = await getSiteContent();
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body id="top" className="bg-black text-white selection:bg-yello selection:text-black">
-        {children}
+        <ContentProvider content={content}>{children}</ContentProvider>
       </body>
     </html>
   );

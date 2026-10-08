@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useContent } from "@/components/cms/ContentProvider";
+import { useContent, useTranslate, useLocale } from "@/components/cms/ContentProvider";
 import { motion } from "framer-motion";
 
 /** Adapted from the supplied DecryptedText: stable layout, parent hover and focus. */
@@ -10,12 +10,14 @@ export default function DecryptedText({ text: originalText, speed = 38, maxItera
   className?: string; parentClassName?: string; encryptedClassName?: string;
   animateOn?: "hover" | "view" | "inViewHover";
 }) {
-  const text = useContent().copy["label:"+originalText] ?? originalText;
+  const t=useTranslate();const locale=useLocale();
+  const text = t(useContent().copy["label:"+originalText] ?? originalText);
   const root = useRef<HTMLSpanElement>(null);
   const [display, setDisplay] = useState(text);
   useEffect(() => {
     const element = root.current;
     if (!element) return;
+    setDisplay(text);
     const target = element.closest("a, button, summary") ?? element;
     const preference = matchMedia("(prefers-reduced-motion: reduce)");
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -25,7 +27,7 @@ export default function DecryptedText({ text: originalText, speed = 38, maxItera
     const reset = () => { clear(); if (alive) setDisplay(text); };
     const play = () => {
       clear();
-      if (preference.matches || document.hidden) { reset(); return; }
+      if (locale==='ar' || preference.matches || document.hidden) { reset(); return; }
       let iteration = 0;
       const frame = () => {
         if (!alive) return;
@@ -59,7 +61,7 @@ export default function DecryptedText({ text: originalText, speed = 38, maxItera
       target.removeEventListener("focus", focus); target.removeEventListener("blur", blur);
       document.removeEventListener("visibilitychange", visibility); preference.removeEventListener("change", motionChange);
     };
-  }, [text, speed, maxIterations, characters, animateOn]);
+  }, [text, speed, maxIterations, characters, animateOn, locale]);
   return <motion.span ref={root} className={`decrypt-text ${parentClassName}`}>
     <span className="sr-only">{text}</span>
     <span className="decrypt-size" aria-hidden="true">{text}</span>

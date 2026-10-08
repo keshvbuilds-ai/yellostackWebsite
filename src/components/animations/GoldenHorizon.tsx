@@ -1,4 +1,6 @@
 'use client';
+import { LocalText } from '@/components/cms/ContentProvider';
+
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -56,5 +58,5 @@ export default function GoldenHorizon(){
     resize();
     return()=>{alive=false;cancelAnimationFrame(frame);observer.disconnect();resizeObserver.disconnect();media.revert();section.removeEventListener('pointermove',move);section.removeEventListener('pointerleave',leave);preference.removeEventListener('change',change);document.removeEventListener('visibilitychange',resume);renderer.domElement.removeEventListener('webglcontextlost',lost);geometry.dispose();materials.forEach(m=>m.dispose());orbitGeometry.dispose();orbitMaterial.dispose();planeGeometry.dispose();background.dispose();renderer.dispose();renderer.domElement.remove();};
   },[]);
-  return <section ref={root} className="golden-horizon" aria-label="Yellostack connected future"><div className="golden-horizon-stage"><div ref={mount} className="golden-horizon-canvas"/><div className="golden-horizon-grid" aria-hidden="true">{[0,1,2,3,4].map(i=><span key={i}>·</span>)}</div><div ref={heading} className="golden-horizon-copy"><p><CmsText id="horizon.eyebrow" fallback="EVERY IDEA HAS A NEXT CHAPTER"/></p><h2><CmsText id="horizon.heading" fallback="Make yours extraordinary."/></h2><a href="/contact"><CmsText id="horizon.link" fallback="LET’S CREATE IT TOGETHER"/> <span aria-hidden="true">↗</span></a></div><div className="golden-horizon-caption"><span>YELLOSTACK / CONNECTED POSSIBILITIES</span><span>SCROLL INTO WHAT’S NEXT ↓</span></div></div></section>;
+  return <section ref={root} className="golden-horizon" aria-label="Yellostack connected future"><div className="golden-horizon-stage"><div ref={mount} className="golden-horizon-canvas"/><div className="golden-horizon-grid" aria-hidden="true">{[0,1,2,3,4].map(i=><span key={i}>·</span>)}</div><div ref={heading} className="golden-horizon-copy"><p><CmsText id="horizon.eyebrow" fallback="EVERY IDEA HAS A NEXT CHAPTER"/></p><h2><CmsText id="horizon.heading" fallback="Make yours extraordinary."/></h2><a href="/contact"><CmsText id="horizon.link" fallback="LET’S CREATE IT TOGETHER"/> <span aria-hidden="true">↗</span></a></div><div className="golden-horizon-caption"><span><LocalText text={"YELLOSTACK / CONNECTED POSSIBILITIES"}/></span><span><LocalText text={"SCROLL INTO WHAT’S NEXT ↓"}/></span></div></div></section>;
 }

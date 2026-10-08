@@ -1,0 +1,16 @@
+.ys-language button{padding:8px 12px;border:1px solid #ffffff40;border-radius:6px;color:#ffcf00;min-height:40px;white-space:nowrap}.ys-language button:focus-visible{outline:2px solid #ffcf00;outline-offset:3px}.ys-language span{display:block;font-size:11px}.ys-nav-links{gap:clamp(10px,1.25vw,25px)}.ys-main-menu{gap:clamp(18px,3vw,80px)}
+html[dir=rtl] body{font-family:Tahoma,Arial,sans-serif;letter-spacing:0}
+[dir=rtl] :is(h1,h2,h3,p,a,button,summary,label){letter-spacing:0!important}
+[dir=rtl] .ys-nav-company .ys-company-panel{left:auto;right:-24px}
+[dir=rtl] .ys-inner-breadcrumb{direction:rtl}
+[dir=rtl] .journey-heading h1{font-size:clamp(46px,6vw,104px);line-height:1.3}
+[dir=rtl] .journey-heading,[dir=rtl] .journey-support{text-align:right}
+[dir=rtl] .contact-story-copy h2{font-family:Tahoma,Arial,sans-serif;font-style:normal;line-height:1.5;font-size:clamp(24px,2.7vw,43px)}
+[dir=rtl] .contact-story-copy h2 em{font-style:normal}
+[dir=rtl] .contact-story-copy:first-child{text-align:right;left:auto;right:0}
+[dir=rtl] .contact-story-copy:nth-child(2){text-align:left;right:auto;left:0}
+[dir=rtl] :is(input[type=email],input[type=tel],a[href^='mailto:'],a[href^='tel:']){direction:ltr;unicode-bidi:isolate}
+[dir=rtl] canvas,[dir=rtl] .layer-gallery-track{direction:ltr}
+[dir=rtl] .decrypt-text{letter-spacing:0}
+@media(max-width:1100px){.ys-language{padding-top:12px}.ys-language button{width:100%;min-height:48px}}
+@media(max-width:700px){[dir=rtl] .journey-heading h1{font-size:clamp(34px,8vw,60px)}[dir=rtl] .contact-story-copy h2{font-size:24px}}

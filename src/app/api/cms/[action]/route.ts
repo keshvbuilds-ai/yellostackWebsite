@@ -29,7 +29,8 @@ export async function GET(_request:Request, {params}:Context) {
       const response=await supabase('/rest/v1/cms_drafts?id=eq.site&select=content,revision',{},editor.token);
       if(!response.ok)throw new Error('Cannot read CMS draft. Check the database migration and editor membership.');
       const rows=await response.json();
-      return json(rows[0] || {content:defaultContent,revision:0});
+      const draft=rows[0] || {content:defaultContent,revision:0};
+      return json({...draft,content:{...draft.content,copy:{...defaultContent.copy,...draft.content.copy},media:{...defaultContent.media,...draft.content.media}}});
     }
     return json({error:'Not found'},404);
   } catch(error){return errorResponse(error);}

@@ -1,4 +1,6 @@
 ﻿"use client";
+import { LocalText } from '@/components/cms/ContentProvider';
+
 import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Lightformer, RoundedBox } from "@react-three/drei";
@@ -43,9 +45,9 @@ function Phone({active,reduced}:{active:number;reduced:boolean}) {
     <mesh position={[0,-3,0]}><cylinderGeometry args={[2.8,3,.2,64]}/><meshStandardMaterial color="#d0d4bf" metalness={.3} roughness={.55}/></mesh>
   </>;
 }
-class StageBoundary extends Component<{children:ReactNode},{failed:boolean}>{state={failed:false};static getDerivedStateFromError(){return {failed:true};}render(){return this.state.failed?<div className="product-stage-fallback">Digital experiences.<br/>Built around people.</div>:this.props.children;}}
+class StageBoundary extends Component<{children:ReactNode},{failed:boolean}>{state={failed:false};static getDerivedStateFromError(){return {failed:true};}render(){return this.state.failed?<div className="product-stage-fallback"><LocalText text={"Digital experiences."}/><br/><LocalText text={"Built around people."}/></div>:this.props.children;}}
 export default function ProductStage({active,reduced}:{active:number;reduced:boolean}){
   const root=useRef<HTMLDivElement>(null);const [visible,setVisible]=useState(false);
   useEffect(()=>{const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting),{rootMargin:"100px"});if(root.current)observer.observe(root.current);return()=>observer.disconnect();},[]);
-  return <div ref={root} className="product-stage"><StageBoundary><Canvas style={{touchAction:"pan-y"}} camera={{position:[0,.3,9.8],fov:40}} dpr={[1,1.5]} frameloop={visible?"always":"never"}><Phone active={active} reduced={reduced}/></Canvas></StageBoundary><span className="product-concept-label">INTERFACE STUDY / {String(active+1).padStart(2,"0")}<br/><small>Concept visualization</small></span></div>;
+  return <div ref={root} className="product-stage"><StageBoundary><Canvas style={{touchAction:"pan-y"}} camera={{position:[0,.3,9.8],fov:40}} dpr={[1,1.5]} frameloop={visible?"always":"never"}><Phone active={active} reduced={reduced}/></Canvas></StageBoundary><span className="product-concept-label"><LocalText text={"INTERFACE STUDY /"}/>{String(active+1).padStart(2,"0")}<br/><small><LocalText text={"Concept visualization"}/></small></span></div>;
 }

@@ -1,4 +1,5 @@
 "use client";
+import { LocalText } from '@/components/cms/ContentProvider';
 import { CmsText } from "@/components/cms/ContentProvider";
 
 import { Component, useCallback, useEffect, useRef, useState, type ReactNode, type PointerEvent } from "react";
@@ -171,12 +172,12 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
       <svg viewBox="0 0 120 120" aria-hidden="true"><circle className="journey-ring-base" cx="60" cy="60" r="54" /><circle ref={ring} className="journey-ring-fill" cx="60" cy="60" r="54" /></svg>
       <span className="journey-ring-marks"><i /><span ref={percentage}>00</span><i /></span>
       </motion.span>
-      <span className="journey-hold-label">{!ready ? "PREPARING EXPERIENCE" : reduced || failed ? "REVEAL THE STACK" : holding ? "KEEP HOLDING" : "CLICK AND HOLD"}</span>
+      <span className="journey-hold-label"><LocalText text={!ready ? "PREPARING EXPERIENCE" : reduced || failed ? "REVEAL THE STACK" : holding ? "KEEP HOLDING" : "CLICK AND HOLD"}/></span>
     </button>
     <div className="journey-words" aria-hidden="true">{yellostackData.hero.words.map((word, i) => <div key={word} ref={el => { words.current[i] = el; }}><span>0{i + 1} <CmsText id="hero.Hero.text.4" fallback=" / THE YELLOSTACK APPROACH"/></span><strong>{word}<b>.</b></strong></div>)}</div>
     <div ref={end} className="journey-end" inert={!done}><p><CmsText id="hero.Hero.text.5" fallback="EVERY LAYER. ONE VISION."/></p><h2><CmsText id="hero.Hero.text.6" fallback="Yellostack"/><span>®</span></h2><div><a href="#services"><DecryptedText text="EXPLORE WHAT WE BUILD" /> ↗</a><button onClick={reset}><DecryptedText text="REPLAY" /> ↺</button></div></div>
     {done && <EasterEgg />}
     <div className="journey-bottom"><span><CmsText id="hero.Hero.text.7" fallback="BUILT ON IDEAS. ENGINEERED FOR IMPACT."/></span><a href="#about"><CmsText id="hero.Hero.text.8" fallback="SCROLL TO DISCOVER "/><span>↓</span></a></div>
-    <span className="sr-only" role="status">{done ? "You found the Yellostack Easter egg and unlocked a 15% offer. Tear the reward ticket to claim it." : ""}</span>
+    <span className="sr-only" role="status"><LocalText text={done ? "You found the Yellostack Easter egg and unlocked a 15% offer. Tear the reward ticket to claim it." : ""}/></span>
   </section>;
 }

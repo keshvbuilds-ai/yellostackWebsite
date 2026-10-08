@@ -1,8 +1,11 @@
-import { getSiteContent } from '@/lib/cms/server';
+import { getLocalizedContent, getLocale } from '@/lib/locale-server';
+import SiteReveals from '@/components/animations/SiteReveals';
+import './locale.css';
 import { ContentProvider } from '@/components/cms/ContentProvider';
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./media.css";
 
 const geistSans = localFont({
   src: [
@@ -33,11 +36,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const content = await getSiteContent();
+  const content = await getLocalizedContent();
+  const locale=await getLocale();
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang={locale} dir={locale==='ar'?'rtl':'ltr'} className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body id="top" className="bg-black text-white selection:bg-yello selection:text-black">
-        <ContentProvider content={content}>{children}</ContentProvider>
+        <ContentProvider content={content} locale={locale}><SiteReveals/>{children}</ContentProvider>
       </body>
     </html>
   );

@@ -1,0 +1,9 @@
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import { CmsImage, useContent, useTranslate } from './cms/ContentProvider';
+import { pageMedia, studioFilm } from '@/content/media';
+export default function MediaPanel({topic='about-us',film=false}:{topic?:string;film?:boolean}){
+ const media=pageMedia(topic),content=useContent(),t=useTranslate();const video=useRef<HTMLVideoElement>(null);const [playing,setPlaying]=useState(false);const [failed,setFailed]=useState(false);
+ useEffect(()=>{const el=video.current;if(!el)return;const observer=new IntersectionObserver(([entry])=>{if(!entry.isIntersecting){el.pause();setPlaying(false);}},{threshold:.1});observer.observe(el);return()=>observer.disconnect();},[]);
+ return <figure data-site-reveal className="ys-editorial-media"><div className="ys-editorial-frame"><CmsImage src={media.src} alt={t(media.alt)} width={1400} height={900} sizes="(max-width: 700px) 100vw, 90vw" className="ys-editorial-image"/>{film&&<><video ref={video} controls={playing} playsInline muted preload="none" poster={content.media[media.src]||media.src} onPause={()=>setPlaying(false)} onPlay={()=>setPlaying(true)} onEnded={()=>setPlaying(false)} onError={()=>{setFailed(true);setPlaying(false);}} aria-label={t('Illustrative stock footage')}><source src={content.media['studio.video']||studioFilm.src} type="video/mp4"/></video>{!playing&&!failed&&<button className="ys-film-play" onClick={()=>{video.current?.play().catch(()=>setFailed(true));}}><span aria-hidden="true">▶</span>{t('Play film')}</button>}{failed&&<p className="ys-film-error" role="status">{t('Video unavailable.')} <a href={studioFilm.source} target="_blank" rel="noreferrer">{t('View source')} ↗</a></p>}</>}</div><figcaption><span>{t(film?'Illustrative stock footage':'Concept visualization')}</span><span>{t('Design. Build. Connect.')}</span></figcaption></figure>;
+}

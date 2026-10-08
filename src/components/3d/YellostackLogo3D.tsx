@@ -1,4 +1,6 @@
 ﻿"use client";
+import { LocalText } from '@/components/cms/ContentProvider';
+
 
 import { useEffect, useMemo, useRef, type MutableRefObject } from "react";
 import { useFrame } from "@react-three/fiber";
@@ -99,7 +101,7 @@ export function YellostackLogo3D({ journey, scale = 1, story = false }: { journe
   return <group ref={assembly} scale={scale}>
     {[0, 1, 2].map(i => <group key={i} ref={el => { plates.current[i] = el; }} position={[0, (1 - i) * 1.02, 0]} scale={[1 + i * .025, 1, 1 + i * .025]}>
       <mesh geometry={geometry} material={story ? storyMaterials[i] : materials} castShadow receiveShadow />
-      {story && <Html position={[0, .55, 1.9]} center zIndexRange={[5, 0]} style={{pointerEvents:"none"}}><div className="stack-layer-callout" ref={element => { labels.current[i] = element; }}><span>0{i + 1} / YELLOSTACK</span><strong>{["BRAND & EXPERIENCE", "APPLICATIONS + AI", "SOFTWARE + HEALTHCARE"][i]}</strong><i /></div></Html>}
+      {story && <Html position={[0, .55, 1.9]} center zIndexRange={[5, 0]} style={{pointerEvents:"none"}}><div className="stack-layer-callout" ref={element => { labels.current[i] = element; }}><span>0{i + 1}<LocalText text={"/ YELLOSTACK"}/></span><strong>{["BRAND & EXPERIENCE", "APPLICATIONS + AI", "SOFTWARE + HEALTHCARE"][i]}</strong><i /></div></Html>}
       <mesh geometry={trim}><meshStandardMaterial color="#ffd65a" metalness={.78} roughness={.24} envMapIntensity={.7} /></mesh>
       <mesh ref={el => { glints.current[i] = el; }}><sphereGeometry args={[1, 16, 8]} /><meshBasicMaterial color={[4, 3.8, 3.2]} toneMapped={false} /></mesh>
     </group>)}

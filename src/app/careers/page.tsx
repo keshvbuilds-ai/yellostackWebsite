@@ -1,3 +1,4 @@
+import MediaPanel from '@/components/MediaPanel';
 import InnerHero from "@/components/inner/InnerHero";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -13,6 +14,7 @@ export default function CareersPage() {
                 <InnerHero title="Build what comes next." eyebrow="Careers at Yellostack" intro="Bring your curiosity, craft and ideas. Help us create digital experiences that connect people and business." />
 
                 <CareersMarquee />
+                <div className="px-[5%]"><MediaPanel topic="team" film/></div>
 
                 <div className="max-w-7xl mx-auto w-full">
                     <CareersList />

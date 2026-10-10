@@ -1,5 +1,8 @@
 // Illustrative stock, not photographs of Yellostack staff or delivered projects.
 export const stockMedia={
+ robotics:{src:'https://images.pexels.com/photos/8294550/pexels-photo-8294550.jpeg?auto=compress&cs=tinysrgb&w=1400',alt:'A real robot on a reflective dark surface',source:'https://www.pexels.com/photo/a-white-robot-on-a-black-shiny-surface-8294550/'},
+ healthcare:{src:'https://images.pexels.com/photos/5327916/pexels-photo-5327916.jpeg?auto=compress&cs=tinysrgb&w=1400',alt:'Healthcare professional working with clinical documents and digital devices',source:'https://www.pexels.com/photo/a-medical-person-using-a-laptop-for-research-5327916/'},
+ analytics:{src:'https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1400',alt:'Business analytics charts and reports on a desk',source:'https://www.pexels.com/photo/close-up-photo-of-survey-spreadsheet-590022/'},
  collaboration:{src:'https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=1400',alt:'A team collaborating around a table',source:'https://www.pexels.com/photo/photo-of-people-doing-handshakes-3183197/'},
  engineering:{src:'https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=1400',alt:'Developers reviewing code together',source:'https://www.pexels.com/photo/two-women-looking-at-the-code-at-laptop-1181263/'},
  cloud:{src:'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&w=1400',alt:'Engineer working beside server infrastructure',source:'https://www.pexels.com/photo/software-engineer-standing-beside-server-racks-1181354/'},

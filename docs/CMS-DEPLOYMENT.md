@@ -75,3 +75,25 @@ Bundled Arabic translations are in src/content/arabic.json. In the CMS Headings 
 Stock images appear on service/company pages, careers and blog cards; the homepage includes a studio media section. Media overrides are editable in the CMS. The studio.video key accepts a hosted MP4 URL; the upload endpoint accepts images only (up to 3 MB). Video playback is user initiated and pauses offscreen. Assets currently depend on the external Pexels CDN. See [media sources and license](MEDIA-LICENSES.md).
 
 Validation completed: TypeScript and CMS/locale/enquiry regression checks. Production build and browser/mobile visual checks must still be run in a working terminal/browser environment. Check both languages at phone, tablet and desktop widths, navigation, forms, media playback, reduced motion and the existing pinned 3D sequences.
+
+## Service hero banners
+
+The 13 service-specific banners are local SVG images in `public/banners`, mapped to routes in `src/content/service-banners.ts`. In CMS Media, search `/banners/` and replace the corresponding image URL or upload a replacement image, then publish. Use a 640:500 aspect ratio with clear space around the artwork. These are original illustrations; no stock license is needed. The shared hero retains its mobile layout, RTL placement and reduced-motion behavior.
+
+## Service hero banners
+
+The 13 service-specific banners are local SVG images in `public/banners`, mapped to routes in `src/content/service-banners.ts`. In CMS Media, search `/banners/` and replace the corresponding image URL or upload a replacement image, then publish. Use a 640:500 aspect ratio with clear space around the artwork. These are original illustrations; no stock license is needed. The shared hero retains its mobile layout, RTL placement and reduced-motion behavior.
+
+## Shared public footer
+
+Every public page uses `src/components/Footer.tsx`: the “Every idea has a next chapter” Golden Horizon, interactive YelloStack signature, and footer links/contact details. Home and careers already used it; service, company, contact, AI, blog index and blog article routes now use the same component. Edit its existing CMS copy fields to update it everywhere. The admin panel remains separate.
+
+
+### Company profile and homepage figures
+The Home overview, mission, vision and animated statistics use editable `profile.*` keys in Copy. Values are seeded from the supplied 2024 Yellostack Profile: 9+ years, 200+ clients, 4.8 Google rating and 300+ projects. These are profile figures, not a live Google rating feed. Keep numeric value keys numeric; suffix and label keys are separate. About Us uses the Pages editor. Previously published About Us records remain authoritative; update its mission and vision sections in the CMS to publish the new profile wording.
+
+
+### Company profile client logos
+Sixteen logos from profile page 18 seed the Clients collection. The same collection is displayed immediately above the Home footer and on /clients. Use the Clients editor to update names, images, links or remove entries. Existing published CMS content remains authoritative; if its Clients collection is empty, add these logos from public/clients in the Clients editor and publish.
+
+Profile additions include /devops-services, /startup-services and /communication-services, plus CloudOps, branding and application-modernisation details. Existing published page records are not overwritten. AI and Medical Coding scenes are preserved.

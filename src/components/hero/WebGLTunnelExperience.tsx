@@ -99,7 +99,7 @@ export function WebGLTunnelExperience({ journey }: { journey: MutableRefObject<J
 }
 
 export default function JourneyCanvas({ journey, visible, onReady, onFailure }: { journey: MutableRefObject<Journey>; visible: boolean; onReady: () => void; onFailure: () => void }) {
-  return <Canvas shadows dpr={[1, 1.5]} frameloop={visible ? "always" : "never"} camera={{ position: [6.8, 3.4, 8], fov: 34, near: .08, far: 100 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance", toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: .9 }} onCreated={({ gl }) => {
+  return <Canvas shadows={{ type: THREE.PCFShadowMap }} dpr={[1, 1.5]} frameloop={visible ? "always" : "never"} camera={{ position: [6.8, 3.4, 8], fov: 34, near: .08, far: 100 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance", toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: .9 }} onCreated={({ gl }) => {
     gl.setClearColor("#080907", 0);
     gl.domElement.addEventListener("webglcontextlost", onFailure, { once: true }); onReady();
   }}><WebGLTunnelExperience journey={journey} /></Canvas>;

@@ -18,7 +18,7 @@ export default function HeroAtmosphere() {
     return () => clearInterval(timer);
   }, [reduced]);
   return <div className="hero-atmosphere" aria-hidden="true">
-    <div className="hero-drafting-grid" />
+    <div className="hero-drafting-grid" /><div className="hero-depth-field"><i/><i/><i/><i/><i/></div>
     <svg className="hero-signal-lines" viewBox="0 0 1600 900" preserveAspectRatio="none">
       <defs><linearGradient id="hero-signal" x1="0" y1="1" x2="1" y2="0"><stop stopColor="#ffcf00" stopOpacity="0" /><stop offset=".55" stopColor="#ffdf69" stopOpacity=".26" /><stop offset="1" stopColor="#ffffff" stopOpacity="0" /></linearGradient></defs>
       <path className="signal-track" d="M-100 380 C250 380 220 100 680 165 S1160 445 1720 90" />

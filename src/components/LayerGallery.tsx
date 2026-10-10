@@ -1,4 +1,6 @@
 "use client";
+import { stockMedia } from "@/content/media";
+import { CmsImage } from "@/components/cms/ContentProvider";
 import { CmsText, useEditedList } from "@/components/cms/ContentProvider";
 import { Component, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -10,6 +12,7 @@ import GlobeSection from "./Globe";
 
 
 gsap.registerPlugin(ScrollTrigger);
+const layerPhotos=[stockMedia.design,stockMedia.engineering,stockMedia.cloud];
 const defaultstories = [
   { title: "Designed around people.", tag: "01 / BRAND & EXPERIENCE", body: "Yellostack brings brand identity, UI/UX and mobile experiences together. Every interaction starts with the people who will use it.", image: "/layer-experience.svg", detail: "UI/UX · BRAND IDENTITY · MOBILE DESIGN" },
   { title: "Ideas become working products.", tag: "02 / APPLICATIONS & AI", body: "From mobile apps and ecommerce to AI assistants and workflow automation, we connect your ideas to the way your business works.", image: "/layer-intelligence.svg", detail: "APPLICATIONS · AI · AUTOMATION" },
@@ -134,7 +137,7 @@ export default function LayerGallery() {
       <header><span><CmsText id="LayerGallery.text.0" fallback="YELLOSTACK / INSIDE EVERY LAYER"/></span><a href="#contact"><CmsText id="LayerGallery.text.1" fallback="LET’S MAKE IT HAPPEN ↗"/></a></header>
       <div className="layer-gallery-intro"><span><CmsText id="LayerGallery.text.2" fallback="ONE SYMBOL. MANY POSSIBILITIES."/></span><h2><CmsText id="LayerGallery.text.3" fallback="There’s more"/><br/><CmsText id="LayerGallery.text.4" fallback="inside every layer."/></h2><p><CmsText id="LayerGallery.text.5" fallback="Scroll to unfold the story →"/></p></div>
       <div className="layer-gallery-canvas" aria-hidden="true"><GalleryBoundary>{animated && <Canvas camera={{position:[0,0,10],fov:42}} dpr={[1,1.5]} frameloop={visible?"always":"never"} style={{touchAction:"pan-y"}}><Cards playhead={playhead} destination={destination}/></Canvas>}</GalleryBoundary></div>
-      <div className="layer-gallery-track">{stories.map(story=><article key={story.tag} className="layer-gallery-panel"><img src={story.image} alt="Yellostack capability illustration"/><div><span>{story.tag}</span><h3>{story.title}</h3><p>{story.body}</p><small>{story.detail}</small></div></article>)}</div>
+      <div className="layer-gallery-track">{stories.map((story,i)=><article key={story.tag} className="layer-gallery-panel"><img src={story.image} alt="Yellostack capability illustration"/><div><figure className="layer-story-photo"><CmsImage src={layerPhotos[i].src} alt={layerPhotos[i].alt} fill sizes="(max-width:800px) 85vw, 180px"/></figure><span>{story.tag}</span><h3>{story.title}</h3><p>{story.body}</p><small>{story.detail}</small></div></article>)}</div>
       <div className="layer-gallery-bottom"><span><CmsText id="LayerGallery.text.6" fallback="THREE LAYERS / ONE CONNECTED PARTNER"/></span><span><CmsText id="LayerGallery.text.7" fallback="SCROLL TO EXPLORE ←"/></span><div className="layer-gallery-progress"><i/></div></div>
       <div ref={destination} className="layer-gallery-destination"><GlobeSection handoff={animated ? playhead : undefined} externalScene={animated}/></div>
     </div>

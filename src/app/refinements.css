@@ -1,0 +1,12 @@
+/* Shared finishing details, scoped to public pages. */
+:root{--motion-ease:cubic-bezier(.22,1,.36,1)}
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-stopped{overflow:hidden}.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+:is(.journey-hero,.business-section,.brand-introduction,.ys-inner-page,.business-footer) h1,:is(.business-section,.brand-introduction,.ys-inner-page) h2{text-wrap:balance}
+:is(.story-copy,.ys-inner-detail,.profile-purpose) p{text-wrap:pretty}
+:is(.service-story,.ys-inner-detail,[id^=story-]){scroll-margin-top:125px}
+:is(.journey-primary,.journey-secondary,.ys-nav-contact,.story-copy>a,.business-contact a){transition:background .3s,color .3s,box-shadow .4s,translate .45s var(--motion-ease)}
+@media(hover:hover) and (pointer:fine){:is(.journey-primary,.journey-secondary,.ys-nav-contact):hover{translate:0 -2px;box-shadow:0 12px 32px #0003}.story-copy>a:hover{color:#ffe477}.profile-client-tile{transition:background .4s}.profile-client-tile:hover{background:#fffdf2}.capability-photo img{transition:transform 1.2s var(--motion-ease),filter .8s}.capability-photo:hover img{transform:scale(1.035);filter:saturate(1)}}
+:is(.story-copy,.profile-purpose,.ys-inner-detail) a:focus-visible{outline:2px solid #c89c00;outline-offset:6px;border-radius:3px}
+@media(prefers-reduced-motion:reduce){:is(.journey-primary,.journey-secondary,.ys-nav-contact,.story-copy>a,.business-contact a,.profile-client-tile,.capability-photo img){transition:none!important;translate:none!important}}
+
+.gm-message{display:grid;grid-template-columns:minmax(230px,.7fr) 1.3fr;gap:7%;padding:80px 0;border-top:1px solid #17201125;align-items:start}.gm-message figure{margin:0;max-width:406px}.gm-message figure img{width:100%;height:auto;border-radius:12px}.gm-message figcaption{display:grid;gap:8px;padding:22px 0}.gm-message figcaption strong{font-size:24px}.gm-message figcaption span{font:12px monospace;color:#69705f}.gm-kicker{font:12px monospace;text-transform:uppercase;letter-spacing:.08em;color:#8c7208;margin-bottom:24px}.gm-message blockquote p{font-size:clamp(18px,1.7vw,25px);line-height:1.65;margin-bottom:24px}.gm-signature{color:#8a6900;font-size:20px;font-weight:600;margin-top:30px}@media(max-width:700px){.gm-message{grid-template-columns:1fr;gap:30px}.gm-message figure{max-width:300px}}

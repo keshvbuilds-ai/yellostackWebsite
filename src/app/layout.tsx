@@ -1,3 +1,6 @@
+import ScrollTextGradient from '@/components/animations/ScrollTextGradient';
+import SmoothScroll from '@/components/SmoothScroll';
+import PremiumCursor from '@/components/animations/PremiumCursor';
 import { getLocalizedContent, getLocale } from '@/lib/locale-server';
 import SiteReveals from '@/components/animations/SiteReveals';
 import './locale.css';
@@ -6,6 +9,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./media.css";
+import "./refinements.css";
 
 const geistSans = localFont({
   src: [
@@ -41,7 +45,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={locale==='ar'?'rtl':'ltr'} className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body id="top" className="bg-black text-white selection:bg-yello selection:text-black">
-        <ContentProvider content={content} locale={locale}><SiteReveals/>{children}</ContentProvider>
+        <ContentProvider content={content} locale={locale}><SmoothScroll><SiteReveals/><ScrollTextGradient/><PremiumCursor/>{children}</SmoothScroll></ContentProvider>
       </body>
     </html>
   );

@@ -48,6 +48,16 @@ export default function IntelligenceScene({kind, progress, active=0}:{kind:'robo
    const halo=mesh(new THREE.TorusGeometry(2.23,.018,8,100),gold,model,0,0,-.6);halo.rotation.x=.35;rings.push(halo);
   }else{
    mesh(new THREE.SphereGeometry(1.35,64,48),ivory,head);
+   // Branching scleral vessels follow the spherical surface, not a flat decal.
+   const vesselMaterial=new THREE.MeshBasicMaterial({color:0xb77464,transparent:true,opacity:.42});
+   for(let branch=0;branch<22;branch++){
+    const azimuth=branch/22*Math.PI*2;
+    for(let fork=0;fork<2;fork++){
+     const points:THREE.Vector3[]=[];
+     for(let j=0;j<18;j++){const polar=.59+j*.041;const a=azimuth+Math.sin(j*.6+branch)*.025+fork*Math.max(0,j-7)*.016;points.push(new THREE.Vector3(1.356*Math.sin(polar)*Math.cos(a),1.356*Math.sin(polar)*Math.sin(a),1.356*Math.cos(polar)));}
+     mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),25,fork?.003:.005,4,false),vesselMaterial,head);
+    }
+   }
    const iris=mesh(new THREE.SphereGeometry(.69,48,32),gold,gaze,0,0,1.16);iris.scale.z=.28;
    const pupil=mesh(new THREE.SphereGeometry(.29,48,32),ink,gaze,0,0,1.36);pupil.scale.z=.22;
    for(let i=0;i<64;i++){const a=i/64*Math.PI*2;const fibre=box(.016,.27,.018,i%3===0?ivory:graphite,gaze,Math.sin(a)*.48,Math.cos(a)*.48,1.355,.003);fibre.rotation.z=-a;}
@@ -77,7 +87,7 @@ export default function IntelligenceScene({kind, progress, active=0}:{kind:'robo
     light.emissiveIntensity=1.6+(selection.current%3)*.3;
    }else{
     const focus=THREE.MathUtils.smoothstep(p,.2,.58);head.rotation.y*=1-focus;head.rotation.x=(1-focus)*(.2-smooth.y*.2);
-    model.rotation.z=(1-focus)*-.28;const zoom=THREE.MathUtils.smoothstep(p,.5,1);model.scale.setScalar(1+zoom*18);model.position.z=zoom*2;
+    model.rotation.z=(1-focus)*-.28;const zoom=THREE.MathUtils.smoothstep(p,.5,1);model.scale.setScalar(1+zoom*8);model.position.z=0;
    }
    if(!motion.matches){particles.rotation.z=t*.025;rings.forEach((ring,i)=>{if(kind==='robot'||i>0)ring.rotation.z=t*.12*(i%2?-1:1);});}
    renderer.render(scene,camera);

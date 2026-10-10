@@ -1,0 +1,7 @@
+@supports (background-clip:text) or (-webkit-background-clip:text){
+.scroll-gold-text{background-image:linear-gradient(110deg,var(--text-base) 0%,var(--text-base) 32%,var(--text-gold) 44%,var(--text-highlight) 50%,var(--text-gold) 56%,var(--text-base) 68%,var(--text-base) 100%);background-size:300% 100%;background-position:var(--gold-position,120%) 50%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.scroll-gold-text :is(span,em,strong,b){-webkit-text-fill-color:inherit}
+.scroll-gold-text::selection{background:#ffcf00;color:#15180e;-webkit-text-fill-color:#15180e}
+}
+@media(prefers-reduced-motion:reduce),(forced-colors:active){.scroll-gold-text{background:none;-webkit-text-fill-color:currentColor}}
+@media print{.scroll-gold-text{background:none;-webkit-text-fill-color:currentColor}}

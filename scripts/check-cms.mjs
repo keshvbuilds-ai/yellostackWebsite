@@ -6,12 +6,12 @@ import ts from 'typescript';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const out=path.join(root,'.cms-check');
 await fs.mkdir(out,{recursive:true});
-const files={media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
+const files={banners:'src/content/service-banners.ts',media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
 for(const [name,file] of Object.entries(files)){
   let source=await fs.readFile(path.join(root,file),'utf8');
   source=source.replace("'@/content/yellostack'","'./yellostack.mjs'").replace("'@/content/inner-pages'","'./pages.mjs'").replace("'@/content/blog'","'./blog.mjs'").replace("'./defaults'","'./defaults.mjs'");
   if(name==='defaults')source=source.replace("import copy from '@/content/cms-copy.json';",`const copy = ${await fs.readFile(path.join(root,'src/content/cms-copy.json'),'utf8')};`);
-  source=source.replace("'@/content/media'","'./media.mjs'");
+  source=source.replace("'@/content/media'","'./media.mjs'").replace("'@/content/service-banners'","'./banners.mjs'");
   source=source.replace("import arabic from '@/content/arabic.json';",'const arabic = '+await fs.readFile(path.join(root,'src/content/arabic.json'),'utf8')+';');
   const output=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText;
   await fs.writeFile(path.join(out,name+'.mjs'),output);

@@ -161,7 +161,7 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
     <HeroAtmosphere />
     <div className="journey-copy" ref={copy}>
       <div className="journey-heading"><p className="journey-eyebrow"><span /> <CmsText id="hero.Hero.text.0" fallback=" STRATEGY. DESIGN. DEVELOPMENT."/></p><h1><CmsText id="hero.Hero.text.1" fallback="Digital products"/><br /><CmsText id="hero.Hero.text.2" fallback="that people"/><br /><em><CmsText id="hero.Hero.text.3" fallback="love to use."/></em></h1></div>
-      <div className="journey-support"><p>{yellostackData.hero.description}</p><div className="journey-actions"><a className="journey-primary" href="#contact"><DecryptedText text="LET’S BUILD" /><span aria-hidden="true">↗</span></a><a className="journey-secondary" href="#work"><DecryptedText text="OUR WORK" /><span aria-hidden="true">↗</span></a></div></div>
+      <div className="journey-support"><p>{yellostackData.hero.description}</p><div className="journey-actions"><a className="journey-primary" href="#contact"><DecryptedText text="LET’S BUILD" /><span aria-hidden="true">↗</span></a><a className="journey-secondary" href="/portfolio"><DecryptedText text="OUR WORK" /><span aria-hidden="true">↗</span></a></div></div>
     </div>
     <button ref={holdControl} className={`journey-hold ${holding ? "is-holding" : ""}`} disabled={!ready || done} aria-label={reduced || failed ? "Reveal Yellostack symbol" : "Hold to explore Yellostack. Hold Space or Enter on keyboard."}
       onPointerDown={e => { if (!e.isPrimary || e.button !== 0) return; e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); start(); followPointer(e); }}

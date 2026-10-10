@@ -1,6 +1,8 @@
 'use client';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useId } from 'react';
+import { CmsImage } from '@/components/cms/ContentProvider';
+import { serviceBanners } from '@/content/service-banners';
 
 export function bannerTheme(slug:string){
  if(/mobile/.test(slug))return 'mobile';
@@ -16,7 +18,9 @@ export function bannerTheme(slug:string){
 }
 /** Crisp, locally rendered editorial artwork tailored to the page subject. */
 export default function HeroArtwork({slug}:{slug:string}){
+ const banner=serviceBanners[slug.replace(/^\/|\/$/g,'')];
  const theme=bannerTheme(slug);const reduce=useReducedMotion();const id=useId().replace(/:/g,'');
+ if(banner)return <motion.div className="ys-hero-art ys-service-banner" aria-hidden="true" animate={reduce?{}:{y:[0,-8,0]}} transition={{duration:9,repeat:Infinity,ease:'easeInOut'}}><CmsImage src={banner} alt="" width={640} height={500} sizes="(max-width: 800px) 90vw, 40vw" priority className="h-auto w-full object-contain"/></motion.div>;
  return <motion.div className={'ys-hero-art ys-art-'+theme} aria-hidden="true" animate={reduce?{}:{y:[0,-10,0]}} transition={{duration:8,repeat:Infinity,ease:'easeInOut'}}>
   <svg viewBox="0 0 600 500" fill="none"><defs><linearGradient id={id} x1="120" y1="40" x2="480" y2="460" gradientUnits="userSpaceOnUse"><stop stopColor="#fff3a0"/><stop offset=".55" stopColor="#ffcf00"/><stop offset="1" stopColor="#926a00"/></linearGradient><pattern id={id+'grid'} width="35" height="35" patternUnits="userSpaceOnUse"><path d="M35 0H0V35" stroke="#ffcf00" strokeOpacity=".09"/></pattern></defs>
   <rect width="600" height="500" fill={'url(#'+id+'grid)'}/><ellipse cx="300" cy="390" rx="220" ry="55" stroke="#ffcf00" strokeOpacity=".25"/><circle cx="310" cy="230" r="175" stroke="#ffcf00" strokeOpacity=".12" strokeDasharray="3 12"/>

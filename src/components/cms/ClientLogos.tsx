@@ -1,7 +1,11 @@
 'use client';
-import { useContent } from './ContentProvider';
-export default function ClientLogos(){
-  const clients=useContent().clients;
-  if(!clients.length)return null;
-  return <section className="py-16" aria-labelledby="client-logo-title"><p className="mb-4 font-mono text-xs text-[#646d55]">THE PEOPLE WE BUILD WITH</p><h2 id="client-logo-title" className="mb-10 text-4xl tracking-tight">Our clients.</h2><div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-black/15 bg-black/15 md:grid-cols-3 lg:grid-cols-4">{clients.map(client=><div key={client.id} className="flex min-h-40 items-center justify-center bg-white p-7">{client.url?<a href={client.url} target="_blank" rel="noreferrer" aria-label={client.name} className="block w-full"><img src={client.image} alt={client.name} loading="lazy" className="mx-auto max-h-20 w-full object-contain"/></a>:<img src={client.image} alt={client.name} loading="lazy" className="max-h-20 w-full object-contain"/>}</div>)}</div></section>;
+import { useId } from 'react';
+import { useContent, LocalText } from './ContentProvider';
+export default function ClientLogos({home=false}:{home?:boolean}){
+ const clients=useContent().clients;const titleId=useId();
+ if(!clients.length)return null;
+ return <section className={home?'profile-clients profile-clients-home':'profile-clients'} aria-labelledby={titleId}>
+  <div data-site-reveal><p className="profile-clients-eyebrow"><LocalText text="THE PEOPLE WE BUILD WITH"/></p><h2 id={titleId}><LocalText text="Our clients."/></h2><p className="profile-clients-intro"><LocalText text="Relationships across industries. A shared commitment to progress."/></p></div>
+  <div className="profile-client-grid">{clients.map(client=><div className="profile-client-tile" key={client.id}>{client.url?<a href={client.url} target="_blank" rel="noopener noreferrer" aria-label={client.name}><img src={client.image} alt={client.name} loading="lazy" width={260} height={130}/></a>:<img src={client.image} alt={client.name} loading="lazy" width={260} height={130}/>}</div>)}</div>
+ </section>;
 }

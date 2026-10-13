@@ -26,12 +26,16 @@ export function makeAnatomicalArm(model:THREE.Object3D,employee:boolean,loft:(ri
  const sleeve=new THREE.Mesh(loft([[-7,.48,.39],[-2.45,.39,.32],[-1.8,.34,.28],[-.95,.27,.23],[-.28,.205,.18],[-.055,.19,.17]]),fabric);root.add(sleeve);
  const wristCuff=new THREE.Mesh(loft([[-.17,.20,.178],[-.045,.196,.173],[.035,.19,.168]]),employee?cuff:fabric);root.add(wristCuff);
  if(employee){for(let i=0;i<3;i++){const button=new THREE.Mesh(new THREE.SphereGeometry(.032,12,8),fabric);button.position.set(-.4-i*.13,-.15,.16);root.add(button);}}
- const bones:{bone:THREE.Bone;rest:THREE.Quaternion;angle:number}[]=[];
- model.traverse(obj=>{if(obj instanceof THREE.Bone&&/_(01|02|03)_r$/.test(obj.name)){const segment=Number(obj.name.split('_')[1]);const thumb=obj.name.startsWith('thumb');bones.push({bone:obj,rest:obj.quaternion.clone(),angle:thumb?[.10,.24,.32][segment-1]:[.38,.72,.48][segment-1]});}});
- const axis=new THREE.Vector3(0,0,1),rotation=new THREE.Quaternion();
+ const bones:{bone:THREE.Bone;rest:THREE.Quaternion;angle:number;axis:THREE.Vector3}[]=[];
+ // Resolve the curl axis from the hand landmarks into each bone's own frame.
+ // A fixed local Z axis is not consistent across this imported rig.
+ root.updateMatrixWorld(true);
+ const curlWorld=new THREE.Vector3(0,1,0);
+ model.traverse(obj=>{if(obj instanceof THREE.Bone&&/_(01|02|03)_r$/.test(obj.name)){const segment=Number(obj.name.split('_')[1]);const thumb=obj.name.startsWith('thumb');const axis=curlWorld.clone().applyQuaternion(obj.getWorldQuaternion(new THREE.Quaternion()).invert()).normalize();bones.push({bone:obj,rest:obj.quaternion.clone(),axis,angle:thumb?[.08,.18,.22][segment-1]:[.30,.58,.36][segment-1]});}});
+ const rotation=new THREE.Quaternion();
  root.rotation.y=employee?-.18:Math.PI-.18;root.rotation.x=employee?.18:-.18;
  // Contact is measured inside the palm, not at the wrist origin. Placing both
  // wrists at zero pushes the hands through the opposing cuffs.
- const contactAnchor=new THREE.Vector3(.43,0,0);
- return {root,contactAnchor,pose:(grip:number)=>{bones.forEach(({bone,rest,angle})=>{rotation.setFromAxisAngle(axis,-angle*grip);bone.quaternion.copy(rest).multiply(rotation);});}};
+ const contactAnchor=new THREE.Vector3(.68,0,0);
+ return {root,contactAnchor,pose:(grip:number)=>{bones.forEach(({bone,rest,angle,axis})=>{rotation.setFromAxisAngle(axis,-angle*THREE.MathUtils.clamp(grip,0,1));bone.quaternion.copy(rest).multiply(rotation);});}};
 }

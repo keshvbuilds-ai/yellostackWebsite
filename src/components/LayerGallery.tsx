@@ -110,17 +110,20 @@ export default function LayerGallery() {
   const [visible,setVisible]=useState(false);
   const [animated,setAnimated]=useState(false);
   useEffect(()=>{
+    const rootElement=root.current;
+    const stageElement=stage.current;
+    if(!rootElement || !stageElement)return;
     const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting),{rootMargin:"100px"});
-    if(root.current)observer.observe(root.current);
+    observer.observe(rootElement);
     const media=gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference) and (min-width: 801px)",()=>{
       setAnimated(true);
       const context=gsap.context(()=>{
-        const timeline=gsap.timeline({scrollTrigger:{trigger:root.current,start:"top top",end:()=>`+=${innerHeight*5}`,pin:stage.current,scrub:.85,anticipatePin:1,invalidateOnRefresh:true}});
+        const timeline=gsap.timeline({scrollTrigger:{trigger:rootElement,start:"top top",end:()=>`+=${innerHeight*5}`,pin:stageElement,scrub:.85,anticipatePin:1,invalidateOnRefresh:true}});
         timeline.to(playhead.current,{progress:1,ease:"none",duration:1},0);
         timeline.to(".layer-gallery-intro",{autoAlpha:0,y:-25,duration:.1},.1);
         timeline.fromTo(".layer-gallery-track",{autoAlpha:0},{autoAlpha:1,duration:.08},.1);
-        timeline.to(".layer-gallery-track",{x:()=>-2*stage.current!.clientWidth,ease:"none",duration:.46},.18);
+        timeline.to(".layer-gallery-track",{x:()=>-2*stageElement.clientWidth,ease:"none",duration:.46},.18);
         timeline.to(".layer-gallery-track",{autoAlpha:0,duration:.05},.68);
         timeline.to(".layer-gallery-stage>header, .layer-gallery-bottom",{autoAlpha:0,duration:.06},.77);
         timeline.fromTo(".layer-gallery-destination",{autoAlpha:0},{autoAlpha:1,duration:.12},.82);

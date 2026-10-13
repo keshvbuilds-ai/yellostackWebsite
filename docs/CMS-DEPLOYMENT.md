@@ -97,3 +97,11 @@ The Home overview, mission, vision and animated statistics use editable `profile
 Sixteen logos from profile page 18 seed the Clients collection. The same collection is displayed immediately above the Home footer and on /clients. Use the Clients editor to update names, images, links or remove entries. Existing published CMS content remains authoritative; if its Clients collection is empty, add these logos from public/clients in the Clients editor and publish.
 
 Profile additions include /devops-services, /startup-services and /communication-services, plus CloudOps, branding and application-modernisation details. Existing published page records are not overwritten. AI and Medical Coding scenes are preserved.
+
+### GM message and medical services
+The About page GM message uses `gm.*` copy fields and `/team/hassan-majrashi.png` in media overrides. The medical services cards and headings use `medical.services.*`. Existing published About page content remains authoritative; update its introduction and sections in the CMS to adopt the new profile copy.
+
+### Team lanyard showcase
+Edit `team.badges.0` through `team.badges.3` name, role, code and description in CMS copy. The first profile uses the supplied GM portrait; the remaining badges represent disciplines, not invented employees. Portrait media uses `/team/hassan-majrashi.png`. The draggable lanyard is adapted from the user-supplied React Bits example and loads only on the team page. Reduced-motion and unavailable WebGL show a static badge.
+
+The team page now uses a branded scroll portal instead of the selectable lanyards. Edit `team.portal.*` for the destination copy. Profile photography and biographies are pending user-provided assets; the initial panel uses a brand monogram.

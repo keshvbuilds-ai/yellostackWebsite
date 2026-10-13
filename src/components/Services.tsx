@@ -21,9 +21,14 @@ export default function Services() {
         ScrollTrigger.create({ trigger: article, start: "top 40%", end: "bottom 40%", onToggle: self => { if (self.isActive) setActive(index); } });
       });
     }, root);
-    const observer = new ResizeObserver(() => ScrollTrigger.refresh());
+    let alive = true;
+    let refreshFrame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(refreshFrame);
+      refreshFrame = requestAnimationFrame(() => { if (alive && root.current?.isConnected) ScrollTrigger.refresh(); });
+    });
     if (root.current) observer.observe(root.current);
-    return () => { observer.disconnect(); context.revert(); };
+    return () => { alive = false; cancelAnimationFrame(refreshFrame); observer.disconnect(); context.revert(); };
   }, []);
   return <section ref={root} id="services" className="scroll-services">
     <header className="services-intro"><p><CmsText id="Services.text.0" fallback="From your first idea"/><br /><CmsText id="Services.text.1" fallback="to your next stage of growth."/></p><h2><CmsText id="Services.text.2" fallback="Intelligence. Experience."/><br /><em><CmsText id="Services.text.3" fallback="Real-world impact."/></em></h2></header>

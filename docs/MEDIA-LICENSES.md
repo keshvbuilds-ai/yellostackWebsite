@@ -22,3 +22,5 @@ Additional homepage stock images (Pexels license, illustrative service photograp
 
 
 Client logos: extracted from page 18 of the user-provided “2024 Yellostack Profile.pdf”. Original embedded artwork is stored in public/clients. Logos identify organisations listed in that profile; no client URLs, project details or testimonials were inferred. Third-party marks remain their respective owners’ property.
+
+- `public/team/hassan-majrashi.png`: Hassan Majrashi portrait extracted from the user-supplied 2024 Yellostack Profile, for the requested General Manager message.

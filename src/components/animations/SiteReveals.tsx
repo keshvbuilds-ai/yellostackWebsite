@@ -16,11 +16,12 @@ export default function SiteReveals() {
     const state = nodes.get(node); if (!state || state.visible === visible) return;
     state.visible = visible;
     state.tween?.kill();
-    state.tween = gsap.to(node, { opacity: visible ? 1 : 0, translate: visible ? '0px 0px' : (node.getBoundingClientRect().top < window.innerHeight * .22 ? '0px -42px' : '0px 58px'), filter: visible ? 'blur(0px)' : 'blur(4px)', duration: visible ? 1.05 : .6, ease: visible ? 'power3.out' : 'power2.inOut', overwrite: 'auto' });
+    state.tween = gsap.to(node, { opacity: visible ? 1 : 0, translate: visible ? '0px 0px' : (node.getBoundingClientRect().top < window.innerHeight * .22 ? '0px 0px' : '0px 58px'), filter: visible ? 'blur(0px)' : 'blur(0px)', duration: visible ? 1.05 : .6, ease: visible ? 'power3.out' : 'power2.inOut', overwrite: 'auto' });
    };
+   const headerBottom = Math.max(0, Math.round(document.querySelector('.site-navigation')?.getBoundingClientRect().bottom || 100));
    const observer = new IntersectionObserver(entries => {
     for (const entry of entries) { const node = entry.target as HTMLElement; animate(node, entry.isIntersecting || node.contains(document.activeElement)); }
-   }, { threshold: 0, rootMargin: '-28% 0px -16% 0px' });
+   }, { threshold: 0, rootMargin: `-${headerBottom}px 0px 0px 0px` });
    const discover = () => {
     for (const [node, state] of nodes) if (!node.isConnected) { state.tween?.kill(); observer.unobserve(node); nodes.delete(node); }
     document.querySelectorAll<HTMLElement>(selector).forEach(node => {

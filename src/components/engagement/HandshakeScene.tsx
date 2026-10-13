@@ -41,16 +41,18 @@ export default function HandshakeScene({progress}:{progress:MutableRefObject<{va
    try{customer=makeAnatomicalArm(clone(gltf.scene),false,loft);employee=makeAnatomicalArm(clone(gltf.scene),true,loft);scene.add(customer.root,employee.root);draw();}catch{setFailed(true);disposeObject(gltf.scene);}
   },undefined,()=>{if(!disposed)setFailed(true);});
   const mq=matchMedia('(prefers-reduced-motion: reduce)');let visible=false,raf=0,disposed=false;
-  const resize=()=>{const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;const tangent=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));camera.position.set(0,.35,Math.max(3.7,2.1/(tangent*camera.aspect)));camera.lookAt(0,0,0);camera.updateProjectionMatrix();draw();};
+  const resize=()=>{const w=Math.max(1,mount.clientWidth),h=Math.max(1,mount.clientHeight);renderer.setSize(w,h);camera.aspect=w/Math.max(h,1);const tangent=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));camera.position.set(0,.35,Math.max(3.7,2.1/(tangent*camera.aspect)));camera.lookAt(0,0,0);camera.updateProjectionMatrix();draw();};
   const customerAnchor=new THREE.Vector3(),employeeAnchor=new THREE.Vector3();
-  const draw=()=>{if(disposed)return;if(!customer||!employee){renderer.render(scene,camera);return;}const p=mq.matches?1:progress.current.value;const enter=THREE.MathUtils.smoothstep(p,0,.29);const meet=THREE.MathUtils.smoothstep(p,.32,.65);const grip=THREE.MathUtils.smoothstep(p,.57,.77);const wave=THREE.MathUtils.smoothstep(p,.79,.97);const shake=Math.sin(wave*Math.PI*4)*.065*Math.sin(wave*Math.PI);
+  const draw=()=>{if(disposed)return;if(!customer||!employee){renderer.render(scene,camera);return;}const p=mq.matches?1:THREE.MathUtils.clamp(progress.current.value,0,1);const enter=THREE.MathUtils.smoothstep(p,0,.29);const approach=THREE.MathUtils.smoothstep(p,.32,.59);const grip=THREE.MathUtils.smoothstep(p,.59,.78);const meet=approach;const wave=THREE.MathUtils.smoothstep(p,.79,.97);const shake=Math.sin(wave*Math.PI*4)*.065*Math.sin(wave*Math.PI);
    const edge=Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*camera.position.z*camera.aspect+1.8;
    customer.root.visible=p>.005;employee.root.visible=p>.32;
    customer.root.rotation.z=-.10*(1-meet);employee.root.rotation.z=.10*(1-meet);
    customerAnchor.copy(customer.contactAnchor).applyQuaternion(customer.root.quaternion);
    employeeAnchor.copy(employee.contactAnchor).applyQuaternion(employee.root.quaternion);
-   customer.root.position.set(edge*(1-enter)+.20*(1-meet),shake,.105).sub(customerAnchor);
-   employee.root.position.set(-edge*(1-meet),shake,-.105).sub(employeeAnchor);
+   // Keep open fingers apart; finish the short palm approach as the fingers curl.
+   const clearance=.32*(1-grip);
+   customer.root.position.set(edge*(1-enter)+clearance,shake+.025,.17).sub(customerAnchor);
+   employee.root.position.set(-edge*(1-meet)-clearance,shake-.025,-.17).sub(employeeAnchor);
    customer.pose(grip);employee.pose(grip);renderer.render(scene,camera);
   };
   const tick=()=>{raf=0;if(!visible||document.hidden||disposed)return;draw();if(!mq.matches)raf=requestAnimationFrame(tick);};

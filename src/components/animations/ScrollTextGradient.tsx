@@ -14,7 +14,7 @@ export default function ScrollTextGradient(){
   media.add('(prefers-reduced-motion: no-preference) and (forced-colors: none)',()=>{
    const entries=new Map<HTMLElement,gsap.core.Tween>();
    // Preserve interactive controls, yellow panels and scene-owned text rendering.
-   const exclude='nav,form,button,a,label,[role=button],.process-list,.profile-purpose article:first-child,.journey-words,.journey-end,.layer-gallery-track,.convergence-copy,[data-no-gradient]';
+   const exclude='nav,form,button,a,label,[role=button],.process-list,.profile-purpose,.journey-words,.journey-end,.layer-gallery-track,.convergence-copy,[data-no-gradient]';
    const discover=()=>{
     for(const [node,tween] of entries)if(!node.isConnected){tween.scrollTrigger?.kill();tween.kill();entries.delete(node);}
     document.querySelectorAll<HTMLElement>('main h1,main h2,main h3,main p,footer h2,footer h3,footer p').forEach(node=>{
@@ -27,7 +27,7 @@ export default function ScrollTextGradient(){
      node.style.setProperty('--text-gold',dark?'#987000':'#ffcf00');
      node.style.setProperty('--text-highlight',dark?'#b58300':'#ffe985');
      node.classList.add('scroll-gold-text');
-     const tween=gsap.fromTo(node,{'--gold-position':'120%'},{'--gold-position':'-20%',ease:'none',scrollTrigger:{trigger:node,start:'top 95%',end:'bottom 20%',scrub:.65,invalidateOnRefresh:true}});
+     const tween=gsap.fromTo(node,{'--gold-position':'100%'},{'--gold-position':'0%',ease:'none',scrollTrigger:{trigger:node,start:'top 95%',end:'bottom 20%',scrub:.65,invalidateOnRefresh:true}});
      entries.set(node,tween);
     });
    };

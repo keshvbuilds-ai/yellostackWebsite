@@ -1,3 +1,4 @@
+import TeamExperience from '@/components/team/TeamExperience';
 import GMMessage from '@/components/GMMessage';
 import MedicalServices from '@/components/medical/MedicalServices';
 import StackConvergence from '@/components/hero/StackConvergence';
@@ -12,7 +13,6 @@ import { LocalText } from '@/components/cms/ContentProvider';
 import ContactExperience from '@/components/engagement/ContactExperience';
 import { getLocalizedContent as getSiteContent } from '@/lib/locale-server';
 import ClientLogos from '@/components/cms/ClientLogos';
-import Lanyard from '@/components/3d/Lanyard';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CmsImage as Image } from '@/components/cms/ContentProvider';
@@ -55,19 +55,10 @@ export default async function Page({ params }: Props) {
     <main id="page-content">
       {path === 'artificial-intelligence' ? <AIExperience title={title} intro={page?.intro || ''} /> : <InnerHero title={title} intro={page?.intro ?? post?.summary ?? 'Explore design, technology and business perspectives from the Yellostack archive.'} eyebrow={page?.eyebrow ?? 'Journal'} article={!!post} />}
       {path === 'about-us' && <StackConvergence />}
+      {path === 'team' && <TeamExperience />}
       {path === 'medical-coding' && <><MedicalExperience /><MedicalServices /></>}
       {path !== 'artificial-intelligence' && <div className="ys-inner-body">
-        {page && path !== 'medical-coding' && path !== 'artificial-intelligence' && page.kind !== 'contact' && <MediaPanel topic={page.slug} film={page.slug === 'about-us' || page.slug === 'team'} />}
-        {path === 'team' && (
-          <section className="ys-inner-detail py-20 pb-40 !max-w-7xl">
-            <div className="w-full text-center mb-10"><h2 className="text-4xl tracking-tighter">Meet The Team</h2><p className="mt-4 text-[#535b46]">Connecting creativity with technology.</p></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-              <Lanyard frontImage="/team/hassan-majrashi.png" cardColor="#ffcf00" />
-              <Lanyard frontImage="/team/hassan-majrashi.png" cardColor="#ffffff" />
-              <Lanyard frontImage="/team/hassan-majrashi.png" cardColor="#ffcf00" />
-            </div>
-          </section>
-        )}
+        {page && path !== 'team' && path !== 'medical-coding' && path !== 'artificial-intelligence' && page.kind !== 'contact' && <MediaPanel topic={page.slug} film={page.slug === 'about-us' || page.slug === 'team'} />}
         {post && <p className="ys-inner-date">{post.category} / <time dateTime={post.date}>{formatBlogDate(post.date)}</time></p>}
         {path === 'blog' && <div className="grid gap-x-10 gap-y-12 py-14 md:grid-cols-2 xl:grid-cols-3">{blogPosts.map((item, index) => <article key={item.slug} className="border-t border-black/20 pt-6"><Link href={'/blog/' + item.slug} tabIndex={-1} aria-hidden="true" className="mb-6 block overflow-hidden rounded-xl bg-[#e0e5d1]"><Image src={item.coverImage || pageMedia(item.slug).src} alt="" width={600} height={420} className="aspect-[16/10] w-full object-cover transition-transform duration-500 motion-safe:hover:scale-105" /></Link><div className="font-mono text-xs text-[#626851]">{item.category} · {formatBlogDate(item.date)}</div><Link href={`/blog/${item.slug}`} className="group"><h2 className="mt-4 text-2xl leading-tight group-hover:underline">{item.title}</h2><p className="mt-4 text-sm leading-7 text-[#626851]">{item.summary}</p><span className="mt-6 inline-block font-mono text-xs"><LocalText text={item.paragraphs.length ? 'READ OVERVIEW' : 'VIEW ARCHIVE ENTRY'} /> ↗</span></Link></article>)}</div>}
         {post && <article className="mx-auto max-w-3xl py-14">{post.coverImage && <Image src={post.coverImage} alt={post.title} width={1000} height={650} className="mb-10 w-full rounded-xl object-cover" />}<p className="mb-8 font-mono text-xs uppercase text-[#626851]">{post.paragraphs.length ? (post.source ? 'Article overview' : 'Journal') : 'From the archive'}</p>{post.paragraphs.length ? post.paragraphs.map(p => <p key={p} className="mb-6 text-lg leading-9">{p}</p>) : <p className="mb-8 text-lg leading-9"><LocalText text={"This entry preserves an article from Yellostack’s published archive. Its full text is not hosted here; you can visit the original publication using the link below."} /></p>}{post.source && <a href={post.source} target="_blank" rel="noreferrer" className="mt-6 inline-flex bg-[#171c11] px-7 py-5 font-mono text-xs text-[#ffcf00]"><LocalText text={"OPEN ORIGINAL PUBLICATION ↗"} /></a>}<p className="mt-8 text-sm text-[#626851]"><LocalText text={"Published content reflects its original date."} /></p><Link href="/blog" className="mt-10 block text-sm underline"><LocalText text={"← All articles"} /></Link></article>}

@@ -55,3 +55,5 @@
 .contact-story-headings{bottom:92px;height:175px}
 @media(max-width:700px){.contact-story{height:300svh}.contact-story-stage{min-height:0}.contact-hands-webgl{inset:21% 0 39%}.contact-story-headings{bottom:86px;height:180px}.contact-story-copy h2{font-size:clamp(24px,6.6vw,34px)}.contact-story-copy p{font-size:12px;line-height:1.5}.contact-story-bottom{bottom:14px}.contact-story-top{top:82px}}
 @media(max-height:550px){.contact-story-top{top:75px;padding-bottom:6px}.contact-hands-webgl{inset:25% 0 38%}.contact-story-headings{bottom:58px;height:110px}.contact-story-copy h2{font-size:24px;margin:6px 0}.contact-story-copy p{font-size:11px}.contact-story-step{font-size:8px}.contact-story-bottom{bottom:8px;font-size:8px}.contact-story-bottom a{padding:5px 0;min-height:32px}}
+
+

@@ -132,6 +132,16 @@ export default function LayerGallery() {
       },root);
       return()=>{context.revert();setAnimated(false);};
     });
+    media.add("(prefers-reduced-motion: no-preference) and (max-width: 800px)",()=>{
+      const context=gsap.context(()=>{
+        const cards=gsap.utils.toArray<HTMLElement>('.layer-mobile-card');
+        const timeline=gsap.timeline({scrollTrigger:{trigger:'.layer-mobile-story',start:'top 120px',end:'bottom bottom',scrub:.65,invalidateOnRefresh:true}});
+        cards.forEach((card,i)=>{
+          gsap.set(card,{rotation:(i-1)*5,y:i*12,scale:1-i*.035,zIndex:3-i});
+          timeline.to(card,{xPercent:i%2?-135:135,y:-60,rotation:i%2?-28:28,opacity:0,duration:1,ease:'power1.in'},i*1.1+.4);
+        });
+      },rootElement);return()=>context.revert();
+    });
     let alive=true;document.fonts.ready.then(()=>{if(alive)ScrollTrigger.refresh();});
     return()=>{alive=false;media.revert();observer.disconnect();};
   },[]);
@@ -139,6 +149,7 @@ export default function LayerGallery() {
     <div ref={stage} className="layer-gallery-stage">
       <header><span><CmsText id="LayerGallery.text.0" fallback="YELLOSTACK / INSIDE EVERY LAYER"/></span><a href="#contact"><CmsText id="LayerGallery.text.1" fallback="LET’S MAKE IT HAPPEN ↗"/></a></header>
       <div className="layer-gallery-intro"><span><CmsText id="LayerGallery.text.2" fallback="ONE SYMBOL. MANY POSSIBILITIES."/></span><h2><CmsText id="LayerGallery.text.3" fallback="There’s more"/><br/><CmsText id="LayerGallery.text.4" fallback="inside every layer."/></h2><p><CmsText id="LayerGallery.text.5" fallback="Scroll to unfold the story →"/></p></div>
+      <div className="layer-mobile-story" aria-hidden="true"><div className="layer-mobile-deck">{stories.map((story,i)=><div className="layer-mobile-card" key={story.tag}><span>0{i+1} / YELLOSTACK</span><img src={story.image} alt=""/><strong>{story.title}</strong><small>{story.detail}</small></div>)}</div></div>
       <div className="layer-gallery-canvas" aria-hidden="true"><GalleryBoundary>{animated && <Canvas camera={{position:[0,0,10],fov:42}} dpr={[1,1.5]} frameloop={visible?"always":"never"} style={{touchAction:"pan-y"}}><Cards playhead={playhead} destination={destination}/></Canvas>}</GalleryBoundary></div>
       <div className="layer-gallery-track">{stories.map((story,i)=><article key={story.tag} className="layer-gallery-panel"><img src={story.image} alt="Yellostack capability illustration"/><div><figure className="layer-story-photo"><CmsImage src={layerPhotos[i].src} alt={layerPhotos[i].alt} fill sizes="(max-width:800px) 85vw, 180px"/></figure><span>{story.tag}</span><h3>{story.title}</h3><p>{story.body}</p><small>{story.detail}</small></div></article>)}</div>
       <div className="layer-gallery-bottom"><span><CmsText id="LayerGallery.text.6" fallback="THREE LAYERS / ONE CONNECTED PARTNER"/></span><span><CmsText id="LayerGallery.text.7" fallback="SCROLL TO EXPLORE ←"/></span><div className="layer-gallery-progress"><i/></div></div>

@@ -9,7 +9,7 @@ import { useSiteData } from "@/components/cms/ContentProvider";
 import DecryptedText from "./animations/DecryptedText";
 
 gsap.registerPlugin(ScrollTrigger);
-const capabilityImages:Record<string, {src:string;alt:string}>={ai:stockMedia.robotics,'medical-coding':stockMedia.healthcare,applications:stockMedia.engineering,software:stockMedia.collaboration,branding:stockMedia.design,marketing:stockMedia.analytics,cloud:stockMedia.cloud};
+const capabilityImages:Record<string, {src:string;alt:string}>={ai:stockMedia.engineering,'medical-coding':stockMedia.healthcare,applications:stockMedia.engineering,software:stockMedia.collaboration,branding:stockMedia.design,marketing:stockMedia.analytics,cloud:stockMedia.cloud};
 export default function Services() {
   const yellostackData = useSiteData();
   const root = useRef<HTMLElement>(null);

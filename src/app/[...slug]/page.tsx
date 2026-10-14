@@ -54,9 +54,8 @@ export default async function Page({ params }: Props) {
     <a href="#page-content" className="fixed left-4 top-4 z-50 -translate-y-24 bg-[#ffcf00] p-4 focus:translate-y-0"><LocalText text={"Skip to content"} /></a>
     <Navigation solid />
     <main id="page-content">
-      {path === 'about-us' && <div className="gm-opening"><GMMessage /></div>}
       {path === 'artificial-intelligence' ? <AIExperience title={title} intro={page?.intro || ''} /> : <InnerHero title={title} intro={page?.intro ?? post?.summary ?? 'Explore design, technology and business perspectives from the Yellostack archive.'} eyebrow={page?.eyebrow ?? 'Journal'} article={!!post} />}
-      {path === 'about-us' && <StackConvergence />}
+      {path === 'about-us' && <><StackConvergence /><div className="gm-opening"><GMMessage /></div></>}
       {path === 'team' && <TeamExperience />}
       {path === 'mobile-application-development-company-saudi-arabia' && <DevelopmentExperience kind="mobile" />}
       {path === 'website-design-company' && <DevelopmentExperience kind="web" />}

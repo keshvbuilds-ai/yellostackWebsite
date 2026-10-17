@@ -13,10 +13,30 @@ import DecryptedText from "./animations/DecryptedText";
 gsap.registerPlugin(ScrollTrigger);
 // Adapted from https://www.yellostack.com/services and the published company homepage.
 const defaultchapters = [
-  { label: "EXPERIENCE", title: "Your brand.\nBrought to life.", description: "Yellostack brings together brand identity, UI/UX, responsive web design and mobile app design to shape how people experience your business.", detail: "LAYER 01 / BRAND IDENTITY + UI/UX" },
-  { label: "APPLICATIONS", title: "Your business.\nIn their hands.", description: "Connect with customers through mobile applications and web experiences. Bring AI assistants and automation into the workflows that support your business.", detail: "LAYER 02 / MOBILE + WEB + AI" },
-  { label: "SOFTWARE", title: "Your operations.\nConnected.", description: "Connect enterprise software, cloud services and healthcare workflows, including medical coding and documentation review, around the way your teams work.", detail: "LAYER 03 / SOFTWARE + CLOUD + MEDICAL CODING" },
-  { label: "ONE STACK", title: "Three layers.\nOne Yellostack.", description: "From Al Khobar, we work closely with clients to define, design and develop digital experiences across platforms. Let’s create your next chapter together.", detail: "DESIGN + DEVELOPMENT + DIGITAL TRANSFORMATION" },
+  {
+    "label": "ROOTED",
+    "title": "Built here.\nHere to stay.",
+    "description": "Yellostack is a Saudi company, founded in Al Khobar in 2017. Every project we take on is designed and built in the Kingdom by a team that understands your market, your language and your regulations. When you need us, we’re down the road, not a time zone away.",
+    "detail": "LAYER 01 / THE FOUNDATION"
+  },
+  {
+    "label": "BUILT",
+    "title": "One team.\nEvery layer of your product.",
+    "description": "Brand, UI/UX, web, mobile, AI and custom software, all under one roof. You get no hand-offs between agencies, no finger-pointing and no gaps between what was designed and what was delivered. The same people own it from the first sketch to go-live.",
+    "detail": "LAYER 02 / THE CRAFT"
+  },
+  {
+    "label": "PROMISED",
+    "title": "On time.\nOr it costs us.",
+    "description": "We stand behind our timelines with a written commitment: if we don’t deliver within the agreed time frame, we waive 20% of the project cost. Our promises are contractual, not just in our marketing.",
+    "detail": "LAYER 03 / THE COMMITMENT"
+  },
+  {
+    "label": "ONE STACK",
+    "title": "Rooted. Built. Promised.\nThat’s Yellostack.",
+    "description": "A local partner with the team to build it all and the confidence to guarantee it. Tell us what you’re building next, and we’ll show you how we’d stack it.",
+    "detail": "ROOTED. BUILT. PROMISED."
+  }
 ];
 type SceneState = { progress: number; reduced: boolean; pointerX: number };
 class SceneBoundary extends Component<{children: ReactNode}, {failed: boolean}> {
@@ -34,6 +54,7 @@ function AssemblyScene({ journey }: {journey: MutableRefObject<SceneState>}) {
     const dt = Math.min(delta,.05);
     journey.current.pointerX = journey.current.reduced ? 0 : pointer.x;
     if (rig.current) {
+      rig.current.scale.setScalar(size.width < 700 ? .78 : 1);
       rig.current.rotation.y = -.35 + smooth * .7;
       rig.current.rotation.z = Math.sin(p*Math.PI)*.035;
       rig.current.position.y = Math.sin(p*Math.PI*2)*.25;

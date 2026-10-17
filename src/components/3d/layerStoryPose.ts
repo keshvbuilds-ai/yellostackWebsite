@@ -6,7 +6,7 @@ export function layerStoryPose(progress: number, index: number) {
     return t * t * (3 - 2 * t);
   };
   const opened = smooth(0, .065, p) * (1 - smooth(.78, .98, p));
-  const start = index * .25;
+  const start = (2 - index) * .25; // Bottom foundation, middle craft, top commitment.
   const focus = smooth(start, start + .055, p) * (1 - smooth(start + .205, start + .255, p));
   return {
     x: opened * (-1.25 + focus * 3.1 + (index - 1) * .25),

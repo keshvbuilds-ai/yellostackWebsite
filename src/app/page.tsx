@@ -6,7 +6,7 @@ import Hero from "@/components/hero/Hero";
 import IntroSequence from "@/components/intro/IntroSequence";
 import ScrollAssembly from "@/components/ScrollAssembly";
 import LayerGallery from "@/components/LayerGallery";
-import StudioMedia from "@/components/StudioMedia";
+import InstagramSection from "@/components/InstagramSection";
 import ProfileStats from "@/components/ProfileStats";
 import Introduction from "@/components/Introduction";
 import Services from "@/components/Services";
@@ -37,9 +37,9 @@ export default function Home() {
         <LayerGallery />
 
         <Introduction />
-        <StudioMedia />
         <WhyYellostack />
         <Blogs />
+        <InstagramSection />
         <CTA />
         <ClientLogos home />
       </main>

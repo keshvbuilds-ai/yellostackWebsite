@@ -1,3 +1,4 @@
+import { upgradeFeedback } from './feedback-upgrade';
 import 'server-only';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
@@ -38,6 +39,6 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
     if (!rows[0]?.content) return defaultContent;
     const content = { ...defaultContent, ...rows[0].content, copy: { ...defaultContent.copy, ...rows[0].content.copy }, media: { ...defaultContent.media, ...rows[0].content.media } };
     validateContent(content);
-    return content;
+    return upgradeFeedback(content);
   } catch { return defaultContent; }
 });

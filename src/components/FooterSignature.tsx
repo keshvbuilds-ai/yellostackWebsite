@@ -15,10 +15,10 @@ export default function FooterSignature() {
 
   const reduced = useReducedMotion();
   return <section className="footer-signature" aria-label="YelloStack interactive brand signature">
-    <motion.div className="signature-heading" initial={reduced ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: .7 }}>
+    <motion.div className="signature-heading" initial={false} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: .7 }}>
       <span><i /> <CmsText id="FooterSignature.text.0" fallback=" IDEAS INTO EXPERIENCES."/></span><span className="signature-instruction"><CmsText id="FooterSignature.text.1" fallback="HOVER TO EXPLORE / DRAG A LETTER"/></span>
     </motion.div>
-    <div className="signature-stage bg-[#111018]">
+    <div className="signature-stage bg-black">
       <TechText
         style={{}}
         text={content.copy["label:YelloStack"] ?? "YelloStack"}

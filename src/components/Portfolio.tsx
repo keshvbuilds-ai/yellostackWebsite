@@ -17,7 +17,7 @@ export default function Portfolio() {
   useEffect(()=>{
     const context=gsap.context(()=>{
       gsap.utils.toArray<HTMLElement>(".application-item").forEach((item,i)=>ScrollTrigger.create({trigger:item,start:"top 60%",end:"bottom 60%",onToggle:self=>{if(self.isActive)setActive(i);}}));
-    },root);
+    }, root.current!);
     return()=>context.revert();
   },[]);
   return <section ref={root} id="work" className="business-section applications-section">

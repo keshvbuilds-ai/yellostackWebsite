@@ -1,0 +1,13 @@
+﻿'use client';
+import Script from 'next/script';
+import {ArrowUpRight} from 'lucide-react';
+import {CmsText,LocalText,useTranslate} from '@/components/cms/ContentProvider';
+import './instagram-section.css';
+function Instagram({size=20}:{size?:number}){return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>;}
+const profile='https://www.instagram.com/_yellostack/';
+/** Instagram owns the profile's current posts; no copied posts or API tokens. */
+export default function InstagramSection(){
+ const t=useTranslate();
+ const processEmbed=()=>{(window as Window & {instgrm?:{Embeds:{process:()=>void}}}).instgrm?.Embeds.process();};
+ return <><Script id="instagram-profile-embed" src="https://www.instagram.com/embed.js" strategy="lazyOnload" onReady={processEmbed}/><section className="ys-instagram" aria-labelledby="instagram-heading"><div className="ys-instagram-copy"><p className="ys-instagram-kicker"><Instagram size={18}/><LocalText text="YELLOSTACK / ON INSTAGRAM"/></p><h2 id="instagram-heading"><CmsText id="instagram.heading" fallback="Beyond the screen. Inside our world."/></h2><p><CmsText id="instagram.body" fallback="Ideas, people and moments from Yellostack. Follow our latest updates on Instagram."/></p><a href={profile} target="_blank" rel="noopener noreferrer" className="ys-instagram-follow"><Instagram size={20}/><span>@_yellostack</span><ArrowUpRight size={21}/></a><span className="ys-instagram-note"><LocalText text="If the feed isn’t available, explore our profile on Instagram."/></span></div><div className="ys-instagram-feed"><div className="ys-instagram-feed-heading"><span><Instagram size={17}/> <LocalText text="FROM OUR INSTAGRAM"/></span><a href={profile} target="_blank" rel="noopener noreferrer" aria-label={t('Open Yellostack on Instagram')}><ArrowUpRight size={21}/></a></div><div className="ys-instagram-embed"><blockquote className="instagram-media" data-instgrm-permalink={profile} data-instgrm-version="14"><a className="ys-instagram-placeholder" href={profile} target="_blank" rel="noopener noreferrer"><Instagram size={48}/><strong>@_yellostack</strong><span><LocalText text="Ideas, people and moments from Yellostack."/></span><span className="ys-instagram-placeholder-action"><LocalText text="View profile on Instagram"/> <ArrowUpRight size={18}/></span></a></blockquote></div><a className="ys-instagram-feed-link" href={profile} target="_blank" rel="noopener noreferrer"><LocalText text="View more on Instagram"/><ArrowUpRight size={17}/></a></div></section></>;
+}

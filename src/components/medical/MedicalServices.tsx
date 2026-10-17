@@ -29,7 +29,7 @@ export default function MedicalServices(){
      tl.fromTo(card,{'--service-fill':'0%',y:18},{'--service-fill':'100%',y:0,ease:'none'},0);
      tl.fromTo(segments[i],{fill:'#ffe583'},{fill:'#ffcc02',ease:'none'},0);
     });
-   },root);return()=>ctx.revert();
+   }, root.current!);return()=>ctx.revert();
   });return()=>mm.revert();
  },[]);
  return <section ref={root} className="medical-services" data-no-gradient>

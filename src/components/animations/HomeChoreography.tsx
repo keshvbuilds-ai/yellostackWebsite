@@ -40,7 +40,7 @@ export default function HomeChoreography({ children }: { children: ReactNode }) 
           if (body) timeline.fromTo(body, { y: 55, opacity: .5 }, { y: 0, opacity: 1, ease: "power2.out", duration: 1 }, .16);
           gsap.fromTo(section, { "--section-line": 0 }, { "--section-line": 1, ease: "none", scrollTrigger: { trigger: section, start: "top 95%", end: "top 55%", scrub: .5 } });
         });
-      }, root);
+      }, root.current!);
       return () => context.revert();
     });
     let alive = true;

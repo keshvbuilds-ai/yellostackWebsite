@@ -14,7 +14,7 @@ export default function ScrollTextGradient(){
   media.add('(prefers-reduced-motion: no-preference) and (forced-colors: none)',()=>{
    const entries=new Map<HTMLElement,gsap.core.Tween>();
    // Preserve interactive controls, yellow panels and scene-owned text rendering.
-   const exclude='nav,form,button,a,label,[role=button],.process-list,.profile-purpose,.journey-words,.journey-end,.layer-gallery-track,.convergence-copy,.team-id-card,.team-person-featured,.gm-message,.medical-service-card';
+   const exclude='nav,form,button,a,label,[role=button],.process-list,.profile-purpose,.journey-words,.journey-end,.layer-gallery-track,.convergence-copy,.team-id-card,.team-person-featured,.gm-message,.medical-service-card,.client-invitation,.industry-cta,.work-opening';
    const discover=()=>{
     for(const [node,tween] of entries)if(!node.isConnected){tween.scrollTrigger?.kill();tween.kill();entries.delete(node);}
     document.querySelectorAll<HTMLElement>('main h1,main h2,main h3,main p,footer h2,footer h3,footer p').forEach(node=>{

@@ -8,11 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "check:cms": "node scripts/check-cms.mjs",
-    "check:enquiries": "node scripts/check-enquiries.mjs"
+    "check:enquiries": "node scripts/check-enquiries.mjs",
+    "postinstall": "node scripts/patch-fiber-timer.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
-    "@react-three/fiber": "^9.7.0",
+    "@react-three/fiber": "9.7.0",
     "@react-three/postprocessing": "^3.1.1",
     "@types/three": "^0.186.0",
     "clsx": "^2.1.1",

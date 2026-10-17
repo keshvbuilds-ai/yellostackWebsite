@@ -32,7 +32,7 @@ function makePlate() {
 }
 
 type ModelJourney = MutableRefObject<{ progress: number; reduced: boolean; pointerX?: number }>;
-export function YellostackLogo3D({ journey, scale = 1, story = false }: { journey?: ModelJourney; scale?: number; story?: boolean }) {
+export function YellostackLogo3D({ journey, scale = 1, story = false, heroStory = false }: { journey?: ModelJourney; scale?: number; story?: boolean; heroStory?: boolean }) {
   const labels = useRef<(HTMLDivElement | null)[]>([]);
   const plates = useRef<(THREE.Group | null)[]>([]);
   const glints = useRef<(THREE.Mesh | null)[]>([]);
@@ -70,6 +70,12 @@ export function YellostackLogo3D({ journey, scale = 1, story = false }: { journe
       plate.position.y = (1 - i) * (1.02 + separate * .68);
       plate.rotation.y = (i - 1) * separate * .12;
       plate.position.x = Math.sin(i * 1.4 + p * Math.PI) * separate * .18;
+      if (heroStory) {
+        const start = .17 + (2-i)*.2;
+        const emphasis = THREE.MathUtils.smoothstep(p,start-.04,start) * (1-THREE.MathUtils.smoothstep(p,start+.085,start+.16));
+        plate.position.z = emphasis*.45;
+        storyMaterials[i].forEach(material=>{material.emissive.set('#ffcc02');material.emissiveIntensity=emphasis*.24;});
+      }
       if (story) {
         const pose = layerStoryPose(p, i);
         plate.position.set(pose.x, pose.y, pose.z);
@@ -100,8 +106,8 @@ export function YellostackLogo3D({ journey, scale = 1, story = false }: { journe
   });
   return <group ref={assembly} scale={scale}>
     {[0, 1, 2].map(i => <group key={i} ref={el => { plates.current[i] = el; }} position={[0, (1 - i) * 1.02, 0]} scale={[1 + i * .025, 1, 1 + i * .025]}>
-      <mesh geometry={geometry} material={story ? storyMaterials[i] : materials} castShadow receiveShadow />
-      {story && <Html position={[0, .55, 1.9]} center zIndexRange={[5, 0]} style={{pointerEvents:"none"}}><div className="stack-layer-callout" ref={element => { labels.current[i] = element; }}><span>0{i + 1}<LocalText text={"/ YELLOSTACK"}/></span><strong>{["BRAND & EXPERIENCE", "APPLICATIONS + AI", "SOFTWARE + HEALTHCARE"][i]}</strong><i /></div></Html>}
+      <mesh geometry={geometry} material={story || heroStory ? storyMaterials[i] : materials} castShadow receiveShadow />
+      {story && <Html position={[0, .55, 1.9]} center zIndexRange={[5, 0]} style={{pointerEvents:"none"}}><div className="stack-layer-callout" ref={element => { labels.current[i] = element; }}><span>0{3 - i}<LocalText text={"/ YELLOSTACK"}/></span><strong>{["PROMISED", "BUILT", "ROOTED"][i]}</strong><i /></div></Html>}
       <mesh geometry={trim}><meshStandardMaterial color="#ffd65a" metalness={.78} roughness={.24} envMapIntensity={.7} /></mesh>
       <mesh ref={el => { glints.current[i] = el; }}><sphereGeometry args={[1, 16, 8]} /><meshBasicMaterial color={[4, 3.8, 3.2]} toneMapped={false} /></mesh>
     </group>)}

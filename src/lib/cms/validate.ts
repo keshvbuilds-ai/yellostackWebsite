@@ -48,7 +48,13 @@ export function validateContent(value: unknown): asserts value is SiteContent {
     page.sections.forEach(section=>{if(section.items!==undefined)shape(section.items,[''],'section.items');if(section.image!==undefined&&(typeof section.image!=='string'||!safeUrl(section.image,true)))throw new Error('Invalid section image');if(section.imageAlt!==undefined&&typeof section.imageAlt!=='string')throw new Error('Invalid image description');});
   }
   for(const post of content.posts) {if(!/^\d{4}-\d{2}-\d{2}$/.test(post.date)||!Number.isFinite(Date.parse(post.date)))throw new Error('Use valid YYYY-MM-DD dates');if(post.coverImage!==undefined&&(typeof post.coverImage!=='string'||!safeUrl(post.coverImage,true)))throw new Error('Invalid cover image');}
-  for(const client of content.clients) if(!safeUrl(client.image,true)||!client.image||!safeUrl(client.url))throw new Error('Invalid client logo or link');
+  for(const client of content.clients) {
+    if(!safeUrl(client.image,true)||!client.image||!safeUrl(client.url))throw new Error('Invalid client logo or link');
+    if(client.sector!==undefined && !['','Enterprise','Healthcare','Oil & Gas','Transport','Retail','Government'].includes(client.sector))throw new Error('Choose a valid client sector');
+    if(client.recent!==undefined && typeof client.recent!=='boolean')throw new Error('Invalid recent client flag');
+    if(client.projectSummary!==undefined && (typeof client.projectSummary!=='string'||client.projectSummary.length>2000))throw new Error('Invalid client project summary');
+    if(client.recent&&!client.projectSummary?.trim())throw new Error('Add a project summary before featuring a recent client');
+  }
   for(const role of content.roles) if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(role.applyEmail))throw new Error('Invalid role application email');
   if(!safeUrl(content.site.contact.telephoneHref))throw new Error('Invalid telephone link');
   // These three stages are tied to the camera choreography.

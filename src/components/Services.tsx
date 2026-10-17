@@ -9,7 +9,7 @@ import { useSiteData } from "@/components/cms/ContentProvider";
 import DecryptedText from "./animations/DecryptedText";
 
 gsap.registerPlugin(ScrollTrigger);
-const capabilityImages:Record<string, {src:string;alt:string}>={ai:stockMedia.engineering,'medical-coding':stockMedia.healthcare,applications:stockMedia.engineering,software:stockMedia.collaboration,branding:stockMedia.design,marketing:stockMedia.analytics,cloud:stockMedia.cloud};
+const capabilityImages:Record<string, {src:string;alt:string}>={ai:stockMedia.engineering,'medical-coding':stockMedia.healthcare,applications:stockMedia.engineering,software:stockMedia.collaboration,web:stockMedia.design,branding:stockMedia.design,marketing:stockMedia.analytics,cloud:stockMedia.cloud};
 export default function Services() {
   const yellostackData = useSiteData();
   const root = useRef<HTMLElement>(null);
@@ -20,7 +20,7 @@ export default function Services() {
       articles.forEach((article, index) => {
         ScrollTrigger.create({ trigger: article, start: "top 40%", end: "bottom 40%", onToggle: self => { if (self.isActive) setActive(index); } });
       });
-    }, root);
+    }, root.current!);
     let alive = true;
     let refreshFrame = 0;
     const observer = new ResizeObserver(() => {
@@ -34,7 +34,7 @@ export default function Services() {
     <header className="services-intro"><p><CmsText id="Services.text.0" fallback="From your first idea"/><br /><CmsText id="Services.text.1" fallback="to your next stage of growth."/></p><h2><CmsText id="Services.text.2" fallback="Intelligence. Experience."/><br /><em><CmsText id="Services.text.3" fallback="Real-world impact."/></em></h2></header>
     <div className="services-story-layout">
       <nav className="services-sticky-index" aria-label="Explore our capabilities">
-        <span className="section-index"><CmsText id="Services.text.4" fallback="● WHY YELLOSTACK"/></span>
+        <span className="section-index"><CmsText id="Services.text.4" fallback="● OUR CAPABILITIES"/></span>
         {yellostackData.capabilities.map((service, i) => <a key={service.id} href={`#story-${service.id}`} aria-current={active === i ? "location" : undefined} className={active === i ? "is-active" : ""}><small>0{i + 1}</small><span>{service.title}</span><span className="service-active-arrow" aria-hidden="true">↗</span></a>)}
         <p className="services-index-note"><CmsText id="Services.text.5" fallback="STRATEGY. DESIGN. DEVELOPMENT."/></p>
       </nav>

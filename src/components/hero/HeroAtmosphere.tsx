@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 const defaultChapters = [
-  { number: "01", title: "Discover", detail: "Every great product starts with a question." },
-  { number: "02", title: "Strategize", detail: "Turn research into a clear plan." },
-  { number: "03", title: "Execute", detail: "Bring design and development together." },
+  { number: "01", title: "Rooted", detail: "Built here. Here to stay." },
+  { number: "02", title: "Built", detail: "One team. Every layer of your product." },
+  { number: "03", title: "Promised", detail: "On time. Or it costs us." },
 ];
 export default function HeroAtmosphere() {
  const chapters = useEditedList("HeroAtmosphere.chapters",defaultChapters);

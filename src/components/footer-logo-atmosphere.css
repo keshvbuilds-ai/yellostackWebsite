@@ -1,0 +1,13 @@
+.business-footer{position:relative;isolation:isolate;overflow:hidden}
+.business-footer>.footer-columns,.business-footer>.footer-baseline{position:relative;z-index:1}
+.footer-logo-atmosphere{position:absolute;inset:0;z-index:0;pointer-events:none;user-select:none;display:grid;place-items:center;overflow:hidden}
+.footer-logo-drift{width:clamp(220px,26vw,370px);aspect-ratio:520/551;opacity:.065;animation:footer-logo-breathe 16s ease-in-out infinite;animation-play-state:paused;will-change:transform}
+.footer-logo-watermark{display:block;width:100%;height:100%;overflow:hidden}
+.footer-logo-halo{position:absolute;width:500px;max-width:85%;aspect-ratio:1;background:radial-gradient(ellipse,#ffcc0209,transparent 65%);opacity:.5;animation:footer-halo-breathe 16s ease-in-out infinite;animation-play-state:paused}
+.footer-logo-atmosphere[data-playing=true] .footer-logo-drift,.footer-logo-atmosphere[data-playing=true] .footer-logo-halo{animation-play-state:running}
+@keyframes footer-logo-breathe{0%,100%{transform:translateY(7px) scale(.98);opacity:.045}50%{transform:translateY(-7px) scale(1.02);opacity:.085}}
+@keyframes footer-halo-breathe{0%,100%{transform:scale(.9);opacity:.3}50%{transform:scale(1.08);opacity:.7}}
+@media(max-width:700px){.footer-logo-drift{width:260px;opacity:.05}.footer-logo-atmosphere{align-items:center}}
+@media(prefers-reduced-motion:reduce){.footer-logo-drift,.footer-logo-halo{animation:none;will-change:auto}.footer-logo-drift{opacity:.055}}
+@media(forced-colors:active){.footer-logo-atmosphere{display:none}}
+.footer-logo-ripple{position:absolute;width:220px;aspect-ratio:1;border:1px solid #ffcc02;border-radius:50%;opacity:0;transform:scale(.8);animation:footer-ripple 12s ease-out infinite;animation-play-state:paused}.footer-logo-ripple.second{animation-delay:6s}.footer-logo-atmosphere[data-playing=true] .footer-logo-ripple{animation-play-state:running}@keyframes footer-ripple{0%{opacity:0;transform:scale(.8)}15%{opacity:.08}100%{opacity:0;transform:scale(2.4)}}@media(prefers-reduced-motion:reduce){.footer-logo-ripple{display:none;animation:none}}

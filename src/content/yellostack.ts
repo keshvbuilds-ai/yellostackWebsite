@@ -1,16 +1,15 @@
 ﻿export const yellostackData = {
     hero: {
         description: "From customer-facing apps to integrated enterprise software, we combine design and development to solve your business challenges.",
-        words: ["Discover", "Strategize", "Execute"],
+        words: ["Rooted", "Built", "Promised"],
     },
     capabilities: [
         { id: "ai", title: "AI & automation", description: "Bring AI into your products and everyday workflows, from conversational experiences to knowledge tools and business automation.", items: ["AI assistants", "Workflow automation", "Knowledge tools", "AI integration"], label: "INTELLIGENCE IN ACTION" },
         { id: "medical-coding", title: "Medical coding", description: "Support healthcare teams with medical coding services and organized documentation workflows, with a focus on accuracy and clear review processes.", items: ["Medical coding", "Documentation review", "Coding workflows", "Quality review"], label: "CONNECTED HEALTHCARE" },
-        { id: "applications", title: "Application development", description: "Connect with customers through mobile apps, ecommerce, websites and SharePoint solutions.", items: ["Mobile applications", "Ecommerce", "Web development", "SharePoint"], label: "CONNECTED EXPERIENCES" },
+        { id: "applications", title: "Mobile App Development", description: "Build mobile experiences for Android and iOS, from customer-facing applications to connected business tools.", items: ["Android & iOS", "Cross-platform applications", "Enterprise mobility", "Mobile commerce"], label: "CONNECTED EXPERIENCES" },
         { id: "software", title: "Enterprise software", description: "Address everyday business needs with custom software, ERP consulting and industry-specific management tools.", items: ["Custom software", "ERP consulting", "Travel Dynamics Plus", "Facility management"], label: "CONNECTED OPERATIONS" },
-        { id: "branding", title: "Branding & experience", description: "Bring consistency to your brand through identity, responsive interfaces and user experience design.", items: ["UI / UX design", "Brand identity", "Mobile app design", "Responsive web design"], label: "DESIGNED FOR PEOPLE" },
-        { id: "marketing", title: "Digital marketing", description: "Reach potential customers through search and social channels, then turn engagement into business opportunities.", items: ["Digital marketing", "Search optimization", "Social channels", "Customer engagement"], label: "MEANINGFUL CONNECTIONS" },
-        { id: "cloud", title: "Cloud migration", description: "Move your digital resources and services to the cloud for access wherever your business operates.", items: ["Digital assets", "Cloud services", "Data access", "Migration planning"], label: "ROOM TO GROW" },
+        { id: "web", title: "Website Development", description: "Design and build responsive websites around your brand, customers and business goals.", items: ["Business websites", "Responsive interfaces", "E-commerce", "Custom web experiences"], label: "YOUR DIGITAL PRESENCE" },
+        { id: "cloud", title: "Cloud Infrastructure", description: "Move your digital resources and services to the cloud for access wherever your business operates.", items: ["Digital assets", "Cloud services", "Data access", "Migration planning"], label: "ROOM TO GROW" },
     ],
     contact: {
         email: "hello@yellostack.com",

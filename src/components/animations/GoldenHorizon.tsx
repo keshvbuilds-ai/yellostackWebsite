@@ -1,4 +1,6 @@
 'use client';
+import { ClientInvitation } from '@/components/cms/ClientLogos';
+import { usePathname } from 'next/navigation';
 import { LocalText } from '@/components/cms/ContentProvider';
 
 import { useEffect, useRef } from 'react';
@@ -11,9 +13,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 /** A procedural model and a screen-space light field share one scroll playhead. */
 export default function GoldenHorizon(){
+ const isClients=usePathname()==='/clients';
   const root=useRef<HTMLElement>(null);const mount=useRef<HTMLDivElement>(null);const heading=useRef<HTMLDivElement>(null);
   useEffect(()=>{
-    const host=mount.current,section=root.current;if(!host||!section)return;
+    const host=mount.current,section=root.current,headingElement=heading.current;if(isClients||!host||!section||!headingElement)return;
     let renderer:THREE.WebGLRenderer;
     try{renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});}catch{return;}
     renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0,0);host.appendChild(renderer.domElement);
@@ -49,14 +52,15 @@ export default function GoldenHorizon(){
     const media=gsap.matchMedia();media.add('(prefers-reduced-motion: no-preference)',()=>{
       const timeline=gsap.timeline({scrollTrigger:{trigger:section,start:'top bottom',end:'bottom bottom',scrub:.8,invalidateOnRefresh:true}});
       timeline.to(state,{progress:1,ease:'none',duration:1},0);
-      timeline.fromTo(heading.current,{y:60,autoAlpha:0},{y:0,autoAlpha:1,duration:.25},.08).to(heading.current,{y:-35,autoAlpha:0,duration:.16},.6);
-      return()=>{gsap.set(heading.current,{clearProps:'all'});};
+      timeline.fromTo(headingElement,{y:60,autoAlpha:0},{y:0,autoAlpha:1,duration:.25},.08).to(headingElement,{y:-35,autoAlpha:0,duration:.16},.6);
+      
     });
     const change=()=>{reduced=preference.matches;resume();};const move=(event:PointerEvent)=>{if(reduced)return;const rect=host.getBoundingClientRect();state.x=(event.clientX-rect.left)/rect.width*2-1;state.y=(event.clientY-rect.top)/rect.height*2-1;};const leave=()=>{state.x=0;state.y=0;};
     section.addEventListener('pointermove',move);section.addEventListener('pointerleave',leave);preference.addEventListener('change',change);document.addEventListener('visibilitychange',resume);
     const lost=(event:Event)=>{event.preventDefault();renderer.domElement.style.opacity='0';};renderer.domElement.addEventListener('webglcontextlost',lost);
     resize();
     return()=>{alive=false;cancelAnimationFrame(frame);observer.disconnect();resizeObserver.disconnect();media.revert();section.removeEventListener('pointermove',move);section.removeEventListener('pointerleave',leave);preference.removeEventListener('change',change);document.removeEventListener('visibilitychange',resume);renderer.domElement.removeEventListener('webglcontextlost',lost);geometry.dispose();materials.forEach(m=>m.dispose());orbitGeometry.dispose();orbitMaterial.dispose();planeGeometry.dispose();background.dispose();renderer.dispose();renderer.domElement.remove();};
-  },[]);
+  },[isClients]);
+  if(isClients)return <ClientInvitation/>;
   return <section ref={root} className="golden-horizon" aria-label="Yellostack connected future"><div className="golden-horizon-stage"><div ref={mount} className="golden-horizon-canvas"/><div className="golden-horizon-grid" aria-hidden="true">{[0,1,2,3,4].map(i=><span key={i}>·</span>)}</div><div ref={heading} className="golden-horizon-copy"><p><CmsText id="horizon.eyebrow" fallback="EVERY IDEA HAS A NEXT CHAPTER"/></p><h2><CmsText id="horizon.heading" fallback="Make yours extraordinary."/></h2><a href="/contact"><CmsText id="horizon.link" fallback="LET’S CREATE IT TOGETHER"/> <span aria-hidden="true">↗</span></a></div><div className="golden-horizon-caption"><span><LocalText text={"YELLOSTACK / CONNECTED POSSIBILITIES"}/></span><span><LocalText text={"SCROLL INTO WHAT’S NEXT ↓"}/></span></div></div></section>;
 }

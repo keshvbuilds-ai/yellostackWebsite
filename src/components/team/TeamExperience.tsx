@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CmsImage, CmsText, LocalText } from '@/components/cms/ContentProvider';
@@ -7,13 +7,13 @@ import './team-experience.css';
 
 export default function TeamExperience() {
  const root=useRef<HTMLElement>(null);const people=useRef<HTMLElement>(null);
- useEffect(()=>{
+ useLayoutEffect(()=>{
   gsap.registerPlugin(ScrollTrigger);
   const media=gsap.matchMedia();
   media.add('(prefers-reduced-motion: no-preference)',()=>{
    const ctx=gsap.context(()=>{
     const timeline=gsap.timeline({scrollTrigger:{trigger:root.current,start:'top top',end:()=>`+=${window.innerHeight*2.8}`,pin:true,scrub:1,invalidateOnRefresh:true}});
-    timeline.fromTo('.team-id-assembly',{yPercent:-45,rotationZ:-12,rotationY:-22,opacity:0},{yPercent:0,rotationZ:0,rotationY:0,opacity:1,duration:1,ease:'power2.out'})
+    timeline.fromTo('.team-id-assembly',{yPercent:-45,rotationZ:-12,rotationY:-22,autoAlpha:0},{yPercent:0,rotationZ:0,rotationY:0,autoAlpha:1,duration:1,ease:'power2.out'})
      .to('.team-id-assembly',{rotationZ:3,duration:.4})
      .to('.team-id-assembly',{rotationZ:0,duration:.4})
      .to('.team-portal-intro',{opacity:0,duration:.4})
@@ -22,7 +22,7 @@ export default function TeamExperience() {
      .to('.team-id-assembly',{opacity:0,duration:.35},'-=.35')
      .to('.team-portal-wash',{backgroundColor:'#11180f',duration:.7},'-=.15')
      .to({}, {duration:.65});
-   },root);return()=>ctx.revert();
+   }, root.current!);return()=>ctx.revert();
   });return()=>media.revert();
  },[]);
  useEffect(()=>{

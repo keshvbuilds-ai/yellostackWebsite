@@ -1,4 +1,5 @@
 'use client';
+import OfficeMap from '../OfficeMap';
 import { LocalText } from '@/components/cms/ContentProvider';
 
 import { useEffect, useRef, useState } from 'react';
@@ -33,7 +34,7 @@ export default function ContactExperience(){
       .to('.contact-story-seal',{autoAlpha:1,scale:1,duration:.5},5.1)
       .to('.contact-story-progress span',{scaleX:1,duration:6,ease:'none'},0);
     gsap.from(form.current,{y:35,opacity:.4,duration:.7,scrollTrigger:{trigger:form.current,start:'top 95%',toggleActions:'play none none reverse'}});
-   },section);
+   }, section.current!);
    return()=>context.revert();
   });
   return()=>mm.revert();
@@ -49,5 +50,5 @@ export default function ContactExperience(){
  <div className="contact-story-seal" aria-hidden="true"><LocalText text={"YELLOSTACK"}/><br/><strong><LocalText text={"Built on trust."}/></strong></div>
  <div className="contact-story-bottom"><span><LocalText text={"SCROLL TO CONNECT ↓"}/></span><a href="#project-form"><LocalText text={"LET’S TALK ABOUT YOUR IDEA ↗"}/></a></div><div className="contact-story-progress" aria-hidden="true"><span/></div>
  </div></section>
- <section ref={form} id="project-form" className="ys-contact-form scroll-mt-28"><div className="grid gap-12 md:grid-cols-2"><div><p className="mb-6 font-mono text-xs text-[#ffcf00]"><LocalText text={"LET’S START SOMETHING"}/></p><h2 className="text-4xl tracking-tight md:text-6xl"><LocalText text={"Your next chapter"}/><br/><LocalText text={"starts here."}/></h2><button type="button" role="switch" aria-checked={mode} className="ys-mode-switch mt-8" onClick={()=>{const next=!mode;setMode(next);setGreeted(false);try{localStorage.setItem('yellostack-mode',next?'on':'off');}catch{}}}><i aria-hidden="true"/><LocalText text={"YELLOSTACK MODE"}/><LocalText text={mode?'ON':'OFF'}/></button>{mode&&!greeted&&<div className="my-6"><RewardTicket greeting onTear={()=>setGreeted(true)}/></div>}{mode&&greeted&&<p className="my-6 text-[#ffcf00]" role="status"><LocalText text={"Welcome inside. Let’s put your idea in motion."}/></p>}<a className="mt-8 block break-all underline" href={`mailto:${site.contact.email}`}>{site.contact.email}</a><a className="mt-4 block" href={site.contact.telephoneHref}>{site.contact.telephone}</a><p className="mt-5 max-w-sm text-sm leading-7 text-white/60">{site.contact.address}</p></div><LeadForm mode={mode}/></div></section></>;
+ <section ref={form} id="project-form" className="ys-contact-form scroll-mt-28"><div className="grid gap-12 md:grid-cols-2"><div><p className="mb-6 font-mono text-xs text-[#ffcf00]"><LocalText text={"LET’S START SOMETHING"}/></p><h2 className="text-4xl tracking-tight md:text-6xl"><LocalText text={"Your next chapter"}/><br/><LocalText text={"starts here."}/></h2><button type="button" role="switch" aria-checked={mode} className="ys-mode-switch mt-8" onClick={()=>{const next=!mode;setMode(next);setGreeted(false);try{localStorage.setItem('yellostack-mode',next?'on':'off');}catch{}}}><i aria-hidden="true"/><LocalText text={"YELLOSTACK MODE"}/><LocalText text={mode?'ON':'OFF'}/></button>{mode&&!greeted&&<div className="my-6"><RewardTicket greeting onTear={()=>setGreeted(true)}/></div>}{mode&&greeted&&<p className="my-6 text-[#ffcf00]" role="status"><LocalText text={"Welcome inside. Let’s put your idea in motion."}/></p>}<a className="mt-8 block break-all underline" href={`mailto:${site.contact.email}`}>{site.contact.email}</a><a className="mt-4 block" href={site.contact.telephoneHref}>{site.contact.telephone}</a><OfficeMap/></div><LeadForm mode={mode}/></div></section></>;
 }

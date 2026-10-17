@@ -14,7 +14,7 @@ export default function Introduction() {
       const context = gsap.context(() => {
         gsap.fromTo(".intro-statement", { y: 70, opacity: .2 }, { y: 0, opacity: 1, ease: "none", scrollTrigger: { trigger: section.current, start: "top 85%", end: "top 30%", scrub: .6 } });
         gsap.fromTo(".intro-line", { scaleX: 0 }, { scaleX: 1, ease: "none", scrollTrigger: { trigger: section.current, start: "top 90%", end: "top 35%", scrub: .6 } });
-      }, section);
+      }, section.current!);
       return () => context.revert();
     });
     return () => media.revert();

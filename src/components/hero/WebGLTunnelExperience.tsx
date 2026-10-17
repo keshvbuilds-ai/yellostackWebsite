@@ -89,7 +89,7 @@ export function WebGLTunnelExperience({ journey }: { journey: MutableRefObject<J
       <Lightformer intensity={1.4} position={[6, 3, -4]} target={[0, 0, 0]} scale={[1, 8, 1]} />
       <Lightformer intensity={.5} position={[0, -4, 6]} target={[0, 0, 0]} scale={[8, 2, 1]} />
     </Environment>
-    <YellostackLogo3D journey={journey} />
+    <YellostackLogo3D journey={journey} heroStory />
     <EnergyTrails journey={journey} />
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.5, 0]} receiveShadow><planeGeometry args={[40, 40]} /><shadowMaterial transparent opacity={.22} /></mesh>
     <points><bufferGeometry><bufferAttribute attach="attributes-position" args={[dust, 3]} /></bufferGeometry><pointsMaterial size={.018} color="#d5c697" transparent opacity={.26} depthWrite={false} /></points>

@@ -61,3 +61,6 @@
 .team-people-slider .team-person-info>p:last-child{background:#11180ff2;border-radius:0 8px 8px 0;padding:18px 16px;box-sizing:border-box}
 .team-people-slider .team-person-info h3{background:#11180ff2!important;padding:8px 12px;border-radius:8px;box-sizing:border-box}
 }
+
+/* Match the scroll timeline before hydration: no first-paint ID card flash. */
+@media(prefers-reduced-motion:no-preference){.team-id-assembly{opacity:0;visibility:hidden}}

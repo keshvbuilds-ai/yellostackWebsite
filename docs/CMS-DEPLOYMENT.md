@@ -105,3 +105,34 @@ The About page GM message uses `gm.*` copy fields and `/team/hassan-majrashi.png
 Edit `team.badges.0` through `team.badges.3` name, role, code and description in CMS copy. The first profile uses the supplied GM portrait; the remaining badges represent disciplines, not invented employees. Portrait media uses `/team/hassan-majrashi.png`. The draggable lanyard is adapted from the user-supplied React Bits example and loads only on the team page. Reduced-motion and unavailable WebGL show a static badge.
 
 The team page now uses a branded scroll portal instead of the selectable lanyards. Edit `team.portal.*` for the destination copy. Profile photography and biographies are pending user-provided assets; the initial panel uses a brand monogram.
+
+
+## October 2026 website feedback
+
+Client logos now include `sector`, `recent`, and `projectSummary`. In **Client logos**, select a sector for filtering. To show a card under **Recently joined the stack**, enable `recent` and enter an approved project summary. The website displays the first four featured clients in CMS order. This section stays hidden until at least one complete recent-client record is published; no sample client projects are published. Its heading and introduction are editable under `clients.recent.*`. The clients-page invitation uses `clients.invitation.*`.
+
+The Products destination is `/products`, with existing Travel, Freight, Retail, Enterprise Dynamics and Facility Management product pages. The Services menu and footer use the nine curated entries in `src/content/catalogue.ts`. Menu illustrations are local SVGs in `public/banners/`.
+
+`feedback-upgrade.ts` upgrades unchanged legacy feedback copy on public and editor reads, adds the Products directory if missing, and supplies client-field defaults. Custom copy values are retained. The legacy seven-capability homepage list is replaced by the six requested capabilities. Saved data is not rewritten until an editor saves/publishes. The migration is idempotent.
+
+Studio Notes remains on the homepage, as permitted by the feedback document. No live Instagram integration was added.
+
+### Industries we serve
+
+The menu and footer link to `/industries-we-serve`. The page provides nine sector profiles, category filters, relevant use cases and links to existing services/products. Edit its headings and sector copy in CMS **Headings & labels** using the `industries.*` keys. Sector ordering, categories, images and destination routes are maintained in `src/content/industries.ts`; keep category names aligned with the filters. Arabic translations are in `src/content/arabic.json`. The page includes responsive layouts and reduced-motion support.
+
+### Work page presentation
+
+`/portfolio` (also reached through `/work`) uses the WorkExperience layout: a yellow opening with section links, alternating application showcases and enquiry links. Edit the existing Portfolio page title, intro and sections in the CMS. Optional section images replace the illustrated concept artwork; section items replace the default feature lists. Motion respects reduced-motion preferences, and the layout supports Arabic and mobile screens.
+
+### Animation runtime compatibility
+
+React Three Fiber is pinned to 9.7.0. Its internal Clock construction is migrated to a Timer-backed adapter by `scripts/patch-fiber-timer.mjs`, run automatically by `postinstall`. The adapter preserves Fiber's elapsed-time, start/stop and manual-frame contracts without suppressing console warnings. Run `node scripts/check-fiber-timer.mjs` to check timing behaviour. Review/remove this version-gated patch when upgrading Fiber to a release that uses Timer natively.
+
+GSAP contexts retain DOM elements rather than mutable React refs, and GoldenHorizon relies on matchMedia reversion for cleanup. This avoids null-target and invalid-scope warnings during route transitions and React development cleanup. A Fast Refresh full reload after editing the shared Arabic JSON is expected development behaviour; HTTP 200 and the `/work` to `/portfolio` 308 redirect are normal.
+
+### Home Instagram section
+
+Home now displays Instagram immediately before the Let's work together CTA; Studio Notes is removed from Home. `InstagramSection.tsx` uses Instagram's native `embed.js` profile widget for the existing `@_yellostack` account. No API token or paid feed subscription is stored. Edit `instagram.heading` and `instagram.body` in CMS Headings & labels. Public visibility and account embedding permissions govern whether Instagram serves the profile. A branded profile link remains when the embed script cannot load. Live content could not be verified in the restricted test browser because requests to Instagram were blocked; verify on the deployed site with Instagram website embeds enabled.
+
+Team's decorative ID card is hidden in CSS before hydration for normal motion, then revealed by its scroll timeline. Reduced-motion users retain the static card.

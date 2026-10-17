@@ -7,7 +7,7 @@ export function translate(text:string,locale:Locale,copy:Record<string,string>={
  const value=copy['ar:'+text.trim()]??(arabic as Record<string,string>)[text.trim()]??normalizedArabic[text.trim().toLowerCase()];
  return value?text.replace(text.trim(),value):text;
 }
-const preserved=new Set(['id','slug','kind','source','image','imageAlt','coverImage','email','telephone','telephoneHref','applyEmail','url','date','number','name']);
+const preserved=new Set(['id','slug','kind','source','image','imageAlt','coverImage','email','telephone','telephoneHref','applyEmail','url','date','number','name','sector']);
 export function localizeContent(content:SiteContent,locale:Locale):SiteContent{
  if(locale==='en')return content;
  const walk=(value:unknown,key=''):unknown=>{

@@ -160,8 +160,8 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
     <div className="journey-shade" /><div className="journey-grain" />
     <HeroAtmosphere />
     <div className="journey-copy" ref={copy}>
-      <div className="journey-heading"><p className="journey-eyebrow"><span /> <CmsText id="hero.Hero.text.0" fallback=" STRATEGY. DESIGN. DEVELOPMENT."/></p><h1><CmsText id="hero.Hero.text.1" fallback="Digital products"/><br /><CmsText id="hero.Hero.text.2" fallback="that people"/><br /><em><CmsText id="hero.Hero.text.3" fallback="love to use."/></em></h1></div>
-      <div className="journey-support"><p>{yellostackData.hero.description}</p><div className="journey-actions"><a className="journey-primary" href="#contact"><DecryptedText text="LET’S BUILD" /><span aria-hidden="true">↗</span></a><a className="journey-secondary" href="/portfolio"><DecryptedText text="OUR WORK" /><span aria-hidden="true">↗</span></a></div></div>
+      <div className="journey-heading"><p className="journey-eyebrow"><span /> <CmsText id="hero.Hero.text.0" fallback=" STRATEGY. DESIGN. DEVELOPMENT."/></p><h1><CmsText id="hero.Hero.text.1" fallback="Building intelligent"/><br /><CmsText id="hero.Hero.text.2" fallback="technology for"/><br /><em><CmsText id="hero.Hero.text.3" fallback="the future."/></em></h1></div>
+      <div className="journey-support"><p>{yellostackData.hero.description}</p><div className="journey-actions"><a className="journey-primary" href="/contact"><DecryptedText text="LET’S BUILD" /><span aria-hidden="true">↗</span></a><a className="journey-secondary" href="/portfolio"><DecryptedText text="OUR WORK" /><span aria-hidden="true">↗</span></a></div></div>
     </div>
     <button ref={holdControl} className={`journey-hold ${holding ? "is-holding" : ""}`} disabled={!ready || done} aria-label={reduced || failed ? "Reveal Yellostack symbol" : "Hold to explore Yellostack. Hold Space or Enter on keyboard."}
       onPointerDown={e => { if (!e.isPrimary || e.button !== 0) return; e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); start(); followPointer(e); }}
@@ -175,7 +175,7 @@ export default function Hero({ isIntroDone }: { isIntroDone: boolean }) {
       <span className="journey-hold-label"><LocalText text={!ready ? "PREPARING EXPERIENCE" : reduced || failed ? "REVEAL THE STACK" : holding ? "KEEP HOLDING" : "CLICK AND HOLD"}/></span>
     </button>
     <div className="journey-words" aria-hidden="true">{yellostackData.hero.words.map((word, i) => <div key={word} ref={el => { words.current[i] = el; }}><span>0{i + 1} <CmsText id="hero.Hero.text.4" fallback=" / THE YELLOSTACK APPROACH"/></span><strong>{word}<b>.</b></strong></div>)}</div>
-    <div ref={end} className="journey-end" inert={!done}><p><CmsText id="hero.Hero.text.5" fallback="EVERY LAYER. ONE VISION."/></p><h2><CmsText id="hero.Hero.text.6" fallback="Yellostack"/><span>®</span></h2><div><a href="#services"><DecryptedText text="EXPLORE WHAT WE BUILD" /> ↗</a><button onClick={reset}><DecryptedText text="REPLAY" /> ↺</button></div></div>
+    <div ref={end} className="journey-end" inert={!done}><p><CmsText id="hero.Hero.text.5" fallback="ROOTED. BUILT. PROMISED."/></p><h2><CmsText id="hero.Hero.text.6" fallback="Yellostack"/><span>®</span></h2><div><a href="#services"><DecryptedText text="EXPLORE WHAT WE BUILD" /> ↗</a><button onClick={reset}><DecryptedText text="REPLAY" /> ↺</button></div></div>
     {done && <EasterEgg />}
     <div className="journey-bottom"><span><CmsText id="hero.Hero.text.7" fallback="BUILT ON IDEAS. ENGINEERED FOR IMPACT."/></span><a href="#about"><CmsText id="hero.Hero.text.8" fallback="SCROLL TO DISCOVER "/><span>↓</span></a></div>
     <span className="sr-only" role="status"><LocalText text={done ? "You found the Yellostack Easter egg and unlocked a 15% offer. Tear the reward ticket to claim it." : ""}/></span>

@@ -110,10 +110,11 @@ export const companyPages: InnerPage[] = [
     { title: 'Design & communication', body: 'UI/UX, graphic design, illustration, motion and marketing disciplines shape the way your brand connects with people.' },
     { title: 'Engineering & delivery', body: 'Developers and project specialists connect the experience with the systems that make it work.' },
   ] },
-  { slug: 'clients', title: 'Built on relationships.', eyebrow: 'Our clients', kind: 'company', source: 'https://www.yellostack.com/clients', intro: 'Close collaboration, considered solutions and a commitment to the people behind each business.', sections: [
+  { slug: 'clients', title: 'Trusted across the Kingdom.', eyebrow: 'Our clients', kind: 'company', source: 'https://www.yellostack.com/clients', intro: 'Since 2017, businesses across Saudi Arabia have trusted Yellostack to design, build and run the technology behind their growth, from AI automation to enterprise software.', sections: [
     { title: 'Your goals shape the work.', body: 'Yellostack places customer service and long-term relationships at the centre of its approach. Every project begins with understanding the organisation and what it needs to achieve.' },
     { title: 'A partner through the process.', body: 'Bring your team into the conversation, align the priorities and maintain a direct relationship from planning to delivery.' },
   ] },
+  { slug: 'products', title: 'Products built for your business.', eyebrow: 'Our products', kind: 'directory', source: '', intro: 'Explore connected software for travel, freight, retail, enterprise operations and facilities management.', sections: [] },
   { slug: 'services', title: 'Every capability. Connected.', eyebrow: 'What we do', kind: 'directory', source: 'https://www.yellostack.com/services', intro: 'Explore applications, enterprise software, branding, cloud and digital growth, with AI and healthcare capabilities alongside them.', sections: [] },
   { slug: 'portfolio', title: 'Possibility, put into practice.', eyebrow: 'Application areas', kind: 'portfolio', source: 'https://www.yellostack.com/', intro: 'Explore the application areas featured by Yellostack, from everyday commerce to healthcare and education.', sections: [
     { title: 'Grocery & delivery', body: 'Mobile shopping and delivery experiences connecting customers with products and services.' },

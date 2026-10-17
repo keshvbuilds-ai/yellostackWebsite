@@ -6,10 +6,11 @@ import ts from 'typescript';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const out=path.join(root,'.cms-check');
 await fs.mkdir(out,{recursive:true});
-const files={banners:'src/content/service-banners.ts',media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
+const files={upgrade:'src/lib/cms/feedback-upgrade.ts',pose:'src/components/3d/layerStoryPose.ts',catalogue:'src/content/catalogue.ts',banners:'src/content/service-banners.ts',media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
 for(const [name,file] of Object.entries(files)){
   let source=await fs.readFile(path.join(root,file),'utf8');
   source=source.replace("'@/content/yellostack'","'./yellostack.mjs'").replace("'@/content/inner-pages'","'./pages.mjs'").replace("'@/content/blog'","'./blog.mjs'").replace("'./defaults'","'./defaults.mjs'");
+  if(name==='upgrade')source=source.replace("import changes from '@/content/feedback-copy-migration.json';",'const changes = '+await fs.readFile(path.join(root,'src/content/feedback-copy-migration.json'),'utf8')+';');
   if(name==='defaults')source=source.replace("import copy from '@/content/cms-copy.json';",`const copy = ${await fs.readFile(path.join(root,'src/content/cms-copy.json'),'utf8')};`);
   source=source.replace("'@/content/media'","'./media.mjs'").replace("'@/content/service-banners'","'./banners.mjs'");
   source=source.replace("import arabic from '@/content/arabic.json';",'const arabic = '+await fs.readFile(path.join(root,'src/content/arabic.json'),'utf8')+';');
@@ -55,3 +56,33 @@ assert.deepEqual(localized.media,defaultContent.media);
 assert.notEqual(localized.pages[0].title,defaultContent.pages[0].title);
 assert.equal(localizeContent(defaultContent,'en'),defaultContent);
 console.log('Locale checks passed: Arabic, overrides, case matching, preserved routes, media and contact addresses.');
+
+const {upgradeFeedback}=await import(pathToFileURL(path.join(out,'upgrade.mjs')).href);
+const legacy=structuredClone(defaultContent);
+legacy.copy['hero.Hero.text.1']='Digital products';
+legacy.copy['Globe.text.2']='An editor-customized heading';
+legacy.pages=legacy.pages.filter(page=>page.slug!=='products');
+legacy.site.hero.words=['Discover','Strategize','Execute'];
+const upgraded=upgradeFeedback(legacy);
+validateContent(upgraded);
+assert.equal(upgraded.copy['hero.Hero.text.1'],'Building intelligent');
+assert.equal(upgraded.copy['Globe.text.2'],'An editor-customized heading');
+assert.equal(upgraded.pages.filter(page=>page.slug==='products').length,1);
+assert.deepEqual(upgradeFeedback(upgraded),upgraded);
+const featured=structuredClone(defaultContent);
+featured.clients[0].recent=true;
+assert.throws(()=>validateContent(featured));
+featured.clients[0].projectSummary='An approved project description.';
+validateContent(featured);
+featured.clients[0].sector='Unknown';
+assert.throws(()=>validateContent(featured));
+const {capabilityLinks,productSlugs}=await import(pathToFileURL(path.join(out,'catalogue.mjs')).href);
+for(const item of capabilityLinks)assert.ok(defaultContent.pages.some(page=>page.slug===item.slug));
+for(const slug of productSlugs)assert.ok(defaultContent.pages.some(page=>page.slug===slug));
+const {layerStoryPose}=await import(pathToFileURL(path.join(out,'pose.mjs')).href);
+for(const [progress,index] of [[.12,2],[.37,1],[.62,0]]){
+ const poses=[0,1,2].map(i=>layerStoryPose(progress,i));
+ assert.equal(poses[index].emphasis,1);
+ assert.equal(poses.filter(pose=>pose.emphasis===1).length,1);
+}
+console.log('Feedback checks passed: legacy migration, custom-copy preservation, recent-client validation, catalogue routes and bottom-to-top stack order.');

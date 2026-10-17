@@ -1,3 +1,4 @@
+import PageJumpControls from '@/components/PageJumpControls';
 import ScrollTextGradient from '@/components/animations/ScrollTextGradient';
 import SmoothScroll from '@/components/SmoothScroll';
 import PremiumCursor from '@/components/animations/PremiumCursor';
@@ -10,6 +11,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "./media.css";
 import "./refinements.css";
+
+const cairo = localFont({src:"../../public/fonts/cairo-variable.ttf",weight:"200 1000",variable:"--font-cairo",display:"swap"});
 
 const geistSans = localFont({
   src: [
@@ -43,9 +46,9 @@ export default async function RootLayout({
   const content = await getLocalizedContent();
   const locale=await getLocale();
   return (
-    <html lang={locale} dir={locale==='ar'?'rtl':'ltr'} className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang={locale} dir={locale==='ar'?'rtl':'ltr'} className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} antialiased`}>
       <body id="top" className="bg-black text-white selection:bg-yello selection:text-black">
-        <ContentProvider content={content} locale={locale}><SmoothScroll><SiteReveals/><ScrollTextGradient/><PremiumCursor/>{children}</SmoothScroll></ContentProvider>
+        <ContentProvider content={content} locale={locale}><SmoothScroll><SiteReveals/><ScrollTextGradient/><PremiumCursor/>{children}<PageJumpControls/></SmoothScroll></ContentProvider>
       </body>
     </html>
   );

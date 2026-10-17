@@ -12,11 +12,29 @@ import GlobeSection from "./Globe";
 
 
 gsap.registerPlugin(ScrollTrigger);
-const layerPhotos=[stockMedia.design,stockMedia.engineering,stockMedia.cloud];
+const layerPhotos=[stockMedia.design,stockMedia.collaboration,stockMedia.cloud];
 const defaultstories = [
-  { title: "Designed around people.", tag: "01 / BRAND & EXPERIENCE", body: "Yellostack brings brand identity, UI/UX and mobile experiences together. Every interaction starts with the people who will use it.", image: "/layer-experience.svg", detail: "UI/UX · BRAND IDENTITY · MOBILE DESIGN" },
-  { title: "Ideas become working products.", tag: "02 / APPLICATIONS & AI", body: "From mobile apps and ecommerce to AI assistants and workflow automation, we connect your ideas to the way your business works.", image: "/layer-intelligence.svg", detail: "APPLICATIONS · AI · AUTOMATION" },
-  { title: "Connected behind the scenes.", tag: "03 / SOFTWARE & HEALTHCARE", body: "Enterprise software, cloud services and medical coding workflows. Connected capabilities that support your teams and your next stage of growth.", image: "/layer-operations.svg", detail: "ENTERPRISE · CLOUD · MEDICAL CODING" },
+  {
+    "title": "UI/UX & Product Design Service",
+    "tag": "01 / PRODUCT DESIGN",
+    "body": "Research, interfaces and product experiences designed around the people who use them. From the first sketch to a coherent design system.",
+    "image": "/layer-experience.svg",
+    "detail": "RESEARCH · UI/UX · PRODUCT DESIGN"
+  },
+  {
+    "title": "Communication Services",
+    "tag": "02 / COMMUNICATION",
+    "body": "Connect your workplace with networking, telecommunications, CCTV and biometric systems, planned around your infrastructure and operational needs.",
+    "image": "/layer-intelligence.svg",
+    "detail": "NETWORKING · TELECOMMUNICATIONS · CONNECTIVITY"
+  },
+  {
+    "title": "DevOps Services",
+    "tag": "03 / DEVOPS",
+    "body": "Bring development and operations together with infrastructure as code, continuous delivery and reliable release workflows.",
+    "image": "/layer-operations.svg",
+    "detail": "INFRASTRUCTURE · AUTOMATION · DELIVERY"
+  }
 ];
 type Playhead = { progress: number; active: number; x: number; y: number };
 const ease = (x: number) => { const t = THREE.MathUtils.clamp(x, 0, 1); return t * t * (3 - 2 * t); };
@@ -45,7 +63,8 @@ function Cards({ playhead, destination }: { playhead: RefObject<Playhead>; desti
     const open = ease(p / .16);
     const travel = THREE.MathUtils.clamp((p - .18) / .46, 0, 1) * 2;
     const reunion = ease((p - .70) / .13);
-    const docking = ease((p - .84) / .12);
+    const mobile = size.width <= 800;
+    const docking = mobile ? 0 : ease((p - .84) / .12);
     hover.current = THREE.MathUtils.damp(hover.current,p > .96 ? state.active : 0,4,Math.min(delta,.05));
     const h=hover.current;
     const width=viewport.width;
@@ -59,24 +78,26 @@ function Cards({ playhead, destination }: { playhead: RefObject<Playhead>; desti
       targetY=-(target.top+target.height/2+pixelsPerUnit-canvas.top-size.height/2)/size.height*viewport.height;
       targetScale=.53*pixelsPerUnit*viewport.height/size.height;
     }
-    const origin=new THREE.Vector3(targetX*docking,THREE.MathUtils.lerp(viewport.height*.1,targetY,docking),0);
-    const assemblyScale=THREE.MathUtils.lerp(.8,targetScale,docking);
+    const restingY=mobile ? viewport.height*.12 : viewport.height*.1;
+    const initialScale=mobile ? Math.min(.8,width*.60/4.8) : .8;
+    const origin=new THREE.Vector3(targetX*docking,THREE.MathUtils.lerp(restingY,targetY,docking),0);
+    const assemblyScale=THREE.MathUtils.lerp(initialScale,targetScale,docking);
     const orientation=new THREE.Quaternion().setFromEuler(new THREE.Euler(.42-.22*docking-state.y*h*.12,.48+state.x*h*.2,0));
     const flat=new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI/2,0,0));
     const finalRotation=orientation.clone().multiply(flat);
     cards.current.forEach((card,i)=>{
       if(!card)return;
       const cardScale=Math.min(viewport.height*.39/4.8,width*.65/4.8);
-      const initial=new THREE.Vector3((i-travel)*width*open,THREE.MathUtils.lerp((1-i)*.65+viewport.height*.1,viewport.height*.12,open),0);
+      const initial=new THREE.Vector3((i-travel)*width*open,THREE.MathUtils.lerp((1-i)*(mobile?.34:.65)+restingY,mobile?viewport.height*.16:viewport.height*.12,open),0);
       const joined=new THREE.Vector3(0,(1-i)*(1.02+h*.25),0).applyQuaternion(orientation).multiplyScalar(assemblyScale).add(origin);
       card.position.copy(initial).lerp(joined,reunion);
       const startRotation=new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.05*(1-open),.15*(1-open),-.55*(1-open)));
       card.quaternion.copy(startRotation).slerp(finalRotation,reunion);
-      card.scale.setScalar(THREE.MathUtils.lerp(THREE.MathUtils.lerp(.8,cardScale,open),assemblyScale,reunion));
+      card.scale.setScalar(THREE.MathUtils.lerp(THREE.MathUtils.lerp(initialScale,cardScale,open),assemblyScale,reunion));
       if(faces.current[i])faces.current[i]!.opacity=ease((p-.1)/.08)*(1-reunion);
     });
     if(assembled.current){
-      assembled.current.visible=p>.84;
+      assembled.current.visible=!mobile && p>.84;
       assembled.current.position.set(targetX,targetY,0);
       assembled.current.scale.setScalar(targetScale/.53*(.92+.08*docking));
       assembled.current.rotation.set(.2,.48,0);
@@ -109,6 +130,7 @@ export default function LayerGallery() {
   const playhead=useRef({progress:0,active:0,x:0,y:0});
   const [visible,setVisible]=useState(false);
   const [animated,setAnimated]=useState(false);
+  const [mobile,setMobile]=useState(false);
   useEffect(()=>{
     const rootElement=root.current;
     const stageElement=stage.current;
@@ -116,7 +138,11 @@ export default function LayerGallery() {
     const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting),{rootMargin:"100px"});
     observer.observe(rootElement);
     const media=gsap.matchMedia();
-    media.add("(prefers-reduced-motion: no-preference) and (min-width: 801px)",()=>{
+    media.add({motion:"(prefers-reduced-motion: no-preference)",mobile:"(max-width: 800px)",reduced:"(prefers-reduced-motion: reduce)"},(match)=>{
+      const isMobile=!!match.conditions?.mobile;
+      setMobile(isMobile);
+      if(!match.conditions?.motion)return;
+      playhead.current.progress=0;
       setAnimated(true);
       const context=gsap.context(()=>{
         const timeline=gsap.timeline({scrollTrigger:{trigger:rootElement,start:"top top",end:()=>`+=${innerHeight*5}`,pin:stageElement,scrub:.85,anticipatePin:1,invalidateOnRefresh:true}});
@@ -126,34 +152,27 @@ export default function LayerGallery() {
         timeline.to(".layer-gallery-track",{x:()=>-2*stageElement.clientWidth,ease:"none",duration:.46},.18);
         timeline.to(".layer-gallery-track",{autoAlpha:0,duration:.05},.68);
         timeline.to(".layer-gallery-stage>header, .layer-gallery-bottom",{autoAlpha:0,duration:.06},.77);
-        timeline.fromTo(".layer-gallery-destination",{autoAlpha:0},{autoAlpha:1,duration:.12},.82);
+        if(isMobile){
+          timeline.to(".layer-gallery-canvas",{autoAlpha:0,duration:.04},.96);
+        }else timeline.fromTo(".layer-gallery-destination",{autoAlpha:0},{autoAlpha:1,duration:.12},.82);
         
         timeline.to(".layer-gallery-progress i",{scaleX:1,ease:"none",duration:1},0);
-      },root);
-      return()=>{context.revert();setAnimated(false);};
-    });
-    media.add("(prefers-reduced-motion: no-preference) and (max-width: 800px)",()=>{
-      const context=gsap.context(()=>{
-        const cards=gsap.utils.toArray<HTMLElement>('.layer-mobile-card');
-        const timeline=gsap.timeline({scrollTrigger:{trigger:'.layer-mobile-story',start:'top 120px',end:'bottom bottom',scrub:.65,invalidateOnRefresh:true}});
-        cards.forEach((card,i)=>{
-          gsap.set(card,{rotation:(i-1)*5,y:i*12,scale:1-i*.035,zIndex:3-i});
-          timeline.to(card,{xPercent:i%2?-135:135,y:-60,rotation:i%2?-28:28,opacity:0,duration:1,ease:'power1.in'},i*1.1+.4);
-        });
-      },rootElement);return()=>context.revert();
+      }, root.current!);
+      const refreshFrame=requestAnimationFrame(()=>ScrollTrigger.refresh());
+      return()=>{cancelAnimationFrame(refreshFrame);context.revert();setAnimated(false);};
     });
     let alive=true;document.fonts.ready.then(()=>{if(alive)ScrollTrigger.refresh();});
     return()=>{alive=false;media.revert();observer.disconnect();};
   },[]);
-  return <section ref={root} className="layer-gallery" aria-label="Three layers of Yellostack">
+  return <section ref={root} className={`layer-gallery ${animated ? "is-animated" : ""}`} aria-label="Three layers of Yellostack">
     <div ref={stage} className="layer-gallery-stage">
-      <header><span><CmsText id="LayerGallery.text.0" fallback="YELLOSTACK / INSIDE EVERY LAYER"/></span><a href="#contact"><CmsText id="LayerGallery.text.1" fallback="LET’S MAKE IT HAPPEN ↗"/></a></header>
-      <div className="layer-gallery-intro"><span><CmsText id="LayerGallery.text.2" fallback="ONE SYMBOL. MANY POSSIBILITIES."/></span><h2><CmsText id="LayerGallery.text.3" fallback="There’s more"/><br/><CmsText id="LayerGallery.text.4" fallback="inside every layer."/></h2><p><CmsText id="LayerGallery.text.5" fallback="Scroll to unfold the story →"/></p></div>
-      <div className="layer-mobile-story" aria-hidden="true"><div className="layer-mobile-deck">{stories.map((story,i)=><div className="layer-mobile-card" key={story.tag}><span>0{i+1} / YELLOSTACK</span><img src={story.image} alt=""/><strong>{story.title}</strong><small>{story.detail}</small></div>)}</div></div>
+      <header><span><CmsText id="LayerGallery.text.0" fallback="YELLOSTACK / OTHER SERVICES"/></span><a href="/contact"><CmsText id="LayerGallery.text.1" fallback="LET’S MAKE IT HAPPEN ↗"/></a></header>
+      <div className="layer-gallery-intro"><span><CmsText id="LayerGallery.text.2" fallback="MORE WAYS TO BUILD TOGETHER."/></span><h2><CmsText id="LayerGallery.text.3" fallback="There’s more"/><br/><CmsText id="LayerGallery.text.4" fallback="we can offer."/></h2><p><CmsText id="LayerGallery.text.5" fallback="Scroll to unfold the story →"/></p></div>
       <div className="layer-gallery-canvas" aria-hidden="true"><GalleryBoundary>{animated && <Canvas camera={{position:[0,0,10],fov:42}} dpr={[1,1.5]} frameloop={visible?"always":"never"} style={{touchAction:"pan-y"}}><Cards playhead={playhead} destination={destination}/></Canvas>}</GalleryBoundary></div>
       <div className="layer-gallery-track">{stories.map((story,i)=><article key={story.tag} className="layer-gallery-panel"><img src={story.image} alt="Yellostack capability illustration"/><div><figure className="layer-story-photo"><CmsImage src={layerPhotos[i].src} alt={layerPhotos[i].alt} fill sizes="(max-width:800px) 85vw, 180px"/></figure><span>{story.tag}</span><h3>{story.title}</h3><p>{story.body}</p><small>{story.detail}</small></div></article>)}</div>
-      <div className="layer-gallery-bottom"><span><CmsText id="LayerGallery.text.6" fallback="THREE LAYERS / ONE CONNECTED PARTNER"/></span><span><CmsText id="LayerGallery.text.7" fallback="SCROLL TO EXPLORE ←"/></span><div className="layer-gallery-progress"><i/></div></div>
-      <div ref={destination} className="layer-gallery-destination"><GlobeSection handoff={animated ? playhead : undefined} externalScene={animated}/></div>
+      <div className="layer-gallery-bottom"><span><CmsText id="LayerGallery.text.6" fallback="THREE SERVICES / ONE CONNECTED PARTNER"/></span><span><CmsText id="LayerGallery.text.7" fallback="SCROLL TO EXPLORE ←"/></span><div className="layer-gallery-progress"><i/></div></div>
+      <div ref={destination} className="layer-gallery-destination">{!mobile && <GlobeSection handoff={animated ? playhead : undefined} externalScene={animated}/>}</div>
     </div>
+    {mobile && <GlobeSection/>}
   </section>;
 }

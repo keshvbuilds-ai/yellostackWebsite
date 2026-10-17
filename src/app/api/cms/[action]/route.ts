@@ -1,3 +1,4 @@
+import { upgradeFeedback } from '@/lib/cms/feedback-upgrade';
 import { cookies } from 'next/headers';
 import { cmsConfig, getSiteContent, requireEditor, sessionCookie, supabase } from '@/lib/cms/server';
 import { defaultContent } from '@/lib/cms/defaults';
@@ -30,7 +31,7 @@ export async function GET(_request:Request, {params}:Context) {
       if(!response.ok)throw new Error('Cannot read CMS draft. Check the database migration and editor membership.');
       const rows=await response.json();
       const draft=rows[0] || {content:defaultContent,revision:0};
-      return json({...draft,content:{...draft.content,copy:{...defaultContent.copy,...draft.content.copy},media:{...defaultContent.media,...draft.content.media}}});
+      return json({...draft,content:upgradeFeedback({...draft.content,copy:{...defaultContent.copy,...draft.content.copy},media:{...defaultContent.media,...draft.content.media}})});
     }
     return json({error:'Not found'},404);
   } catch(error){return errorResponse(error);}

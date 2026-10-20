@@ -17,7 +17,7 @@ async function readBody(request: Request) {
 export async function GET(_request:Request, {params}:Context) {
   const {action}=await params;
   if(action==='public') return json(await getSiteContent());
-  if(action==='status') return json({configured:localMode()?localConfigured():!!cmsConfig()});
+  if(action==='status') return json({configured:localMode()?localConfigured():!!cmsConfig(),backend:localMode()?(process.env.CMS_BACKEND==='json'?'json':'local'):'supabase',hosting:process.env.VERCEL?'vercel':'node'});
   try {
     const editor=await requireEditor();
     if(action==='session') return json({email:editor.email});

@@ -11,9 +11,9 @@ export function createWorkWorld(host:HTMLElement){
  scene.add(new THREE.HemisphereLight(0xffffff,0x8d8065,3));
  const key=new THREE.DirectionalLight(0xfff3cf,5);key.position.set(4,7,7);scene.add(key);
  const fill=new THREE.DirectionalLight(0xffffff,3);fill.position.set(-5,3,-15);scene.add(fill);
- const white=new THREE.MeshStandardMaterial({color:0xf5f4ea,roughness:.32,metalness:.12});
- const gold=new THREE.MeshStandardMaterial({color:0xffcc02,roughness:.26,metalness:.65});
- const ink=new THREE.MeshStandardMaterial({color:0x22291c,roughness:.5,metalness:.2});
+ const white=new THREE.MeshPhongMaterial({color:0xf5f4ea,shininess:35});
+ const gold=new THREE.MeshPhongMaterial({color:0xffcc02,specular:0xb89a31,shininess:65});
+ const ink=new THREE.MeshPhongMaterial({color:0x22291c,shininess:25});
  const geometries:THREE.BufferGeometry[]=[];
  const box=new THREE.BoxGeometry(1,1,1);geometries.push(box);
  const stacks:{group:THREE.Group;layers:THREE.Mesh[];offset:number}[]=[];

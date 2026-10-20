@@ -1,3 +1,4 @@
+import publishedWork from '@/content/published-work.json';
 import {industries} from '@/content/industries';
 import { serviceBanners } from '@/content/service-banners';
 import { stockMedia, studioFilm } from '@/content/media';
@@ -9,7 +10,7 @@ import copy from '@/content/cms-copy.json';
 import type { SiteContent } from './types';
 export const defaultContent: SiteContent = {
   site: yellostackData,
-  products:[],workProjects:[],industryEntries:industries,
+  products:[],workProjects:publishedWork,industryEntries:industries,
   teamMembers:[
     {id:'hassan',name:'Hassan Majrashi',role:'General Manager',bio:'Leading YelloStack mission to build intelligent technology from Saudi Arabia for a connected digital future.',image:'/team/hassan-majrashi.png',demo:false},
     {id:'faisal',name:'Faisal Al-Qahtani',role:'Technology Lead',bio:'Sample profile: bringing software engineering and thoughtful problem-solving together.',image:'/team/placeholder-saudi.svg',demo:true},

@@ -1,3 +1,4 @@
+import {remoteMode,remoteConfigured,remoteRead,remoteTransaction,remoteUpload,remoteList,remoteDelete,remoteMedia} from './json-store';
 import 'server-only';
 import { mkdir, readFile, writeFile, rename, readdir, unlink } from 'node:fs/promises';
 import path from 'node:path';
@@ -7,9 +8,12 @@ import type { SiteContent } from './types';
 export const localMode = () => process.env.CMS_BACKEND !== 'supabase';
 export const dataDirectory = () => path.resolve(/* turbopackIgnore: true */ process.env.CMS_DATA_DIR || '.cms-data');
 type State = { content:SiteContent; published:SiteContent; revision:number; enquiries:Record<string,unknown>[]; sessions:Record<string,number>; attempts:number[] };
-async function read():Promise<State>{try{return JSON.parse(await readFile(path.join(dataDirectory(),'store.json'),'utf8'));}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;return {content:defaultContent,published:defaultContent,revision:0,enquiries:[],sessions:{},attempts:[]};}}
+const initialState=():State=>({content:structuredClone(defaultContent),published:structuredClone(defaultContent),revision:0,enquiries:[],sessions:{},attempts:[]});
+async function read():Promise<State>{if(remoteMode())return remoteRead(initialState);try{return JSON.parse(await readFile(path.join(dataDirectory(),'store.json'),'utf8'));}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;return initialState();}}
 // An exclusive filesystem lock also serializes multiple Node workers on the same volume.
 export async function transaction<T>(fn:(state:State)=>T|Promise<T>):Promise<T>{
+ if(remoteMode())return remoteTransaction(initialState,fn);
+ if(process.env.VERCEL)throw new Error('Select CMS_BACKEND=json and connect persistent JSON storage before editing on Vercel.');
  await mkdir(dataDirectory(),{recursive:true});const lock=path.join(dataDirectory(),'write.lock');let locked=false;
  for(let i=0;i<100;i++){try{await mkdir(lock);locked=true;break;}catch(e){if((e as NodeJS.ErrnoException).code!=='EEXIST')throw e;await new Promise(r=>setTimeout(r,50));}}
  if(!locked)throw new Error('Content store busy. Try again.');
@@ -17,7 +21,7 @@ export async function transaction<T>(fn:(state:State)=>T|Promise<T>):Promise<T>{
 }
 export async function localContent(published=false){const state=await read();const content=published?state.published:state.content;const expanded={...content};if(!content.teamMembers)expanded.teamMembers=defaultContent.teamMembers!.map((person,i)=>({...person,name:content.copy['team.people.'+i+'.name']??person.name,role:content.copy['team.people.'+i+'.role']??person.role,bio:content.copy['team.people.'+i+'.bio']??person.bio,image:content.media['team.people.'+i+'.image']??person.image}));if(!content.industryEntries)expanded.industryEntries=defaultContent.industryEntries!.map((item,i)=>Object.fromEntries(Object.entries(item).map(([key,value])=>[key,key==='image'?(content.media['industries.sectors.'+i+'.image']??value):(content.copy['industries.sectors.'+i+'.'+key]??value)])) as typeof item);return {content:{...defaultContent,...expanded,copy:{...defaultContent.copy,...content.copy},media:{...defaultContent.media,...content.media}},revision:state.revision};}
 const digest=(token:string)=>createHash('sha256').update(token).digest('hex');
-export const localConfigured=()=>!!process.env.CMS_ADMIN_USERNAME&&!!process.env.CMS_ADMIN_PASSWORD_HASH;
+export const localConfigured=()=>!!process.env.CMS_ADMIN_USERNAME&&!!process.env.CMS_ADMIN_PASSWORD_HASH&&(remoteMode()?remoteConfigured():!process.env.VERCEL);
 export async function localLogin(username:string,password:string){
  const allowed=await transaction(s=>{s.attempts=s.attempts.filter(t=>t>Date.now()-60000);if(s.attempts.length>=10)return false;s.attempts.push(Date.now());return true;});
  if(!allowed)throw new Error('Too many sign-in attempts. Wait one minute.');
@@ -30,6 +34,8 @@ export async function localLogin(username:string,password:string){
 export async function localSession(token:string){const s=await read();return (s.sessions[digest(token)]||0)>Date.now();}
 export async function localLogout(token:string){await transaction(s=>{delete s.sessions[digest(token)];});}
 export async function saveLocal(content:SiteContent,revision:number,publish:boolean){return transaction(s=>{if(s.revision!==revision)throw new Error('Revision conflict: reload the saved draft before saving.');s.content=content;if(publish)s.published=content;return ++s.revision;});}
-export async function uploadLocal(name:string,bytes:Uint8Array){await mkdir(path.join(dataDirectory(),'media'),{recursive:true});await writeFile(path.join(dataDirectory(),'media',name),bytes);return '/api/media/'+name;}
-export async function listMedia(){try{return (await readdir(path.join(dataDirectory(),'media'))).filter(n=>/^[a-f0-9-]+\.(png|jpg|webp|avif)$/.test(n)).map(name=>({name,url:'/api/media/'+name}));}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return [];throw e;}}
-export async function deleteMedia(url:string){if(!/^\/api\/media\/[a-f0-9-]+\.(png|jpg|webp|avif)$/.test(url))throw new Error('Invalid media URL');await transaction(async s=>{if(JSON.stringify([s.content,s.published]).includes(url))throw new Error('This image is used in saved content. Replace it and publish before deleting.');await unlink(path.join(dataDirectory(),'media',path.basename(url)));});}
+export async function uploadLocal(name:string,bytes:Uint8Array){if(remoteMode())return remoteUpload(name,bytes);await mkdir(path.join(dataDirectory(),'media'),{recursive:true});await writeFile(path.join(dataDirectory(),'media',name),bytes);return '/api/media/'+name;}
+export async function listMedia(){if(remoteMode())return remoteList();try{return (await readdir(path.join(dataDirectory(),'media'))).filter(n=>/^[a-f0-9-]+\.(png|jpg|webp|avif)$/.test(n)).map(name=>({name,url:'/api/media/'+name}));}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return [];throw e;}}
+export async function deleteMedia(url:string){if(!/^\/api\/media\/[a-f0-9-]+\.(png|jpg|webp|avif)$/.test(url))throw new Error('Invalid media URL');if(remoteMode())return remoteDelete(url);await transaction(async s=>{if(JSON.stringify([s.content,s.published]).includes(url))throw new Error('This image is used in saved content. Replace it and publish before deleting.');await unlink(path.join(dataDirectory(),'media',path.basename(url)));});}
+
+export async function readMedia(name:string){return remoteMode()?remoteMedia(name):readFile(path.join(dataDirectory(),'media',name));}

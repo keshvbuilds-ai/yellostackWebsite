@@ -1,3 +1,39 @@
+## Vercel without Supabase: persistent JSON CMS
+
+The Node.js CMS now supports `CMS_BACKEND=json`. It stores its JSON state and uploaded image bytes in Upstash Redis over server-side REST. This retains the existing username/password login and visual editor. It requires a persistent Upstash database; no Supabase or SQL migration is needed. Do not use a temporary expiring test database for production.
+
+1. Create/connect an Upstash Redis database to your Vercel project. Use a non-evicting configuration so CMS records cannot be evicted under memory pressure. Check the provider storage and request limits for your image volume; images are base64 encoded, using about one third more storage than the original file.
+2. In Vercel Production environment variables set:
+   - `CMS_BACKEND=json`
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN` (read/write token, server-only)
+   - `CMS_ADMIN_USERNAME`
+   - `CMS_ADMIN_PASSWORD_HASH` (copy the salted hash value from your ignored local `.env.local`; never commit it or use the plain password)
+   - Optional `CMS_STORAGE_PREFIX=yellostack:cms:production`
+3. Redeploy. Open `/api/cms/status`: it should report `configured: true` and `backend: json`. This confirms settings exist; sign in to verify connectivity.
+4. Open `/admin` and use the existing administrator username/password. An empty store starts with bundled content. Save a draft, publish, reload and verify the public page. Upload a test image and verify it survives a redeploy.
+5. To move other local content, export a backup from the local CMS and import it in the deployed editor. Local `/api/media/` files are not in that backup: re-upload them and replace their references before publishing. The bundled Work snapshot already includes its exported image.
+
+Use a separate database or prefix for Preview deployments to keep test edits away from production. Content revisions and atomic compare-and-set protect competing saves. Login sessions and throttling are shared across serverless instances. Storage outages return errors instead of silently writing to temporary disk. Keep content backups and arrange provider backups for images and state.
+
+The code is ready for this mode, but configuring credentials and connecting the external database are required before the live CMS can operate.
+
+## Current setup: Node.js CMS
+
+The default backend is the existing Node.js filesystem CMS. Supabase is optional and is only selected when `CMS_BACKEND=supabase` is explicitly set.
+
+Use `npm run dev` locally and open `/admin` with your configured administrator account. If no account exists, run `node scripts/setup-admin.mjs` and restart. Existing content, media, drafts, and credentials are preserved.
+
+For now, Vercel serves the public website with bundled content. Its ephemeral filesystem cannot run this CMS reliably for login sessions and saved changes. Continue editing on the local Node.js server until persistent hosting or a hosted backend is configured. Do not set `CMS_DATA_DIR=/tmp` as a persistence workaround.
+
+## Work journey on Vercel
+
+The Work journey needs at least one published Work project. Git does not include `.cms-data`, so a GitHub import does not transfer local CMS records or `/api/media` uploads.
+
+Run `node scripts/export-published-work.mjs` while the local site is running to export **only published Work projects** and their local uploaded images. Commit `src/content/published-work.json`, `public/work-published/`, and the code changes, then redeploy. The bundled snapshot is used when no CMS data exists; a configured CMS collection (including an intentionally empty collection) takes precedence. Re-run the export after publishing local project changes if deploying without a hosted CMS.
+
+For live CMS editing on Vercel, configure `CMS_BACKEND=supabase`, `SUPABASE_URL`, and `SUPABASE_ANON_KEY`, and follow the Supabase setup below. The local filesystem CMS cannot persist edits on Vercel. Never commit `.cms-data` or `.env.local`.
+
 ## Collections and animation editing
 
 The editor now fits the viewport without an outer scrollbar. **Full screen** maximizes the website canvas. While in Click to edit, pointer gestures no longer reach the 3D scenes; industry image panels are expanded for reliable selection. **Edit section text & images** exposes the ordered fields for hidden animation stages, including the homepage stack, AI and medical sections. Browse restores normal interactions.

@@ -1,3 +1,4 @@
+import { localMode, localConfigured, localLogin, localLogout, localContent, saveLocal, uploadLocal, listMedia, deleteMedia, transaction } from '@/lib/cms/local-store';
 import { upgradeFeedback } from '@/lib/cms/feedback-upgrade';
 import { cookies } from 'next/headers';
 import { cmsConfig, getSiteContent, requireEditor, sessionCookie, supabase } from '@/lib/cms/server';
@@ -16,17 +17,20 @@ async function readBody(request: Request) {
 export async function GET(_request:Request, {params}:Context) {
   const {action}=await params;
   if(action==='public') return json(await getSiteContent());
-  if(action==='status') return json({configured:!!cmsConfig()});
+  if(action==='status') return json({configured:localMode()?localConfigured():!!cmsConfig()});
   try {
     const editor=await requireEditor();
     if(action==='session') return json({email:editor.email});
+    if(action==='media'&&localMode())return json({rows:await listMedia()});
     if(action==='enquiries') {
+      if(localMode())return json({rows:await transaction(s=>s.enquiries.slice().reverse().slice(Number(new URL(_request.url).searchParams.get('offset'))||0,(Number(new URL(_request.url).searchParams.get('offset'))||0)+50))});
       const offset=Math.min(100000,Math.max(0,Number(new URL(_request.url).searchParams.get('offset'))||0));
       const response=await supabase('/rest/v1/enquiries?select=id,kind,email,name,message,mode,offer_code,created_at&order=created_at.desc&limit=50&offset='+Math.floor(offset),{},editor.token);
       if(!response.ok)throw new Error('Inbox unavailable. Run migration 002_enquiries.sql.');
       return json({rows:await response.json()});
     }
     if(action==='content') {
+      if(localMode())return json(await localContent());
       const response=await supabase('/rest/v1/cms_drafts?id=eq.site&select=content,revision',{},editor.token);
       if(!response.ok)throw new Error('Cannot read CMS draft. Check the database migration and editor membership.');
       const rows=await response.json();
@@ -44,6 +48,7 @@ export async function POST(request:Request,{params}:Context) {
     if(action==='login') {
       const body=await readBody(request);
       if(typeof body.email!=='string'||typeof body.password!=='string'||body.email.length>254||body.password.length>1024)throw new Error('Invalid credentials');
+      if(localMode()){const token=await localLogin(body.email,body.password);(await cookies()).set(sessionCookie,token,{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict',path:'/api/cms',maxAge:3600});return json({ok:true});}
       const response=await supabase('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:body.email,password:body.password})});
       if(!response.ok)return json({error:'Sign-in failed. Check your credentials or try again later.'},401);
       const session=await response.json();
@@ -54,13 +59,17 @@ export async function POST(request:Request,{params}:Context) {
     }
     if(action==='logout') {
       const jar=await cookies();const token=jar.get(sessionCookie)?.value;
-      if(token)await supabase('/auth/v1/logout',{method:'POST'},token).catch(()=>null);
+      if(token&&localMode())await localLogout(token);
+      if(token&&!localMode())await supabase('/auth/v1/logout',{method:'POST'},token).catch(()=>null);
       jar.set(sessionCookie,'',{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict',path:'/api/cms',maxAge:0});return json({ok:true});
     }
     const {token}=await requireEditor();
+    if(action==='delete-media'&&localMode()){await deleteMedia((await readBody(request)).url);return json({ok:true});}
+    if(action==='delete-enquiry'&&localMode()){const body=await readBody(request);await transaction(s=>{s.enquiries=s.enquiries.filter(row=>row.id!==body.id);});return json({ok:true});}
     if(action==='save'||action==='publish') {
       const body=await readBody(request);validateContent(body.content);
       if(!Number.isInteger(body.revision)||body.revision<0)throw new Error('Invalid revision');
+      if(localMode())return json({revision:await saveLocal(body.content,body.revision,action==='publish'),published:action==='publish'});
       const response=await supabase('/rest/v1/rpc/cms_save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({payload:body.content,expected_revision:body.revision,publish_now:action==='publish'})},token);
       if(!response.ok){const err=await response.json();throw new Error(err.message?.includes('conflict')?'Revision conflict: another editor saved changes. Export your changes before reloading.':'Save failed. Check database policies and configuration.');}
       return json({revision:await response.json(),published:action==='publish'});
@@ -75,6 +84,7 @@ export async function POST(request:Request,{params}:Context) {
       const valid=file.type==='image/png'?bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71:file.type==='image/jpeg'?bytes[0]===255&&bytes[1]===216&&bytes[2]===255:file.type==='image/webp'?new TextDecoder().decode(bytes.slice(0,4))==='RIFF'&&new TextDecoder().decode(bytes.slice(8,12))==='WEBP':new TextDecoder().decode(bytes.slice(4,12))==='ftypavif';
       if(!valid)throw new Error('File contents do not match the image type');
       const path=`${crypto.randomUUID()}.${extensions[file.type]}`;
+      if(localMode())return json({url:await uploadLocal(path,bytes)});
       const response=await supabase(`/storage/v1/object/site-media/${path}`,{method:'POST',headers:{'Content-Type':file.type},body:bytes},token);
       if(!response.ok)throw new Error('Upload failed. Check the storage bucket and policies.');
       return json({url:`${cmsConfig()!.url}/storage/v1/object/public/site-media/${path}`});

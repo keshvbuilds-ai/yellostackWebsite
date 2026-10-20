@@ -1,3 +1,4 @@
+import { localMode, localSession, localContent } from './local-store';
 import { upgradeFeedback } from './feedback-upgrade';
 import 'server-only';
 import { cookies } from 'next/headers';
@@ -23,6 +24,7 @@ export async function supabase(path: string, init: RequestInit = {}, token?: str
 export async function requireEditor() {
   const token = (await cookies()).get(sessionCookie)?.value;
   if (!token) throw new Error('Unauthorized');
+  if(localMode()){if(!await localSession(token))throw new Error('Unauthorized');return {token,email:process.env.CMS_ADMIN_USERNAME!};}
   const userResponse = await supabase('/auth/v1/user', {}, token);
   if (!userResponse.ok) throw new Error('Unauthorized');
   const user = await userResponse.json();
@@ -31,6 +33,7 @@ export async function requireEditor() {
   return { token, email: user.email as string };
 }
 export const getSiteContent = cache(async (): Promise<SiteContent> => {
+  if(localMode())return (await localContent(true)).content;
   if (!cmsConfig()) return defaultContent;
   try {
     const response = await supabase('/rest/v1/cms_public?id=eq.site&select=content');

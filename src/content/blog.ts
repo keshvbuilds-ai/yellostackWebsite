@@ -1,6 +1,6 @@
 export type BlogPost = {
   slug: string; title: string; date: string; category: string;
-  summary: string; paragraphs: string[]; source: string; coverImage?: string;
+  summary: string; paragraphs: string[]; source: string; coverImage?: string; galleryImages?: {image:string;imageAlt:string}[];
 };
 
 // Original titles, dates and paths are retained from the published archive.

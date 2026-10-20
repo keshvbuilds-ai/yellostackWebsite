@@ -1,0 +1,9 @@
+﻿'use client';
+import {useContent,CmsImage} from './ContentProvider';
+import './collections.css';
+export default function PublishedCollections({kind}:{kind:'products'|'work'}){
+ const content=useContent();const rows=kind==='products'?content.products??[]:content.workProjects??[];
+ const groups=kind==='products'?['products']:[...new Set((content.workProjects??[]).map(p=>p.service))];
+ if(!rows.length)return null;
+ return <section className={`published-collections ${kind==='work'?'published-work':''}`} data-no-gradient><header><p>YELLOSTACK / {kind==='products'?'OUR PRODUCTS':'SELECTED WORK'}</p><h2>{kind==='products'?'Built for your next chapter.':'Ideas, brought to life.'}</h2></header>{groups.map(group=><div className="collection-group" key={group}>{kind==='work'&&<h3>{content.pages.find(p=>p.slug===group)?.title||group.replaceAll('-',' ')}</h3>}<div className="collection-grid">{rows.map((item,i)=>{if(kind==='work'&&'service' in item&&item.service!==group)return null;const base=kind==='products'?'products':'workProjects';return <article key={item.id}>{item.image&&<div className="collection-image"><CmsImage cmsPath={[base,String(i),'image']} src={item.image} alt={item.title} width={900} height={650}/></div>}<div className="collection-copy"><span className="collection-number">{String(i+1).padStart(2,'0')}</span><h4 data-cms-path={JSON.stringify([base,String(i),'title'])}>{item.title}</h4><p data-cms-path={JSON.stringify([base,String(i),'description'])}>{item.description}</p>{'features' in item&&<ul>{item.features.map((feature,j)=><li key={j} data-cms-path={JSON.stringify([base,String(i),'features',String(j)])}>{feature}</li>)}</ul>}{item.url&&<a href={item.url} target="_blank" rel="noopener noreferrer">{kind==='products'?'Explore product':'View project'} <span aria-hidden="true">↗</span></a>}</div></article>;})}</div></div>)}</section>;
+}

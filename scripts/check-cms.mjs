@@ -6,12 +6,13 @@ import ts from 'typescript';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const out=path.join(root,'.cms-check');
 await fs.mkdir(out,{recursive:true});
-const files={upgrade:'src/lib/cms/feedback-upgrade.ts',pose:'src/components/3d/layerStoryPose.ts',catalogue:'src/content/catalogue.ts',banners:'src/content/service-banners.ts',media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
+const files={industries:'src/content/industries.ts',upgrade:'src/lib/cms/feedback-upgrade.ts',pose:'src/components/3d/layerStoryPose.ts',catalogue:'src/content/catalogue.ts',banners:'src/content/service-banners.ts',media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
 for(const [name,file] of Object.entries(files)){
   let source=await fs.readFile(path.join(root,file),'utf8');
   source=source.replace("'@/content/yellostack'","'./yellostack.mjs'").replace("'@/content/inner-pages'","'./pages.mjs'").replace("'@/content/blog'","'./blog.mjs'").replace("'./defaults'","'./defaults.mjs'");
   if(name==='upgrade')source=source.replace("import changes from '@/content/feedback-copy-migration.json';",'const changes = '+await fs.readFile(path.join(root,'src/content/feedback-copy-migration.json'),'utf8')+';');
   if(name==='defaults')source=source.replace("import copy from '@/content/cms-copy.json';",`const copy = ${await fs.readFile(path.join(root,'src/content/cms-copy.json'),'utf8')};`);
+  source=source.replace("'@/content/industries'","'./industries.mjs'");
   source=source.replace("'@/content/media'","'./media.mjs'").replace("'@/content/service-banners'","'./banners.mjs'");
   source=source.replace("import arabic from '@/content/arabic.json';",'const arabic = '+await fs.readFile(path.join(root,'src/content/arabic.json'),'utf8')+';');
   const output=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText;
@@ -86,3 +87,18 @@ for(const [progress,index] of [[.12,2],[.37,1],[.62,0]]){
  assert.equal(poses.filter(pose=>pose.emphasis===1).length,1);
 }
 console.log('Feedback checks passed: legacy migration, custom-copy preservation, recent-client validation, catalogue routes and bottom-to-top stack order.');
+
+const collections=structuredClone(defaultContent);
+collections.products.push({id:'product-test',title:'Test product',description:'Details',image:'/test.png',features:['Feature one'],url:''});
+collections.workProjects.push({id:'work-test',title:'Test work',description:'Details',image:'/test.png',service:'website-design-company',url:'https://example.com'});
+validateContent(collections);
+collections.workProjects[0].url='javascript:alert(1)';assert.throws(()=>validateContent(collections));
+collections.workProjects[0].url='';collections.products.push(collections.products[0]);assert.throws(()=>validateContent(collections));
+console.log('Collection checks passed: products, project links, duplicate IDs and URL safety.');
+const gallery=structuredClone(defaultContent);
+gallery.posts[0].galleryImages=[{image:'/banners/web.svg',imageAlt:'Project screens'}];
+validateContent(gallery);
+gallery.posts[0].galleryImages[0].image='javascript:alert(1)';assert.throws(()=>validateContent(gallery));
+gallery.posts[0].galleryImages=Array.from({length:13},()=>({image:'/banners/web.svg',imageAlt:''}));assert.throws(()=>validateContent(gallery));
+delete gallery.posts[0].galleryImages;validateContent(gallery);
+console.log('Blog gallery checks passed: optional legacy field, valid images, unsafe URLs and gallery limit.');

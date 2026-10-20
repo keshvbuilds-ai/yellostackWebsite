@@ -3,7 +3,15 @@ import type { InnerPage } from '@/content/inner-pages';
 import type { BlogPost } from '@/content/blog';
 export type Role = { id: string; title: string; location: string; type: string; description: string; applyEmail: string; open: boolean };
 export type ClientLogo = { id: string; name: string; image: string; url: string; sector?: string; recent?: boolean; projectSummary?: string };
+export type TeamMember={id:string;name:string;role:string;bio:string;image:string;demo:boolean};
+export type Product={id:string;title:string;description:string;image:string;features:string[];url:string};
+export type WorkProject={id:string;title:string;description:string;image:string;service:string;url:string};
+export type IndustryEntry={id:string;title:string;category:string;headline:string;body:string;use1:string;use2:string;use3:string;service:string;solution:string;image:string};
 export type SiteContent = {
+  teamMembers?:TeamMember[];
+  products?:Product[];
+  workProjects?:WorkProject[];
+  industryEntries?:IndustryEntry[];
   site: typeof yellostackData;
   pages: InnerPage[];
   posts: BlogPost[];

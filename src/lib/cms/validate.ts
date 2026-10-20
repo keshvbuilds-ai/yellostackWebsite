@@ -32,6 +32,8 @@ export function validateContent(value: unknown): asserts value is SiteContent {
     clients: {id:'',name:'',image:'',url:''},
   };
   for (const [key, sample] of Object.entries(templates)) shape(value[key],[sample],key);
+  const additional={teamMembers:{id:'',name:'',role:'',bio:'',image:'',demo:false},products:{id:'',title:'',description:'',image:'',features:[''],url:''},workProjects:{id:'',title:'',description:'',image:'',service:'',url:''},industryEntries:{id:'',title:'',category:'',headline:'',body:'',use1:'',use2:'',use3:'',service:'',solution:'',image:''}};
+  for(const [key,sample] of Object.entries(additional))if(value[key]!==undefined){shape(value[key],[sample],key);const rows=value[key] as Record<string,unknown>[];if(new Set(rows.map(row=>row.id)).size!==rows.length)throw new Error('Use unique item IDs');for(const row of rows){if(key==='workProjects'&&!row.service)throw new Error('Choose a service category for each work project');if(typeof row.image!=='string'||!safeUrl(row.image,true))throw new Error('Invalid image URL');if(row.url!==undefined&&(typeof row.url!=='string'||!safeUrl(row.url)))throw new Error('Invalid destination URL');if(typeof row.service==='string'&&row.service&&!/^[a-z0-9-]+$/.test(row.service))throw new Error('Choose a valid service');}}
   const content = value as unknown as SiteContent;
   for(const list of [content.pages, content.posts]) {
     const slugs = new Set<string>();
@@ -47,7 +49,7 @@ export function validateContent(value: unknown): asserts value is SiteContent {
     if(page.group!==undefined && typeof page.group!=='string') throw new Error('Invalid service group');
     page.sections.forEach(section=>{if(section.items!==undefined)shape(section.items,[''],'section.items');if(section.image!==undefined&&(typeof section.image!=='string'||!safeUrl(section.image,true)))throw new Error('Invalid section image');if(section.imageAlt!==undefined&&typeof section.imageAlt!=='string')throw new Error('Invalid image description');});
   }
-  for(const post of content.posts) {if(!/^\d{4}-\d{2}-\d{2}$/.test(post.date)||!Number.isFinite(Date.parse(post.date)))throw new Error('Use valid YYYY-MM-DD dates');if(post.coverImage!==undefined&&(typeof post.coverImage!=='string'||!safeUrl(post.coverImage,true)))throw new Error('Invalid cover image');}
+  for(const post of content.posts) {if(!/^\d{4}-\d{2}-\d{2}$/.test(post.date)||!Number.isFinite(Date.parse(post.date)))throw new Error('Use valid YYYY-MM-DD dates');if(post.coverImage!==undefined&&(typeof post.coverImage!=='string'||!safeUrl(post.coverImage,true)))throw new Error('Invalid cover image');if(post.galleryImages!==undefined){shape(post.galleryImages,[{image:'',imageAlt:''}],'galleryImages');if(post.galleryImages.length>12)throw new Error('Use at most 12 gallery images');for(const image of post.galleryImages)if(!safeUrl(image.image,true))throw new Error('Invalid gallery image');}if(post.galleryImages!==undefined){shape(post.galleryImages,[{image:'',imageAlt:''}],'galleryImages');if(post.galleryImages.length>12)throw new Error('Use at most 12 gallery images');for(const image of post.galleryImages)if(!safeUrl(image.image,true))throw new Error('Invalid gallery image');}}
   for(const client of content.clients) {
     if(!safeUrl(client.image,true)||!client.image||!safeUrl(client.url))throw new Error('Invalid client logo or link');
     if(client.sector!==undefined && !['','Enterprise','Healthcare','Oil & Gas','Transport','Retail','Government'].includes(client.sector))throw new Error('Choose a valid client sector');

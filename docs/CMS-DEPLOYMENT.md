@@ -1,3 +1,75 @@
+## Collections and animation editing
+
+The editor now fits the viewport without an outer scrollbar. **Full screen** maximizes the website canvas. While in Click to edit, pointer gestures no longer reach the 3D scenes; industry image panels are expanded for reliable selection. **Edit section text & images** exposes the ordered fields for hidden animation stages, including the homepage stack, AI and medical sections. Browse restores normal interactions.
+
+Direct manager buttons provide CRUD for Team members, Open roles, Blog articles, Client logos, Products, Industries and Work projects. Each item has its own image uploader. Existing team and industry overrides are retained when older local content is migrated.
+
+- Products: image, title, description, feature list and optional destination link. Published items appear in the Products showcase.
+- Work projects: image, title, description, service category and optional link. Published cards are grouped under service titles in Work. No link means no redirect button.
+- Industries: add/remove industries, edit their image, category, introduction, use cases and linked service.
+- Team members: add/remove/reorder profiles with name, role, bio and portrait. The public slider follows that order.
+- Blogs: each article has a dedicated `/blog/{slug}` page with its image and paragraphs.
+- Careers: open/close or delete jobs. Clients: manage logo, sector, link and recent-client information.
+
+Save draft keeps changes private; Publish updates the public collections. Back up the full data directory before production migrations.
+
+---
+
+## Visual editing (default)
+
+Open `/admin`, sign in, and choose a page. The actual website fills the editor.
+
+- Scroll to the content and click highlighted text or an image. A small side panel opens for that item only.
+- Typing or replacing an image updates this private website preview immediately. It does not publish automatically.
+- **Done editing** closes the side panel. **Save draft** preserves your work privately. **Publish** updates the public site.
+- Switch to **Browse** to use the website navigation and interactive sections. Switch back to **Click to edit** to make changes. External links and form submissions are disabled inside the preview.
+- Use **Mobile view** to check the narrow layout.
+- **Content lists & settings** contains blog/career creation, deletion, backups, media library and inbox tools.
+
+The preview runs the actual page and its animations. Editable text and images are highlighted on hover; WebGL geometry and other custom layout code are not editable by clicking. The visual preview uses English; Arabic translations remain in the content fields.
+
+---
+
+## Editing by website page
+
+The default admin view is now **Edit website by page**:
+
+1. Choose Home, About us, Our team, a service page, Work, Industries, Blog or Careers.
+2. Choose a numbered section in the left sidebar. Sections follow the public page from top to bottom.
+3. Edit the visible text or use **Upload / replace image** beside its preview. The upload is assigned directly to that field. Capability, industry and team images can be replaced independently.
+4. Save draft to keep changes private, or Publish to make them public.
+5. Use **Show live website** for a desktop/mobile published-page preview. It refreshes after publishing; it does not display unsaved drafts. Other open website tabs in the same browser refresh their content on publication.
+
+The GM message follows Three perspectives on About us. Shared footer/contact fields are available at the end of every page. Blog and career entries support adding/removing items. Advanced tools retain the full field editor, backups, media library and enquiry inbox.
+
+---
+
+# Node.js admin backend (default)
+
+Open `/admin` and use your configured username and password. The requested account is configured locally in ignored `.env.local`, using a salted scrypt password hash.
+
+## Deployment
+
+- On a new machine run `node scripts/setup-admin.mjs` to create the admin account, then restart the server. Environment variables CMS_SETUP_USERNAME and CMS_SETUP_PASSWORD can supply setup credentials through a secret manager.
+- Run `npm run build` and `npm start` on a persistent Node.js server behind HTTPS.
+- Set `CMS_DATA_DIR` to a durable writable directory outside the web root (default `.cms-data`). Preserve it across deployments. Local mode is not suitable for Vercel or other ephemeral/serverless filesystems.
+- Back up the entire data directory securely, including media, plus your environment configuration. The admin JSON export only backs up content, not images.
+- Writes use atomic replacement and an exclusive filesystem lock. If a process is forcibly terminated during a write, stop all app processes and remove the stale `write.lock` directory inside CMS_DATA_DIR before restarting. Multiple workers must share a filesystem supporting exclusive directory creation and atomic rename.
+
+## Admin workflow
+
+Manage homepage data, existing English/Arabic headings, images, inner pages, blog articles, careers and client logos in the editor. Arrays support add, edit, remove and reorder. Close a role to stop advertising it. Upload images and copy their URLs from the image library into the corresponding image fields. Unused uploaded images can be deleted; images referenced by saved or published content are protected. Read and delete contact enquiries from the inbox.
+
+Save draft keeps changes private. Publish updates the public website. Revision checks protect against overwriting a newer draft. Export a backup before importing replacement content. Sessions expire after one hour and logout revokes them. Login is limited to ten attempts per minute.
+
+Animation geometry and custom layouts remain code-controlled. Registered copy/media fields and structured content are editable; newly created generic pages do not automatically add navigation items.
+
+## Optional Supabase backend
+
+Set `CMS_BACKEND=supabase` to use the previous hosted backend and its email login. Local media deletion/library and enquiry deletion controls require the Node backend. The previous deployment guide follows for this optional mode.
+
+---
+
 # Deploy Yellostack with its content studio
 
 The website and `/admin` deploy together on Vercel. Persistent data, login and images live in Supabase. A GitHub import cannot automatically create that external project or an admin account. No paid purchase or external provisioning has been performed by this implementation.

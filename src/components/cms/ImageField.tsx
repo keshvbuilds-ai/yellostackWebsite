@@ -1,0 +1,6 @@
+'use client';
+import {useState} from 'react';
+export default function ImageField({value,label,onChange}:{value:string;label:string;onChange:(value:string)=>void}){
+ const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ return <div className="cms-image-field"><span>{label}</span>{value&&<img src={value} alt={label} loading="lazy"/>}<label className="cms-image-upload">{busy?'Uploading…':'Upload / replace image'}<input type="file" disabled={busy} accept="image/png,image/jpeg,image/webp,image/avif" onChange={async e=>{const file=e.target.files?.[0];if(!file)return;setBusy(true);setMessage('');try{const form=new FormData();form.append('file',file);const response=await fetch('/api/cms/upload',{method:'POST',body:form});const data=await response.json();if(!response.ok)throw new Error(data.error);onChange(data.url);setMessage('Image added to this section. Save or publish your changes.');}catch(error){setMessage((error as Error).message);}finally{setBusy(false);e.target.value='';}}}/></label><details><summary>Image URL / existing media</summary><input aria-label={label+' URL'} value={value} onChange={e=>onChange(e.target.value)} placeholder="Paste an image URL"/></details>{message&&<p role="status">{message}</p>}</div>;
+}

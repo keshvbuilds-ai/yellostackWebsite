@@ -5,13 +5,14 @@ import { CmsText } from "@/components/cms/ContentProvider";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useSiteData } from "@/components/cms/ContentProvider";
+import { useSiteData, useContent } from "@/components/cms/ContentProvider";
 import DecryptedText from "./animations/DecryptedText";
 
 gsap.registerPlugin(ScrollTrigger);
 const capabilityImages:Record<string, {src:string;alt:string}>={ai:stockMedia.engineering,'medical-coding':stockMedia.healthcare,applications:stockMedia.engineering,software:stockMedia.collaboration,web:stockMedia.design,branding:stockMedia.design,marketing:stockMedia.analytics,cloud:stockMedia.cloud};
 export default function Services() {
   const yellostackData = useSiteData();
+  const content=useContent();
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function Services() {
         <p className="services-index-note"><CmsText id="Services.text.5" fallback="STRATEGY. DESIGN. DEVELOPMENT."/></p>
       </nav>
       <div className="services-stories">{yellostackData.capabilities.map((service) => <article key={service.id} id={`story-${service.id}`} className="service-story" aria-labelledby={`story-title-${service.id}`}>
-        <figure className="capability-photo"><CmsImage src={(capabilityImages[service.id]||stockMedia.collaboration).src} alt={(capabilityImages[service.id]||stockMedia.collaboration).alt} fill sizes="(max-width: 800px) 88vw, 48vw"/><figcaption>{service.label}</figcaption></figure>
+        <figure className="capability-photo"><CmsImage cmsKey={'capability.'+service.id} src={content.media['capability.'+service.id]||(capabilityImages[service.id]||stockMedia.collaboration).src} alt={(capabilityImages[service.id]||stockMedia.collaboration).alt} fill sizes="(max-width: 800px) 88vw, 48vw"/><figcaption>{service.label}</figcaption></figure>
         <div className="story-copy" data-site-reveal><h3 id={`story-title-${service.id}`}>{service.title}</h3><p>{service.description}</p><ul>{service.items.map(item => <li key={item}>{item}</li>)}</ul><a href="#contact"><DecryptedText text="LET’S BUILD YOUR NEXT CHAPTER"/><span aria-hidden="true">↗</span></a></div>
       </article>)}</div>
     </div>

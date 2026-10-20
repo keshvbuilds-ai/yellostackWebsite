@@ -6,6 +6,7 @@ import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {CmsImage,CmsText,LocalText,useContent,useVisualEditing} from '../cms/ContentProvider';
 import {journeyPlan,phase,smooth} from './journey-motion';
 import './work-journey.css';
+import publishedWork from '@/content/published-work.json';
 gsap.registerPlugin(ScrollTrigger);
 type DepthFrame={depth:number;visibility:number;finale?:number};
 const show=(element:HTMLElement,opacity:number)=>{element.style.opacity=String(opacity);element.style.visibility=opacity>.001?'visible':'hidden';};
@@ -16,7 +17,8 @@ export default function WorkJourney(){
  const root=useRef<HTMLElement>(null),stage=useRef<HTMLDivElement>(null),canvas=useRef<HTMLDivElement>(null);
  const depthFrame=useRef<DepthFrame>({depth:0,visibility:0});
  const draw=useRef<(frame:DepthFrame)=>void>(()=>{});
- const groups=useMemo(()=>Array.from(new Set((content.workProjects??[]).map(p=>p.service))).map(service=>({service,title:content.pages.find(p=>p.slug===service)?.title??service.replaceAll('-',' '),items:(content.workProjects??[]).map((project,index)=>({project,index})).filter(({project})=>project.service===service)})),[content.workProjects,content.pages]);
+ const projects=useMemo(()=>(content.workProjects?.length?content.workProjects:publishedWork).map(project=>({...project,url:project.url||(project.id===publishedWork[0]?.id?'https://qnc.sa':'')})),[content.workProjects]);
+ const groups=useMemo(()=>Array.from(new Set((projects).map(p=>p.service))).map(service=>({service,title:content.pages.find(p=>p.slug===service)?.title??service.replaceAll('-',' '),items:(projects).map((project,index)=>({project,index})).filter(({project})=>project.service===service)})),[projects,content.pages]);
  const plan=useMemo(()=>journeyPlan(groups.map(group=>group.items.length)),[groups]);
  useEffect(()=>{
   const sectionRef=root.current,viewportRef=stage.current;if(!sectionRef||!viewportRef||!groups.length||editing||listView)return;

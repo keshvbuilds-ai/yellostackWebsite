@@ -1,9 +1,9 @@
 'use client';
 import {ArrowUp,ArrowDown} from 'lucide-react';
 import {usePathname} from 'next/navigation';
-import {useTranslate} from './cms/ContentProvider';
+import {useContent,useTranslate} from './cms/ContentProvider';
 import './page-jump-controls.css';
-export default function PageJumpControls(){const pathname=usePathname();const t=useTranslate();if(pathname.startsWith('/admin'))return null;
+export default function PageJumpControls(){const pathname=usePathname();const t=useTranslate();const content=useContent();const number=(content.site.contact.whatsappNumber??'+966 53 041 5576').replace(/\D/g,'');if(pathname.startsWith('/admin'))return null;
  function jump(target:'top'|'footer'){const footer=document.querySelector('.business-footer');const y=target==='top'?0:Math.max(0,(footer?.getBoundingClientRect().top??0)+window.scrollY-110);const event=new CustomEvent('ys:page-jump',{detail:{y},cancelable:true});if(window.dispatchEvent(event))window.scrollTo({top:y,behavior:'instant'});}
- return <div className="ys-page-jumps" role="group" aria-label={t('Page navigation')}><button onClick={()=>jump('top')} aria-label={t('Go to page banner')} title={t('Go to page banner')}><ArrowUp size={19}/></button><span/><button onClick={()=>jump('footer')} aria-label={t('Go to footer')} title={t('Go to footer')}><ArrowDown size={19}/></button></div>;
+ return <div className="ys-floating-actions"><div className="ys-page-jumps" role="group" aria-label={t('Page navigation')}><button onClick={()=>jump('top')} aria-label={t('Go to page banner')} title={t('Go to page banner')}><ArrowUp size={19}/></button><span/><button onClick={()=>jump('footer')} aria-label={t('Go to footer')} title={t('Go to footer')}><ArrowDown size={19}/></button></div>{/^[1-9]\d{6,14}$/.test(number)&&<a className="ys-whatsapp" href={`https://wa.me/${number}`} target="_blank" rel="noopener noreferrer" aria-label={t('Chat with us on WhatsApp')} title={t('Chat with us on WhatsApp')}><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.3 19.4L3 29l6.8-1.8A13 13 0 1 0 16 3Z"/><path fill="#173d25" d="M11 9c-.5-.2-1.1-.1-1.5.4-.8.8-1.2 1.8-1 3 .5 3.7 5.5 8.8 9.5 10 1.6.4 3.5-.2 4.3-1.6.3-.6.5-1.5.2-1.8l-3.2-1.5c-.4-.2-.6-.1-.9.3l-1.1 1.3c-.2.2-.5.2-.9 0-2.1-1-3.8-2.6-4.8-4.5-.2-.4-.1-.6.1-.9l.9-1.1c.2-.3.2-.6.1-.9Z"/></svg></a>}</div>;
 }

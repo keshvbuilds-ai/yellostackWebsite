@@ -17,7 +17,8 @@ export function safeUrl(url: string, image = false) {
 }
 export function validateContent(value: unknown): asserts value is SiteContent {
   if (!object(value)) throw new Error('Expected site content');
-  shape(value.site,defaultContent.site,'site');
+  const {whatsappNumber: _whatsappDefault,...legacyContact}=defaultContent.site.contact;
+  shape(value.site,{...defaultContent.site,contact:legacyContact},'site');
   for (const key of ['copy','media']) {
     if (!object(value[key])) throw new Error(`Missing ${key}`);
     for (const [id,text] of Object.entries(value[key])) {
@@ -59,6 +60,8 @@ export function validateContent(value: unknown): asserts value is SiteContent {
   }
   for(const role of content.roles) if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(role.applyEmail))throw new Error('Invalid role application email');
   if(!safeUrl(content.site.contact.telephoneHref))throw new Error('Invalid telephone link');
+  const whatsapp=content.site.contact.whatsappNumber;
+  if(whatsapp!==undefined&&whatsapp!==''&&(typeof whatsapp!=='string'||!/^\+?[\d ()-]+$/.test(whatsapp)||! /^[1-9]\d{6,14}$/.test(whatsapp.replace(/\D/g,''))))throw new Error('Enter a valid WhatsApp number including country code, or leave it blank');
   // These three stages are tied to the camera choreography.
   if(content.site.hero.words.length!==3)throw new Error('Hero journey requires exactly three words');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(content.site.contact.email))throw new Error('Invalid contact email');

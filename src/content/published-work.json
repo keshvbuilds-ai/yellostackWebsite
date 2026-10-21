@@ -6,5 +6,21 @@
     "image": "/work-published/921f07c1-c63a-4d65-9b05-844f50a3ca9c.jpg",
     "service": "website-design-company",
     "url": "https://qnc.sa"
+  },
+  {
+    "id": "amhbm-website",
+    "title": "AMHBM",
+    "description": "Supplying the Future of Industry",
+    "image": "/work-published/amhbm.svg",
+    "service": "website-design-company",
+    "url": "https://amhbm.com/"
+  },
+  {
+    "id": "grocery-delivery-concept",
+    "title": "Grocery delivery app - Concept",
+    "description": "An illustrative mobile app concept for browsing fresh groceries, building a basket and tracking delivery.",
+    "image": "/work-published/grocery-concept.svg",
+    "service": "mobile-application-development-company-saudi-arabia",
+    "url": ""
   }
 ]

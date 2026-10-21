@@ -14,7 +14,7 @@ const templates:Record<string,Value>={
   galleryImages:{image:'',imageAlt:''},
   pages:{slug:'new-page',title:'New page',eyebrow:'Yellostack',intro:'Page introduction.',kind:'company',source:'',sections:[{title:'Section heading',body:'Section content.',image:'',imageAlt:''}]},
 };
-function label(value:string){if(value==='url')return 'Destination link (optional, e.g. https://qnc.sa)';if(value==='demo')return 'Show placeholder profile label';return value.replace(/([a-z])([A-Z])/g,'$1 $2').replaceAll('_',' ');}
+function label(value:string){if(value==='whatsappNumber')return 'WhatsApp number (include country code; leave blank to hide)';if(value==='url')return 'Destination link (optional, e.g. https://qnc.sa)';if(value==='demo')return 'Show placeholder profile label';return value.replace(/([a-z])([A-Z])/g,'$1 $2').replaceAll('_',' ');}
 export function Field({value,path,onChange,onSave}:{value:Value;path:string;onChange:(value:Value)=>void;onSave?:()=>void}) {
   const site=useContent();
   const name=path.split('.').at(-1)!;

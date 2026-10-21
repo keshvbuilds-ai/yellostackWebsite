@@ -17,7 +17,8 @@ export default function WorkJourney(){
  const root=useRef<HTMLElement>(null),stage=useRef<HTMLDivElement>(null),canvas=useRef<HTMLDivElement>(null);
  const depthFrame=useRef<DepthFrame>({depth:0,visibility:0});
  const draw=useRef<(frame:DepthFrame)=>void>(()=>{});
- const projects=useMemo(()=>(content.workProjects??publishedWork).map(project=>({...project,url:project.url||(project.id===publishedWork[0]?.id?'https://qnc.sa':'')})),[content.workProjects]);
+ // Public portfolio is bundled so publishing does not require a CMS backend.
+ const projects=useMemo(()=>editing?(content.workProjects??publishedWork):publishedWork,[editing,content.workProjects]);
  const groups=useMemo(()=>Array.from(new Set((projects).map(p=>p.service))).map(service=>({service,title:content.pages.find(p=>p.slug===service)?.title??service.replaceAll('-',' '),items:(projects).map((project,index)=>({project,index})).filter(({project})=>project.service===service)})),[projects,content.pages]);
  const plan=useMemo(()=>journeyPlan(groups.map(group=>group.items.length)),[groups]);
  useEffect(()=>{
@@ -62,8 +63,6 @@ export default function WorkJourney(){
      element.style.transform=`translate3d(0,${y}px,${z}px)`;
      const settle=smooth(phase(t,score.ready+.5,score.ready+1.8));
      const heading=element.querySelector<HTMLElement>('.y-service-title')!;
-     heading.style.setProperty('--title-line-yellow',String(smooth(phase(t,score.enter+.35,score.ready+.25))));
-     heading.style.setProperty('--title-line-white',String(smooth(phase(t,score.enter+.65,score.ready+.5))));
      heading.style.transform=`translateY(${(1-settle)*height*.25}px) scale(${1.15-.15*settle})`;
      const window=element.querySelector<HTMLElement>('.y-project-window')!;show(window,settle);
      window.style.transform=`translateY(${(1-settle)*45}px)`;
@@ -111,7 +110,7 @@ export default function WorkJourney(){
    <div ref={canvas} className="y-canvas" aria-hidden="true"/>
    <div className="y-sheet-space"><div className="y-gold-sheet" aria-hidden="true"/><div className="y-services">{groups.map((group,gi)=><section className="y-service" key={group.service} aria-label={group.title}>
     <header className="y-service-heading"><span className="y-service-number">{String(gi+1).padStart(2,'0')}<i>/ {String(groups.length).padStart(2,'0')}</i></span><div className="y-service-kicker"><LocalText text="APPLICATION EXPERIENCES"/><span>{group.title}</span></div><motion.a whileHover={{y:-2}} href={`/${group.service}`}><LocalText text="Explore service"/> <span>↗</span></motion.a></header>
-    <h3 className="y-service-title">{group.title}<span className="y-title-underlines" aria-hidden="true"><i/><i/></span></h3><div className="y-project-window"><div className="y-project-track">{group.items.map(({project,index},pi)=><article key={project.id} className="y-project">
+    <h3 className="y-service-title">{group.title}</h3><div className="y-project-window"><div className="y-project-track">{group.items.map(({project,index},pi)=><article key={project.id} className="y-project">
      <div className="y-project-copy"><span className="y-project-index"><i/>{String(pi+1).padStart(2,'0')} / {String(group.items.length).padStart(2,'0')} — <LocalText text="SELECTED PROJECT"/></span><h4 data-cms-path={JSON.stringify(['workProjects',String(index),'title'])}>{project.title}</h4><p data-cms-path={JSON.stringify(['workProjects',String(index),'description'])}>{project.description}</p>{project.url&&<motion.a whileHover={{x:5}} transition={{duration:.2}} href={project.url} target="_blank" rel="noopener noreferrer"><LocalText text="View project"/> <span>↗</span></motion.a>}</div>
      {project.image&&<figure className="y-project-image"><CmsImage cmsPath={['workProjects',String(index),'image']} src={project.image} alt={project.title} width={900} height={600}/><figcaption>{String(pi+1).padStart(2,'0')} — {project.title}</figcaption></figure>}
     </article>)}</div></div>

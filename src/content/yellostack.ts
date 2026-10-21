@@ -14,6 +14,7 @@
     contact: {
         email: "hello@yellostack.com",
         telephone: "013-6643530",
+        whatsappNumber: "+966 53 041 5576",
         telephoneHref: "tel:+966136643530",
         address: "Al Hussaini Commercial Tower, Suite 404, 4th Floor, 1st Street, Dammam 32233, Kingdom of Saudi Arabia",
     },

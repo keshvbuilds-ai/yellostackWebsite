@@ -1,3 +1,4 @@
+import {normalizeContentLinks} from '@/lib/cms/normalize';
 import { localMode, localConfigured, localLogin, localLogout, localContent, saveLocal, uploadLocal, listMedia, deleteMedia, transaction } from '@/lib/cms/local-store';
 import { upgradeFeedback } from '@/lib/cms/feedback-upgrade';
 import { cookies } from 'next/headers';
@@ -67,7 +68,7 @@ export async function POST(request:Request,{params}:Context) {
     if(action==='delete-media'&&localMode()){await deleteMedia((await readBody(request)).url);return json({ok:true});}
     if(action==='delete-enquiry'&&localMode()){const body=await readBody(request);await transaction(s=>{s.enquiries=s.enquiries.filter(row=>row.id!==body.id);});return json({ok:true});}
     if(action==='save'||action==='publish') {
-      const body=await readBody(request);validateContent(body.content);
+      const body=await readBody(request);if(body.content&&typeof body.content==='object'&&Array.isArray(body.content.workProjects))body.content=normalizeContentLinks(body.content);validateContent(body.content);
       if(!Number.isInteger(body.revision)||body.revision<0)throw new Error('Invalid revision');
       if(localMode())return json({revision:await saveLocal(body.content,body.revision,action==='publish'),published:action==='publish'});
       const response=await supabase('/rest/v1/rpc/cms_save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({payload:body.content,expected_revision:body.revision,publish_now:action==='publish'})},token);

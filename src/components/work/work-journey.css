@@ -111,3 +111,19 @@
  .is-animated .y-intro-copy{padding-top:105px;padding-bottom:20px}
  .is-animated .y-intro-description>span:last-child{margin-top:12px}
 }
+
+/* Service title takes the stage first, then settles above the project gallery. */
+.y-intro{perspective:900px}
+.y-question-orbit{position:absolute;bottom:5%;font:bold italic clamp(90px,15vw,250px) Georgia,serif;color:#15190e22;pointer-events:none}
+.y-question-orbit.left{left:5%}.y-question-orbit.right{right:5%;bottom:1%}
+.y-service-title{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;font-size:clamp(34px,4.6vw,78px);line-height:1.05;letter-spacing:-.045em;text-align:center;margin:24px auto;max-width:85%;text-wrap:balance}
+.is-animated .y-service{padding-top:170px;padding-bottom:45px}
+.is-animated .y-service-title{flex-shrink:0;position:relative;z-index:2;will-change:transform}
+.is-animated .y-project-window{position:relative;margin:0 5%;border-radius:18px;border-top:3px solid #ffcc00;border-bottom:3px solid #15190e;background:#fafaf5}
+.is-animated .y-project{padding:20px 5%;grid-template-columns:1fr 1fr;gap:8%;align-items:center}
+.is-animated .y-project-image{max-width:430px;justify-self:center}
+.is-animated .y-project-image img{max-height:min(28vh,270px);object-fit:contain}
+.is-animated .y-project-copy>a{margin-top:15px;padding:12px 20px;border-radius:6px}
+.is-animated .y-service-footer{margin-top:14px}
+@media(max-width:800px){.is-animated .y-service{padding-top:135px;padding-bottom:35px}.y-service-title{font-size:32px;margin:18px auto}.is-animated .y-project{grid-template-columns:1fr;gap:10px;padding:16px 6%}.is-animated .y-project-image img{max-height:140px}.is-animated .y-project-copy{max-height:100%}.y-question-orbit{font-size:100px;bottom:6%}}
+@media(max-height:540px){.is-animated .y-service{padding-top:115px;padding-bottom:15px}.y-service-title{font-size:28px;margin:10px auto}.is-animated .y-project{grid-template-columns:1fr 1fr;padding:10px 5%}.is-animated .y-project-image img{max-height:100px}.is-animated .y-service-footer{margin-top:6px}.is-animated .y-project-copy>a{padding:8px 14px;margin-top:8px}}

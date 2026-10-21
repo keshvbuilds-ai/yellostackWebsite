@@ -4,7 +4,7 @@ export type WorldFrame={depth:number;visibility:number;finale?:number};
 export function createWorkWorld(host:HTMLElement){
  const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0xfafaf7,1);
- renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
+ renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;
  host.appendChild(renderer.domElement);renderer.domElement.setAttribute('aria-hidden','true');
  const scene=new THREE.Scene();scene.fog=new THREE.Fog(0xfafaf7,18,70);
  const camera=new THREE.PerspectiveCamera(48,1,.1,100);
@@ -12,7 +12,7 @@ export function createWorkWorld(host:HTMLElement){
  const key=new THREE.DirectionalLight(0xfff3cf,5);key.position.set(4,7,7);scene.add(key);
  const fill=new THREE.DirectionalLight(0xffffff,3);fill.position.set(-5,3,-15);scene.add(fill);
  const white=new THREE.MeshPhongMaterial({color:0xf5f4ea,shininess:35});
- const gold=new THREE.MeshPhongMaterial({color:0xffcc02,specular:0xb89a31,shininess:65});
+ const gold=new THREE.MeshBasicMaterial({color:0xffcc00,toneMapped:false});
  const ink=new THREE.MeshPhongMaterial({color:0x22291c,shininess:25});
  const geometries:THREE.BufferGeometry[]=[];
  const box=new THREE.BoxGeometry(1,1,1);geometries.push(box);
@@ -26,6 +26,12 @@ export function createWorkWorld(host:HTMLElement){
  // Offset brand sculptures provide foreground parallax on both sides of the forward flight.
  for(let i=0;i<9;i++)for(const side of [-1,1])stack(side*(4.2+(i%2)*.7),Math.sin(i)*.7,-i*6, .8+(i%3)*.15,i*.7+side);
  const destination=stack(0,1.1,-73,1.35,0);
+ const carpetGeometry=new THREE.PlaneGeometry(3.5,110,1,30);geometries.push(carpetGeometry);
+ const carpet=new THREE.Mesh(carpetGeometry,gold);carpet.rotation.x=-Math.PI/2;carpet.position.set(0,-2.96,-35);scene.add(carpet);
+ // Low architectural plinths echo the rectangular brand layers without visual hoops.
+ for(let i=0;i<9;i++)for(const side of [-1,1]){
+  const plinth=new THREE.Mesh(box,ink);plinth.scale.set(2.6,.12,2.6);plinth.position.set(side*5,-2.85,-i*6);plinth.rotation.y=Math.PI/4;scene.add(plinth);
+ }
  const floorGeometry=new THREE.PlaneGeometry(40,130);geometries.push(floorGeometry);
  const floor=new THREE.Mesh(floorGeometry,white);floor.rotation.x=-Math.PI/2;floor.position.set(0,-3,-35);scene.add(floor);
  for(const side of [-1,1]){const rail=new THREE.Mesh(box,gold);rail.scale.set(.025,.025,110);rail.position.set(side*2,-2.98,-35);scene.add(rail);}
@@ -36,7 +42,7 @@ export function createWorkWorld(host:HTMLElement){
   const end=current.finale??0;
   destination.visible=end>0;
   destination.scale.setScalar(camera.aspect<.8?.62:camera.aspect>2? .85:1.35);
-  destination.position.x=camera.aspect>2?-3:0;
+  destination.position.x=0;
   stacks.forEach(({group,layers,offset})=>{
    if(group!==destination)group.visible=end<.98;
    const cycle=time*.00023+offset;

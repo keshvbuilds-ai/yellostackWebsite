@@ -23,7 +23,7 @@ export default function PremiumCursor(){
     if(!target||target.closest('input,textarea,select,[contenteditable=true],iframe,video,.journey-hero,dialog,[data-native-cursor]')){hide();return;}
     if(!visible){visible=true;el.style.opacity='1';document.documentElement.classList.add('ys-cursor-active');}
     const next=target.closest('a,button,summary,[role=button]')?'link':target.closest('canvas,[data-cursor=explore]')?'scene':'default';
-    if(mode!==next){mode=next;el.dataset.mode=next;gsap.to(r,{scale:next==='link'?1.55:next==='scene'?1.9:1,duration:.3,ease:'power3.out',overwrite:'auto'});}
+    if(mode!==next){mode=next;gsap.to(d,{scale:next==='link'?1.8:1,duration:.2,ease:'power3.out',overwrite:'auto'});el.dataset.mode=next;gsap.to(r,{scale:next==='scene'?1.9:1,duration:.3,ease:'power3.out',overwrite:'auto'});}
    };
    const move=(event:PointerEvent)=>{
     if(event.pointerType!=='mouse'){hide();return;}
@@ -32,7 +32,7 @@ export default function PremiumCursor(){
    };
    const scroll=()=>{if(initialized)classify(document.elementFromPoint(px,py));};
    const down=()=>{if(visible)gsap.to(d,{scale:2,duration:.16,overwrite:'auto'});};
-   const up=()=>gsap.to(d,{scale:1,duration:.25,overwrite:'auto'});
+   const up=()=>gsap.to(d,{scale:mode==='link'?1.8:1,duration:.25,overwrite:'auto'});
    const key=()=>hide();
    const leave=(event:PointerEvent)=>{if(!event.relatedTarget)hide();};
    const visibility=()=>{if(document.hidden)hide();};
@@ -42,5 +42,5 @@ export default function PremiumCursor(){
    return()=>{hide();window.removeEventListener('scroll',scroll);window.removeEventListener('pointermove',move);window.removeEventListener('pointerdown',down);window.removeEventListener('pointerup',up);window.removeEventListener('blur',hide);window.removeEventListener('keydown',key);document.removeEventListener('pointerout',leave);document.removeEventListener('visibilitychange',visibility);x.tween.kill();y.tween.kill();gsap.killTweensOf([d,r]);context.revert();initialized=false;};
   });return()=>media.revert();
  },[pathname]);
- return <div ref={root} className="premium-cursor" aria-hidden="true"><div ref={ring} className="premium-cursor-ring"><span>↗</span></div><div ref={dot} className="premium-cursor-dot"/></div>;
+ return <div ref={root} className="premium-cursor" aria-hidden="true"><div ref={ring} className="premium-cursor-ring"/><div ref={dot} className="premium-cursor-dot"/></div>;
 }

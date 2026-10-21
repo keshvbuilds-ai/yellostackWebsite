@@ -1,18 +1,18 @@
 "use client";
-import { LocalText } from '@/components/cms/ContentProvider';
-
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-
-/** A short brand curtain; it never locks scrolling or waits on remote assets. */
-export default function IntroSequence({ onComplete }: { onComplete: () => void }) {
-  const curtain = useRef<HTMLDivElement>(null);
-  const complete = useRef(onComplete);
-  useEffect(() => { complete.current = onComplete; }, [onComplete]);
-  useEffect(() => {
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const tween = gsap.to(curtain.current, { opacity: 0, duration: reduced ? 0 : .65, delay: reduced ? 0 : .15, ease: "power2.out", onComplete: () => complete.current() });
-    return () => { tween.kill(); };
-  }, []);
-  return <div ref={curtain} className="brand-curtain" aria-hidden="true"><span><LocalText text={"Yellostack"}/><span>®</span></span></div>;
+import {useEffect,useRef} from 'react';
+import gsap from 'gsap';
+import './intro-sequence.css';
+export default function IntroSequence({onComplete}:{onComplete:()=>void}){
+ const curtain=useRef<HTMLDivElement>(null),complete=useRef(onComplete);
+ useEffect(()=>{complete.current=onComplete;},[onComplete]);
+ useEffect(()=>{
+  let disposed=false;let exit:gsap.core.Tween|undefined;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const minimum=new Promise(resolve=>setTimeout(resolve,reduced?0:1000));
+  const ready=Promise.all([document.fonts.ready,document.readyState==='complete'?Promise.resolve():new Promise<void>(resolve=>window.addEventListener('load',()=>resolve(),{once:true}))]);
+  const cap=new Promise(resolve=>setTimeout(resolve,3500));
+  Promise.all([minimum,Promise.race([ready,cap])]).then(()=>{if(disposed)return;exit=gsap.to(curtain.current,{opacity:0,yPercent:reduced?0:-5,duration:reduced?0:.55,ease:'power2.inOut',onComplete:()=>complete.current()});});
+  return()=>{disposed=true;exit?.kill();};
+ },[]);
+ return <div ref={curtain} className="ys-loading-screen" role="status" aria-label="Loading YelloStack"><div className="ys-loading-center"><div className="ys-loading-stack" aria-hidden="true"><i/><i/><i/></div><div className="ys-loading-name">YelloStack</div><p>Ideas taking shape.</p><div className="ys-loading-track" aria-hidden="true"><span/></div></div></div>;
 }

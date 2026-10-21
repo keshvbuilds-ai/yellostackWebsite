@@ -1,3 +1,4 @@
+import {appCategories} from '@/content/work-catalogue';
 import type { SiteContent } from './types';
 import { defaultContent } from './defaults';
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
@@ -36,6 +37,11 @@ export function validateContent(value: unknown): asserts value is SiteContent {
   const additional={teamMembers:{id:'',name:'',role:'',bio:'',image:'',demo:false},products:{id:'',title:'',description:'',image:'',features:[''],url:''},workProjects:{id:'',title:'',description:'',image:'',service:'',url:''},industryEntries:{id:'',title:'',category:'',headline:'',body:'',use1:'',use2:'',use3:'',service:'',solution:'',image:''}};
   for(const [key,sample] of Object.entries(additional))if(value[key]!==undefined){shape(value[key],[sample],key);const rows=value[key] as Record<string,unknown>[];if(new Set(rows.map(row=>row.id)).size!==rows.length)throw new Error('Use unique item IDs');for(const row of rows){if(key==='workProjects'&&!row.service)throw new Error(`Work project "${row.title||'Untitled'}": choose a service category`);if(typeof row.image!=='string'||!safeUrl(row.image,true))throw new Error('Invalid image URL');if(row.url!==undefined&&(typeof row.url!=='string'||!safeUrl(row.url)))throw new Error(`${key} / ${row.title||row.name||row.id}: destination link must be a full HTTPS address (for example https://qnc.sa), or leave it empty`);if(typeof row.service==='string'&&row.service&&!/^[a-z0-9-]+$/.test(row.service))throw new Error('Choose a valid service');}}
   const content = value as unknown as SiteContent;
+  if(content.workProjectsManaged!==undefined&&typeof content.workProjectsManaged!=='boolean')throw new Error('Invalid project publishing mode');
+  for(const project of content.workProjects??[]){
+   if(project.category && !appCategories.some(c=>c.slug===project.category))throw new Error('Choose a valid app category');
+   if(content.workProjectsManaged&&project.service==='mobile-application-development-company-saudi-arabia'&&!project.category)throw new Error(`${project.title}: choose an app category so visitors can find it`);
+  }
   for(const list of [content.pages, content.posts]) {
     const slugs = new Set<string>();
     for(const item of list) {

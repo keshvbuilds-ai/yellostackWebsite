@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {toCreasedNormals} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 export type WorldFrame={depth:number;visibility:number;finale?:number};
 /** One continuous, reversible camera flight through a modelled architectural Y gallery. */
 export function createWorkWorld(host:HTMLElement){
@@ -13,14 +14,24 @@ export function createWorkWorld(host:HTMLElement){
  const fill=new THREE.DirectionalLight(0xffffff,3);fill.position.set(-5,3,-15);scene.add(fill);
  const white=new THREE.MeshPhongMaterial({color:0xf5f4ea,shininess:35});
  const gold=new THREE.MeshBasicMaterial({color:0xffcc00,toneMapped:false});
+ const goldEdge=new THREE.MeshPhongMaterial({color:0xe6ad00,shininess:65});
  const ink=new THREE.MeshPhongMaterial({color:0x22291c,shininess:25});
  const geometries:THREE.BufferGeometry[]=[];
  const box=new THREE.BoxGeometry(1,1,1);geometries.push(box);
+ // Match the hero: a flat rounded-square outline with a separate, small edge bevel.
+ const outline=new THREE.Shape(),h=1,r=.162;
+ outline.moveTo(-h+r,-h);outline.lineTo(h-r,-h);outline.quadraticCurveTo(h,-h,h,-h+r);
+ outline.lineTo(h,h-r);outline.quadraticCurveTo(h,h,h-r,h);
+ outline.lineTo(-h+r,h);outline.quadraticCurveTo(-h,h,-h,h-r);
+ outline.lineTo(-h,-h+r);outline.quadraticCurveTo(-h,-h,-h+r,-h);outline.closePath();
+ const extruded=new THREE.ExtrudeGeometry(outline,{depth:.102,steps:1,bevelEnabled:true,bevelThickness:.028,bevelSize:.028,bevelSegments:4,curveSegments:12});
+ extruded.center();extruded.rotateX(-Math.PI/2);
+ const plate=toCreasedNormals(extruded,.65);if(plate!==extruded)extruded.dispose();geometries.push(plate);
  const stacks:{group:THREE.Group;layers:THREE.Mesh[];offset:number}[]=[];
  function stack(x:number,y:number,z:number,size:number,offset:number){
   const group=new THREE.Group();group.position.set(x,y,z);group.scale.setScalar(size);group.rotation.x=.42;scene.add(group);
   const layers:THREE.Mesh[]=[];
-  for(let i=0;i<3;i++){const layer=new THREE.Mesh(box,i===1?white:gold);layer.scale.set(2,.15,2);layer.rotation.y=Math.PI/4;group.add(layer);layers.push(layer);}
+  for(let i=0;i<3;i++){const layer=new THREE.Mesh(plate,i===1?white:[gold,goldEdge]);layer.rotation.y=Math.PI/4;group.add(layer);layers.push(layer);}
   stacks.push({group,layers,offset});return group;
  }
  // Offset brand sculptures provide foreground parallax on both sides of the forward flight.
@@ -62,5 +73,5 @@ export function createWorkWorld(host:HTMLElement){
  const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(visible&&current.visibility&&!raf)raf=requestAnimationFrame(paint);},{threshold:0});intersection.observe(host);
  const resize=new ResizeObserver(()=>{const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height);camera.aspect=width/height;camera.fov=width<600?60:48;camera.updateProjectionMatrix();render(current);});resize.observe(host);
  const lost=(event:Event)=>{event.preventDefault();host.style.opacity='0';};renderer.domElement.addEventListener('webglcontextlost',lost);
- return {render,dispose(){cancelAnimationFrame(raf);intersection.disconnect();resize.disconnect();geometries.forEach(g=>g.dispose());[white,gold,ink].forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();}};
+ return {render,dispose(){cancelAnimationFrame(raf);intersection.disconnect();resize.disconnect();geometries.forEach(g=>g.dispose());[white,gold,goldEdge,ink].forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();}};
 }

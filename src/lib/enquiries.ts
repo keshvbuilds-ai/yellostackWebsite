@@ -7,6 +7,8 @@ export function validateEnquiry(value:unknown){
  if(typeof v.email!=='string'||v.email.length>254||! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email))throw new Error('Please enter a valid email address.');
  if(typeof v.name!=='string'||v.name.length>100||typeof v.message!=='string'||v.message.length>4000)throw new Error('Please check your name and message.');
  if(v.kind==='contact'&&(!v.name.trim()||v.message.trim().length<10))throw new Error('Please include your name and at least 10 characters about your project.');
+ if(v.kind==='offer'&&!v.name.trim())throw new Error('Please enter your name to claim the offer.');
+ if(v.phone!==undefined&&(typeof v.phone!=='string'||v.phone.length>40||! /^[+\d ()-]*$/.test(v.phone)))throw new Error('Please enter a valid phone number.');
  if(v.website)throw new Error('Unable to accept this submission.');
- return {id:v.id,kind:v.kind,email:v.email.trim().toLowerCase(),name:v.name.trim(),message:v.message.trim(),mode:v.mode===true};
+ return {phone:typeof v.phone==='string'?v.phone.trim():'',id:v.id,kind:v.kind,email:v.email.trim().toLowerCase(),name:v.name.trim(),message:v.message.trim(),mode:v.mode===true};
 }

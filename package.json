@@ -9,7 +9,9 @@
     "lint": "eslint",
     "check:cms": "node scripts/check-cms.mjs",
     "check:enquiries": "node scripts/check-enquiries.mjs",
-    "postinstall": "node scripts/patch-fiber-timer.mjs"
+    "postinstall": "node scripts/patch-fiber-timer.mjs",
+    "check:security": "node scripts/check-security.mjs",
+    "check:security-api": "node scripts/check-security-api.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
@@ -21,23 +23,24 @@
     "gsap": "^3.15.0",
     "lenis": "^1.3.26",
     "lucide-react": "^1.47.0",
-    "next": "16.3.5",
+    "next": "16.4.3",
+    "nodemailer": "^10.3.1",
     "playwright": "^1.63.0",
-    "puppeteer": "^24.43.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "sharp": "0.35.5",
     "tailwind-merge": "^3.7.0",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.186.1",
-    "tunnel": "^0.0.6"
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

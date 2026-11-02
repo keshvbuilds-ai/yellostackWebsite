@@ -8,6 +8,7 @@ export type Product={id:string;title:string;description:string;image:string;feat
 export type WorkProject={category?:string;id:string;title:string;description:string;image:string;service:string;url:string};
 export type IndustryEntry={id:string;title:string;category:string;headline:string;body:string;use1:string;use2:string;use3:string;service:string;solution:string;image:string};
 export type SiteContent = {
+  general?: {salesEmail:string;salesPhone:string;mapUrl:string;offerEnabled:boolean;offerPercent:number;offerCode:string;offerTerms:string;offerExpires:string};
   workProjectsManaged?:boolean;
   teamMembers?:TeamMember[];
   products?:Product[];

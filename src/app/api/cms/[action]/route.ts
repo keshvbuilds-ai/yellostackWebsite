@@ -1,3 +1,6 @@
+import {deliverClaim} from '@/lib/claim-mail';
+import {readLimitedBody,readLimitedJson,RequestError} from '@/lib/request-security';
+import sharp from 'sharp';
 import {normalizeContentLinks} from '@/lib/cms/normalize';
 import { localMode, localConfigured, localLogin, localLogout, localContent, saveLocal, uploadLocal, listMedia, deleteMedia, transaction } from '@/lib/cms/local-store';
 import { upgradeFeedback } from '@/lib/cms/feedback-upgrade';
@@ -10,11 +13,12 @@ type Context = { params: Promise<{action:string}> };
 const json = (body: unknown, status=200) => Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
 function errorResponse(error: unknown) {
   const message=error instanceof Error?error.message:'Request failed';
+  if(error instanceof RequestError)return json({error:message},error.status);
+  if(message.startsWith('Too many'))return json({error:message},429);
+  if(error instanceof Error&&'code' in error)return json({error:'Storage operation failed. Please try again.'},503);
   return json({error:message},message==='Unauthorized'?401:message==='Forbidden'?403:message.includes('conflict')?409:400);
 }
-async function readBody(request: Request) {
-  const body=await request.text(); if(body.length>1_500_000)throw new Error('Content exceeds 1.5 MB'); return JSON.parse(body);
-}
+const readBody=(request:Request)=>readLimitedJson(request,1_500_000);
 export async function GET(_request:Request, {params}:Context) {
   const {action}=await params;
   if(action==='public') return json(await getSiteContent());
@@ -47,8 +51,8 @@ export async function POST(request:Request,{params}:Context) {
   const {action}=await params;
   try {
     if(action==='login') {
-      const body=await readBody(request);
-      if(typeof body.email!=='string'||typeof body.password!=='string'||body.email.length>254||body.password.length>1024)throw new Error('Invalid credentials');
+      const body=await readLimitedJson(request,4096);
+      if(!body||typeof body.email!=='string'||typeof body.password!=='string'||body.email.length>254||body.password.length>1024)throw new Error('Invalid credentials');
       if(localMode()){const token=await localLogin(body.email,body.password);(await cookies()).set(sessionCookie,token,{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict',path:'/api/cms',maxAge:3600});return json({ok:true});}
       const response=await supabase('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:body.email,password:body.password})});
       if(!response.ok)return json({error:'Sign-in failed. Check your credentials or try again later.'},401);
@@ -66,6 +70,7 @@ export async function POST(request:Request,{params}:Context) {
     }
     const {token}=await requireEditor();
     if(action==='delete-media'&&localMode()){await deleteMedia((await readBody(request)).url);return json({ok:true});}
+    if(action==='retry-claim-email'&&localMode()){const body=await readBody(request);if(typeof body.id!=='string'||! /^[a-f0-9-]{36}$/i.test(body.id))return json({error:'Invalid claim ID'},400);await deliverClaim(body.id);return json({ok:true});}
     if(action==='delete-enquiry'&&localMode()){const body=await readBody(request);await transaction(s=>{s.enquiries=s.enquiries.filter(row=>row.id!==body.id);});return json({ok:true});}
     if(action==='save'||action==='publish') {
       const body=await readBody(request);if(body.content&&typeof body.content==='object'&&Array.isArray(body.content.workProjects))body.content=normalizeContentLinks(body.content);validateContent(body.content);
@@ -77,16 +82,22 @@ export async function POST(request:Request,{params}:Context) {
     }
     if(action==='upload') {
       if(Number(request.headers.get('content-length'))>3_300_000)return json({error:'Image exceeds 3 MB'},413);
-      const form=await request.formData();const file=form.get('file');
+      const raw=await readLimitedBody(request,3_300_000);
+      const form=await new Response(new Uint8Array(raw),{headers:{'Content-Type':request.headers.get('content-type')||''}}).formData();const file=form.get('file');
       if(!(file instanceof File)||file.size>3*1024*1024||file.size===0)throw new Error('Choose an image under 3 MB');
       const extensions:Record<string,string>={'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/avif':'avif'};
       if(!extensions[file.type])throw new Error('Use PNG, JPEG, WebP or AVIF images');
       const bytes=new Uint8Array(await file.arrayBuffer());
       const valid=file.type==='image/png'?bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71:file.type==='image/jpeg'?bytes[0]===255&&bytes[1]===216&&bytes[2]===255:file.type==='image/webp'?new TextDecoder().decode(bytes.slice(0,4))==='RIFF'&&new TextDecoder().decode(bytes.slice(8,12))==='WEBP':new TextDecoder().decode(bytes.slice(4,12))==='ftypavif';
       if(!valid)throw new Error('File contents do not match the image type');
-      const path=`${crypto.randomUUID()}.${extensions[file.type]}`;
-      if(localMode())return json({url:await uploadLocal(path,bytes)});
-      const response=await supabase(`/storage/v1/object/site-media/${path}`,{method:'POST',headers:{'Content-Type':file.type},body:bytes},token);
+      // Decode with a pixel ceiling, strip metadata and re-encode; magic bytes alone
+      // do not establish that a file is a safe, valid image.
+      let clean:Buffer;
+      try{clean=await sharp(bytes,{limitInputPixels:25_000_000,animated:false}).rotate().webp({quality:88}).toBuffer();}catch{throw new RequestError('Invalid image or image dimensions exceed the limit');}
+      if(clean.length>3*1024*1024)throw new RequestError('Processed image exceeds 3 MB',413);
+      const path=`${crypto.randomUUID()}.webp`;
+      if(localMode())return json({url:await uploadLocal(path,clean)});
+      const response=await supabase(`/storage/v1/object/site-media/${path}`,{method:'POST',headers:{'Content-Type':'image/webp'},body:new Uint8Array(clean)},token);
       if(!response.ok)throw new Error('Upload failed. Check the storage bucket and policies.');
       return json({url:`${cmsConfig()!.url}/storage/v1/object/public/site-media/${path}`});
     }

@@ -1,12 +1,14 @@
 import {remoteMode,remoteConfigured,remoteRead,remoteTransaction,remoteUpload,remoteList,remoteDelete,remoteMedia} from './json-store';
 import 'server-only';
+import {promisify} from 'node:util';
+const deriveKey=promisify(scrypt);
 import { mkdir, readFile, writeFile, rename, readdir, unlink } from 'node:fs/promises';
 import path from 'node:path';
-import { randomBytes, scryptSync, timingSafeEqual, createHash } from 'node:crypto';
+import { randomBytes, scrypt, timingSafeEqual, createHash } from 'node:crypto';
 import { defaultContent } from './defaults';
 import type { SiteContent } from './types';
 export const localMode = () => process.env.CMS_BACKEND !== 'supabase';
-export const dataDirectory = () => path.resolve(/* turbopackIgnore: true */ process.env.CMS_DATA_DIR || '.cms-data');
+export const dataDirectory = () => {const dir=path.resolve(/* turbopackIgnore: true */ process.env.CMS_DATA_DIR || '.cms-data');const relative=path.relative(path.resolve('public'),dir);if(!relative||(!relative.startsWith('..'+path.sep)&&relative!=='..'&&!path.isAbsolute(relative)))throw new Error('CMS_DATA_DIR must be outside the public directory');return dir;};
 type State = { content:SiteContent; published:SiteContent; revision:number; enquiries:Record<string,unknown>[]; sessions:Record<string,number>; attempts:number[] };
 const initialState=():State=>({content:structuredClone(defaultContent),published:structuredClone(defaultContent),revision:0,enquiries:[],sessions:{},attempts:[]});
 async function read():Promise<State>{if(remoteMode())return remoteRead(initialState);try{return JSON.parse(await readFile(path.join(dataDirectory(),'store.json'),'utf8'));}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;return initialState();}}
@@ -14,24 +16,25 @@ async function read():Promise<State>{if(remoteMode())return remoteRead(initialSt
 export async function transaction<T>(fn:(state:State)=>T|Promise<T>):Promise<T>{
  if(remoteMode())return remoteTransaction(initialState,fn);
  if(process.env.VERCEL)throw new Error('Select CMS_BACKEND=json and connect persistent JSON storage before editing on Vercel.');
- await mkdir(dataDirectory(),{recursive:true});const lock=path.join(dataDirectory(),'write.lock');let locked=false;
+ await mkdir(dataDirectory(),{recursive:true,mode:0o700});const lock=path.join(dataDirectory(),'write.lock');let locked=false;
  for(let i=0;i<100;i++){try{await mkdir(lock);locked=true;break;}catch(e){if((e as NodeJS.ErrnoException).code!=='EEXIST')throw e;await new Promise(r=>setTimeout(r,50));}}
  if(!locked)throw new Error('Content store busy. Try again.');
  try{const state=await read();const result=await fn(state);const tmp=path.join(dataDirectory(),randomBytes(12).toString('hex')+'.tmp');await writeFile(tmp,JSON.stringify(state),{mode:0o600});await rename(tmp,path.join(dataDirectory(),'store.json'));return result;}finally{await import('node:fs/promises').then(fs=>fs.rmdir(lock));}
 }
 export async function localContent(published=false){const state=await read();const content=published?state.published:state.content;const expanded={...content};if(!content.teamMembers)expanded.teamMembers=defaultContent.teamMembers!.map((person,i)=>({...person,name:content.copy['team.people.'+i+'.name']??person.name,role:content.copy['team.people.'+i+'.role']??person.role,bio:content.copy['team.people.'+i+'.bio']??person.bio,image:content.media['team.people.'+i+'.image']??person.image}));if(!content.industryEntries)expanded.industryEntries=defaultContent.industryEntries!.map((item,i)=>Object.fromEntries(Object.entries(item).map(([key,value])=>[key,key==='image'?(content.media['industries.sectors.'+i+'.image']??value):(content.copy['industries.sectors.'+i+'.'+key]??value)])) as typeof item);return {content:{...defaultContent,...expanded,copy:{...defaultContent.copy,...content.copy},media:{...defaultContent.media,...content.media}},revision:state.revision};}
-const digest=(token:string)=>createHash('sha256').update(token).digest('hex');
+const digest=(token:string)=>createHash('sha256').update(process.env.CMS_ADMIN_PASSWORD_HASH||'').update(':').update(token).digest('hex');
 export const localConfigured=()=>!!process.env.CMS_ADMIN_USERNAME&&!!process.env.CMS_ADMIN_PASSWORD_HASH&&(remoteMode()?remoteConfigured():!process.env.VERCEL);
 export async function localLogin(username:string,password:string){
  const allowed=await transaction(s=>{s.attempts=s.attempts.filter(t=>t>Date.now()-60000);if(s.attempts.length>=10)return false;s.attempts.push(Date.now());return true;});
  if(!allowed)throw new Error('Too many sign-in attempts. Wait one minute.');
  const [salt,hash]= (process.env.CMS_ADMIN_PASSWORD_HASH||'').split(':');
  if(!salt||!hash)throw new Error('Admin account is not configured');
- const actual=scryptSync(password,salt,64),expected=Buffer.from(hash,'hex');
+ if(!/^[a-f0-9]{128}$/i.test(hash))throw new Error('Admin account is not configured');
+ const actual=await deriveKey(password,salt,64) as Buffer,expected=Buffer.from(hash,'hex');
  if(expected.length!==actual.length||!timingSafeEqual(actual,expected)||username!==process.env.CMS_ADMIN_USERNAME)throw new Error('Unauthorized');
  const token=randomBytes(32).toString('hex');await transaction(s=>{s.sessions=Object.fromEntries(Object.entries(s.sessions).filter(([,expiry])=>expiry>Date.now()));s.sessions[digest(token)]=Date.now()+3600000;});return token;
 }
-export async function localSession(token:string){const s=await read();return (s.sessions[digest(token)]||0)>Date.now();}
+export async function localSession(token:string){if(!localConfigured()||! /^[a-f0-9]{64}$/.test(token))return false;const s=await read();return (s.sessions[digest(token)]||0)>Date.now();}
 export async function localLogout(token:string){await transaction(s=>{delete s.sessions[digest(token)];});}
 export async function saveLocal(content:SiteContent,revision:number,publish:boolean){return transaction(s=>{if(s.revision!==revision)throw new Error('Revision conflict: reload the saved draft before saving.');s.content=content;if(publish)s.published=content;return ++s.revision;});}
 export async function uploadLocal(name:string,bytes:Uint8Array){if(remoteMode())return remoteUpload(name,bytes);await mkdir(path.join(dataDirectory(),'media'),{recursive:true});await writeFile(path.join(dataDirectory(),'media',name),bytes);return '/api/media/'+name;}

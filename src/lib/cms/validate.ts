@@ -1,3 +1,4 @@
+import {generalDefaults} from './general';
 import {appCategories} from '@/content/work-catalogue';
 import type { SiteContent } from './types';
 import { defaultContent } from './defaults';
@@ -36,6 +37,17 @@ export function validateContent(value: unknown): asserts value is SiteContent {
   for (const [key, sample] of Object.entries(templates)) shape(value[key],[sample],key);
   const additional={teamMembers:{id:'',name:'',role:'',bio:'',image:'',demo:false},products:{id:'',title:'',description:'',image:'',features:[''],url:''},workProjects:{id:'',title:'',description:'',image:'',service:'',url:''},industryEntries:{id:'',title:'',category:'',headline:'',body:'',use1:'',use2:'',use3:'',service:'',solution:'',image:''}};
   for(const [key,sample] of Object.entries(additional))if(value[key]!==undefined){shape(value[key],[sample],key);const rows=value[key] as Record<string,unknown>[];if(new Set(rows.map(row=>row.id)).size!==rows.length)throw new Error('Use unique item IDs');for(const row of rows){if(key==='workProjects'&&!row.service)throw new Error(`Work project "${row.title||'Untitled'}": choose a service category`);if(typeof row.image!=='string'||!safeUrl(row.image,true))throw new Error('Invalid image URL');if(row.url!==undefined&&(typeof row.url!=='string'||!safeUrl(row.url)))throw new Error(`${key} / ${row.title||row.name||row.id}: destination link must be a full HTTPS address (for example https://qnc.sa), or leave it empty`);if(typeof row.service==='string'&&row.service&&!/^[a-z0-9-]+$/.test(row.service))throw new Error('Choose a valid service');}}
+  if(value.general!==undefined){
+    shape(value.general,generalDefaults,'general');
+    const g=value.general as typeof generalDefaults;
+    if(!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(g.salesEmail)||g.salesEmail.length>254)throw new Error('General: enter a valid sales email');
+    if(!/^https:\/\//.test(g.mapUrl)||!safeUrl(g.mapUrl))throw new Error('General: enter an HTTPS map link');
+    if(g.salesPhone.length>40||!/^[+\d ()-]*$/.test(g.salesPhone))throw new Error('General: invalid sales telephone');
+    if(!Number.isInteger(g.offerPercent)||g.offerPercent<1||g.offerPercent>100)throw new Error('General: discount must be 1?100');
+    if(!/^[A-Z0-9_-]{1,32}$/.test(g.offerCode))throw new Error('General: use letters, numbers, hyphens or underscores for the coupon');
+    if(g.offerTerms.length>2000)throw new Error('General: offer terms are too long');
+    if(g.offerExpires&&(!/^\d{4}-\d{2}-\d{2}$/.test(g.offerExpires)||!Number.isFinite(Date.parse(g.offerExpires))))throw new Error('General: invalid expiry date');
+  }
   const content = value as unknown as SiteContent;
   if(content.workProjectsManaged!==undefined&&typeof content.workProjectsManaged!=='boolean')throw new Error('Invalid project publishing mode');
   for(const project of content.workProjects??[]){

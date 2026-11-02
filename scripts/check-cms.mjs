@@ -6,9 +6,12 @@ import ts from 'typescript';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const out=path.join(root,'.cms-check');
 await fs.mkdir(out,{recursive:true});
-const files={industries:'src/content/industries.ts',upgrade:'src/lib/cms/feedback-upgrade.ts',pose:'src/components/3d/layerStoryPose.ts',catalogue:'src/content/catalogue.ts',banners:'src/content/service-banners.ts',media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
+const files={general:'src/lib/cms/general.ts',workCatalogue:'src/content/work-catalogue.ts',industries:'src/content/industries.ts',upgrade:'src/lib/cms/feedback-upgrade.ts',pose:'src/components/3d/layerStoryPose.ts',catalogue:'src/content/catalogue.ts',banners:'src/content/service-banners.ts',media:'src/content/media.ts',i18n:'src/lib/i18n.ts',yellostack:'src/content/yellostack.ts',pages:'src/content/inner-pages.ts',blog:'src/content/blog.ts',defaults:'src/lib/cms/defaults.ts',validate:'src/lib/cms/validate.ts'};
 for(const [name,file] of Object.entries(files)){
   let source=await fs.readFile(path.join(root,file),'utf8');
+  source=source.replace("'./general'","'./general.mjs'");
+  source=source.replace("'@/content/work-catalogue'","'./workCatalogue.mjs'");
+  for(const statement of ["import publishedWork from '@/content/published-work.json';","import bundled from './published-work.json';"]){if(source.includes(statement))source=source.replace(statement,'const '+(statement.includes('bundled')?'bundled':'publishedWork')+' = '+await fs.readFile(path.join(root,'src/content/published-work.json'),'utf8')+';');}
   source=source.replace("'@/content/yellostack'","'./yellostack.mjs'").replace("'@/content/inner-pages'","'./pages.mjs'").replace("'@/content/blog'","'./blog.mjs'").replace("'./defaults'","'./defaults.mjs'");
   if(name==='upgrade')source=source.replace("import changes from '@/content/feedback-copy-migration.json';",'const changes = '+await fs.readFile(path.join(root,'src/content/feedback-copy-migration.json'),'utf8')+';');
   if(name==='defaults')source=source.replace("import copy from '@/content/cms-copy.json';",`const copy = ${await fs.readFile(path.join(root,'src/content/cms-copy.json'),'utf8')};`);
@@ -102,3 +105,8 @@ gallery.posts[0].galleryImages[0].image='javascript:alert(1)';assert.throws(()=>
 gallery.posts[0].galleryImages=Array.from({length:13},()=>({image:'/banners/web.svg',imageAlt:''}));assert.throws(()=>validateContent(gallery));
 delete gallery.posts[0].galleryImages;validateContent(gallery);
 console.log('Blog gallery checks passed: optional legacy field, valid images, unsafe URLs and gallery limit.');
+
+const {generalDefaults}=await import(pathToFileURL(path.join(out,'general.mjs')));
+validateContent({...structuredClone(defaultContent),general:generalDefaults});
+for(const invalid of [{offerPercent:101},{salesEmail:'bad'},{mapUrl:'javascript:alert(1)'},{offerCode:'bad code'}])assert.throws(()=>validateContent({...structuredClone(defaultContent),general:{...generalDefaults,...invalid}}));
+console.log('General settings: defaults and invalid input checks passed.');

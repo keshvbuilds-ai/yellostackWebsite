@@ -19,3 +19,4 @@
 .cms-notification>span{flex:1}.cms-notification>button{flex-shrink:0;padding:4px 10px;min-height:36px}
 .cms-work-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:#f5f6ef;padding:12px;border:1px solid #d6dccb;border-radius:8px;margin-bottom:16px}.cms-work-actions>a{font-size:13px;text-decoration:underline}
 @media(max-width:600px){.cms .cms-notification{right:16px;bottom:16px}}
+.cms-general h3{margin:28px 0 16px;font-size:21px}.cms-general p{line-height:1.6;max-width:65ch}.cms-general input[type=checkbox]{width:22px;height:22px}.cms-general .cms-image-field img{max-width:260px;max-height:120px;object-fit:contain;background:#253020;padding:16px;border-radius:8px}

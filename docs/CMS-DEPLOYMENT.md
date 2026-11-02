@@ -1,3 +1,7 @@
+## Hostinger VPS (current deployment plan)
+
+Use the [VPS deployment guide](VPS-DEPLOYMENT.md) for yellostack.com. The VPS uses local persistent JSON and media storage with `CMS_BACKEND=local`; Upstash and Supabase are not required. The sections below describe alternative hosting configurations.
+
 ## Vercel without Supabase: persistent JSON CMS
 
 The Node.js CMS now supports `CMS_BACKEND=json`. It stores its JSON state and uploaded image bytes in Upstash Redis over server-side REST. This retains the existing username/password login and visual editor. It requires a persistent Upstash database; no Supabase or SQL migration is needed. Do not use a temporary expiring test database for production.

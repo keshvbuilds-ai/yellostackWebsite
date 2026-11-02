@@ -1,3 +1,4 @@
+import {isAllowedOrigin} from '@/lib/request-security';
 import {generalSettings,offerActive} from '@/lib/cms/general';
 import {getSiteContent} from '@/lib/cms/server';
 import {deliverClaim} from '@/lib/claim-mail';
@@ -7,7 +8,7 @@ import { validateEnquiry } from '@/lib/enquiries';
 export const runtime='nodejs';
 const reply=(data:unknown,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store'}});
 export async function POST(request:Request){
- if(request.headers.get('origin')!==new URL(request.url).origin)return reply({error:'Invalid origin.'},403);
+ if(!isAllowedOrigin(request))return reply({error:'Invalid origin.'},403);
  const url=process.env.SUPABASE_URL?.replace(/\/$/,'');const secret=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!localMode()&&(!url||!secret))return reply({error:'Online submissions are not available yet. Please contact hello@yellostack.com.'},503);
  try{

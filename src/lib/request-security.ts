@@ -1,3 +1,15 @@
+/** Explicit public origins avoid trusting client-supplied proxy headers. */
+export function isAllowedOrigin(request:Request){
+ const origin=request.headers.get('origin');
+ if(!origin||origin==='null')return false;
+ const configured=process.env.SITE_ALLOWED_ORIGINS;
+ if(!configured)return origin===new URL(request.url).origin;
+ return configured.split(',').some(value=>{
+  const candidate=value.trim();
+  try{const url=new URL(candidate);return url.protocol==='https:'&&url.origin===candidate&&candidate===origin;}catch{return false;}
+ });
+}
+
 /** Bound streamed bodies before parsers allocate memory. Works without Content-Length. */
 export class RequestError extends Error { constructor(message:string,public status=400){super(message);} }
 export async function readLimitedBody(request:Request,maxBytes:number){

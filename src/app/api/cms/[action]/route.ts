@@ -1,3 +1,4 @@
+import {isAllowedOrigin} from '@/lib/request-security';
 import {deliverClaim} from '@/lib/claim-mail';
 import {readLimitedBody,readLimitedJson,RequestError} from '@/lib/request-security';
 import sharp from 'sharp';
@@ -47,7 +48,7 @@ export async function GET(_request:Request, {params}:Context) {
 }
 export async function POST(request:Request,{params}:Context) {
   // Browser writes must come from this deployment. No cross-origin mutation API.
-  if(request.headers.get('origin')!==new URL(request.url).origin)return json({error:'Forbidden origin'},403);
+  if(!isAllowedOrigin(request))return json({error:'Forbidden origin'},403);
   const {action}=await params;
   try {
     if(action==='login') {

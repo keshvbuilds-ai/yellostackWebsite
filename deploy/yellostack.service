@@ -10,6 +10,7 @@ WorkingDirectory=/srv/yellostack/current
 Environment=NODE_ENV=production
 Environment=CMS_BACKEND=local
 Environment=CMS_DATA_DIR=/var/lib/yellostack
+Environment=SITE_ALLOWED_ORIGINS=https://yellostack.com,https://www.yellostack.com,https://preview.yellostack.com
 EnvironmentFile=/etc/yellostack/environment
 ExecStart=/usr/bin/node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3000
 Restart=on-failure

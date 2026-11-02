@@ -110,3 +110,11 @@ const {generalDefaults}=await import(pathToFileURL(path.join(out,'general.mjs'))
 validateContent({...structuredClone(defaultContent),general:generalDefaults});
 for(const invalid of [{offerPercent:101},{salesEmail:'bad'},{mapUrl:'javascript:alert(1)'},{offerCode:'bad code'}])assert.throws(()=>validateContent({...structuredClone(defaultContent),general:{...generalDefaults,...invalid}}));
 console.log('General settings: defaults and invalid input checks passed.');
+
+const {restoreProjectCategory}=await import(pathToFileURL(path.join(out,'workCatalogue.mjs')));
+const legacyGrocery={id:'legacy-grocery',title:'Grocery delivery ',description:'Grocery app',image:'',service:'mobile-application-development-company-saudi-arabia',url:''};
+assert.equal(restoreProjectCategory(legacyGrocery).category,'grocery-delivery');
+assert.equal(restoreProjectCategory({...legacyGrocery,category:'booking-on-demand'}).category,'booking-on-demand');
+assert.equal(restoreProjectCategory({...legacyGrocery,title:'Unclassified app'}).category,undefined);
+validateContent({...structuredClone(defaultContent),workProjectsManaged:true,workProjects:[restoreProjectCategory(legacyGrocery)]});
+console.log('Legacy grocery category migration passes without overwriting selected categories.');

@@ -52,7 +52,7 @@ export function validateContent(value: unknown): asserts value is SiteContent {
   if(content.workProjectsManaged!==undefined&&typeof content.workProjectsManaged!=='boolean')throw new Error('Invalid project publishing mode');
   for(const project of content.workProjects??[]){
    if(project.category && !appCategories.some(c=>c.slug===project.category))throw new Error('Choose a valid app category');
-   if(content.workProjectsManaged&&project.service==='mobile-application-development-company-saudi-arabia'&&!project.category)throw new Error(`${project.title}: choose an app category so visitors can find it`);
+   if(content.workProjectsManaged&&project.service==='mobile-application-development-company-saudi-arabia'&&!project.category)throw new Error(`${project.title.trim()}: open Work projects, select an App category, then save`);
   }
   for(const list of [content.pages, content.posts]) {
     const slugs = new Set<string>();

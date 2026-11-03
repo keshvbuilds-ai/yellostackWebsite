@@ -21,3 +21,13 @@ CMS Inbox shows pending, sending, sent (accepted by SMTP), failed, or not_config
 Never test with real visitor data. Verify a claim to a mailbox you control after deployment, confirm delivery and Reply-To, then remove the test enquiry. Current automated tests use disabled SMTP and never send real emails. The Supabase submission path does not support these offer notifications; this implementation targets the requested VPS JSON CMS.
 
 Contact form submissions also send a notification to the published Sales Email using these same SMTP settings. They include the visitor name, email, phone and message, without offer details. Submissions remain saved if SMTP is unavailable; delivery status and Retry notification are available in CMS Inbox. No automatic email is sent to the visitor.
+
+## Private SMTP settings in CMS
+On the VPS, General ? Private email settings lets an authenticated editor save SMTP host, port, username, app password and sender email. Blank passwords retain the existing password. Save SMTP settings applies immediately, independently of publishing; Send test email uses the published Sales Email, with one test per minute. The API never returns passwords. Existing server environment settings remain a fallback until CMS settings are saved.
+
+Settings are AES-256-GCM encrypted in the private store, with a generated mode-600 key at CMS_DATA_DIR/smtp.key. Include this key and store.json in private backups; losing the key requires reconfiguring SMTP. Encryption does not protect against someone with full access to both server files. Settings are not included in public content or draft exports. No real test email is sent automatically during setup.
+
+## Message presentation and connection test
+Test connection & send email saves entered settings and sends a real email to the published Sales Email. SMTP acceptance is reported separately from inbox delivery; check the recipient inbox/spam folder. Subjects are Contact Form Submission, Easter Egg Found!!!, and Test Connection Email. Messages include escaped HTML tables, a plain-text alternative and the bundled YelloStack logo as an inline CID attachment. Visitor emails are used only as Reply-To.
+
+Google: smtp.gmail.com, port 587, full mailbox email for username/sender, and an app password created after enabling 2-Step Verification (subject to account policy). Zoho: copy the mailbox-specific outgoing server from its server configuration; use port 587, full mailbox email and an app password from Zoho Accounts ? Security ? App passwords. Hosts vary by region and plan.

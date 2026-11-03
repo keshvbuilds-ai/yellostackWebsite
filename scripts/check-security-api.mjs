@@ -13,6 +13,9 @@ try{
  let ready=false;for(let i=0;i<90;i++){try{if((await fetch(origin+'/api/cms/status')).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,500));}assert.ok(ready,'Production test server starts');
  const headers=(await fetch(origin+'/api/cms/status')).headers;assert.equal(headers.get('x-content-type-options'),'nosniff');assert.equal(headers.get('x-frame-options'),'SAMEORIGIN');assert.ok(headers.get('content-security-policy').includes("frame-ancestors 'self'"));assert.equal(headers.get('x-powered-by'),null);
  assert.equal((await fetch(origin+'/api/cms/content')).status,401);
+ assert.equal((await fetch(origin+'/api/cms/smtp-settings')).status,401);
+ assert.equal((await post('smtp-settings',{})).status,401);
+ assert.equal((await post('smtp-test',{})).status,401);
  assert.equal((await post('save',{})).status,401);
  assert.equal((await post('login',{},'',{origin:'https://attacker.example'})).status,403);
  assert.equal((await post('login',{email:'security-test',password:'bad'})).status,401);
@@ -45,6 +48,12 @@ try{
  const disabled=await (await fetch(origin+'/api/cms/content',{headers:{cookie}})).json();disabled.content.general.offerEnabled=false;assert.equal((await post('publish',disabled,cookie)).status,200);
  assert.equal((await submit()).status,400);
  console.log('PASS: server-owned offer values, persisted claim details, duplicate suppression, SMTP missing status and disabled offers.');
+ const smtp={host:'smtp.example.com',port:587,user:'sender@example.com',from:'sender@example.com',password:'test-only-secret'};
+ const smtpSave=await post('smtp-settings',smtp,cookie);assert.equal(smtpSave.status,200);const smtpView=await smtpSave.json();assert.equal(smtpView.password,undefined);assert.equal(smtpView.passwordSet,true);
+ assert.equal((await post('smtp-settings',{...smtp,password:''},cookie)).status,200);
+ assert.equal((await post('smtp-settings',{...smtp,port:25},cookie)).status,400);
+ for(const action of ['public','content']){const text=await (await fetch(origin+'/api/cms/'+action,{headers:{cookie}})).text();assert.ok(!text.includes('test-only-secret'));assert.ok(!text.includes('smtpEncrypted'));}
+ console.log('PASS: SMTP authorization, validation, password masking and publication isolation.');
  await post('logout',{},cookie);assert.equal((await fetch(origin+'/api/cms/session',{headers:{cookie}})).status,401);
  for(let i=0;i<8;i++)await post('login',{email:'security-test',password:'bad'});assert.equal((await post('login',{email:'security-test',password:'bad'})).status,429);
  console.log('PASS: production headers, auth/CSRF, login limits, secure cookie, content create/read/update/delete, draft/publish, upload/delete media and logout revocation (isolated temporary store).');

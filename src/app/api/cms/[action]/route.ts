@@ -1,3 +1,5 @@
+import {smtpSummary,saveSmtp,testSmtp} from '@/lib/smtp-settings';
+import {generalSettings} from '@/lib/cms/general';
 import {isAllowedOrigin} from '@/lib/request-security';
 import {deliverClaim} from '@/lib/claim-mail';
 import {readLimitedBody,readLimitedJson,RequestError} from '@/lib/request-security';
@@ -26,6 +28,7 @@ export async function GET(_request:Request, {params}:Context) {
   if(action==='status') return json({configured:localMode()?localConfigured():!!cmsConfig(),backend:localMode()?(process.env.CMS_BACKEND==='json'?'json':'local'):'supabase',hosting:process.env.VERCEL?'vercel':'node'});
   try {
     const editor=await requireEditor();
+    if(action==='smtp-settings')return json(await smtpSummary());
     if(action==='session') return json({email:editor.email});
     if(action==='media'&&localMode())return json({rows:await listMedia()});
     if(action==='enquiries') {
@@ -70,6 +73,8 @@ export async function POST(request:Request,{params}:Context) {
       jar.set(sessionCookie,'',{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict',path:'/api/cms',maxAge:0});return json({ok:true});
     }
     const {token}=await requireEditor();
+    if(action==='smtp-settings'){await saveSmtp(await readLimitedJson(request,4096));return json(await smtpSummary());}
+    if(action==='smtp-test'){await testSmtp(generalSettings(await getSiteContent()).salesEmail);return json({ok:true});}
     if(action==='delete-media'&&localMode()){await deleteMedia((await readBody(request)).url);return json({ok:true});}
     if(action==='retry-claim-email'&&localMode()){const body=await readBody(request);if(typeof body.id!=='string'||! /^[a-f0-9-]{36}$/i.test(body.id))return json({error:'Invalid claim ID'},400);await deliverClaim(body.id);return json({ok:true});}
     if(action==='delete-enquiry'&&localMode()){const body=await readBody(request);await transaction(s=>{s.enquiries=s.enquiries.filter(row=>row.id!==body.id);});return json({ok:true});}

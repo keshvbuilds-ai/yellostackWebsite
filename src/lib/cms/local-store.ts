@@ -9,7 +9,7 @@ import { defaultContent } from './defaults';
 import type { SiteContent } from './types';
 export const localMode = () => process.env.CMS_BACKEND !== 'supabase';
 export const dataDirectory = () => {const dir=path.resolve(/* turbopackIgnore: true */ process.env.CMS_DATA_DIR || '.cms-data');const relative=path.relative(path.resolve('public'),dir);if(!relative||(!relative.startsWith('..'+path.sep)&&relative!=='..'&&!path.isAbsolute(relative)))throw new Error('CMS_DATA_DIR must be outside the public directory');return dir;};
-type State = { content:SiteContent; published:SiteContent; revision:number; enquiries:Record<string,unknown>[]; sessions:Record<string,number>; attempts:number[] };
+type State = { smtpEncrypted?:string; smtpTestAt?:number; content:SiteContent; published:SiteContent; revision:number; enquiries:Record<string,unknown>[]; sessions:Record<string,number>; attempts:number[] };
 const initialState=():State=>({content:structuredClone(defaultContent),published:structuredClone(defaultContent),revision:0,enquiries:[],sessions:{},attempts:[]});
 async function read():Promise<State>{if(remoteMode())return remoteRead(initialState);try{return JSON.parse(await readFile(path.join(dataDirectory(),'store.json'),'utf8'));}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;return initialState();}}
 // An exclusive filesystem lock also serializes multiple Node workers on the same volume.

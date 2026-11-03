@@ -48,6 +48,11 @@ try{
  const disabled=await (await fetch(origin+'/api/cms/content',{headers:{cookie}})).json();disabled.content.general.offerEnabled=false;assert.equal((await post('publish',disabled,cookie)).status,200);
  assert.equal((await submit()).status,400);
  console.log('PASS: server-owned offer values, persisted claim details, duplicate suppression, SMTP missing status and disabled offers.');
+ const publicBlog=await (await fetch(origin+'/api/cms/public')).json();const slug=publicBlog.posts[0].slug;
+ const view=(slug,cookie='',sentOrigin=origin)=>fetch(origin+'/api/blog/views',{method:'POST',headers:{origin:sentOrigin,'content-type':'application/json',cookie},body:JSON.stringify({slug})});
+ assert.equal((await view(slug,'','https://attacker.example')).status,403);assert.equal((await view('missing-article')).status,404);
+ const firstView=await view(slug);assert.equal(firstView.status,200);assert.equal((await firstView.json()).count,1);const visitorCookie=firstView.headers.get('set-cookie').split(';')[0];assert.equal((await (await view(slug,visitorCookie)).json()).count,1);assert.equal((await (await view(slug)).json()).count,2);assert.equal((await (await fetch(origin+'/api/blog/views')).json()).counts[slug],2);
+ console.log('PASS: blog views persistence, browser/day deduplication, unknown slugs and origin checks.');
  const smtp={host:'smtp.example.com',port:587,user:'sender@example.com',from:'sender@example.com',password:'test-only-secret'};
  const smtpSave=await post('smtp-settings',smtp,cookie);assert.equal(smtpSave.status,200);const smtpView=await smtpSave.json();assert.equal(smtpView.password,undefined);assert.equal(smtpView.passwordSet,true);
  assert.equal((await post('smtp-settings',{...smtp,password:''},cookie)).status,200);

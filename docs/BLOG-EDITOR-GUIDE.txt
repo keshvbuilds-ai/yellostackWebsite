@@ -1,0 +1,39 @@
+﻿YELLOSTACK - BLOG AND COMPANY FIGURES
+
+BLOG ARTICLES
+1. Sign in at /admin. Choose Blog articles.
+2. Choose New article, or open an existing article.
+3. Enter title, publication date, category and page address (slug).
+   Choose an existing category or type a new one. All categories appear on the blog page.
+   Changing an existing page address changes its URL; keep it unchanged unless necessary.
+4. Enter a short introduction and upload the hero/cover image.
+5. Add article sections. Each section has an optional heading and content.
+   Use blank lines between paragraphs.
+   Choose Text only, Image left, Image right, or Full-width image.
+   Upload the section image and describe it. Move sections up/down as needed.
+6. Add optional gallery images at the bottom, with descriptions.
+7. Save draft, then Publish using the main CMS buttons.
+   Open published article shows the live version, not unpublished edits.
+
+The latest publication date determines the large featured story and recent-post order.
+Related posts use the same category first, then recent posts from other categories.
+Every article has a Let's speak about this button linking to /contact.
+Existing plain paragraph articles remain supported. Editing sections updates the new layout.
+
+VIEW COUNTS
+Counts begin when this release is deployed; historical visits are not reconstructed.
+An article visit is recorded after two seconds with the tab visible. Repeated visits from the same browser count once per UTC day. A short-lived anonymous browser cookie is used; no visitor names or IP addresses are stored by this counter.
+Counts are approximate recorded views, not verified unique people. Different devices or cleared cookies can count again. They are persisted with the CMS data and cannot be edited from article content.
+
+HOMEPAGE COMPANY FIGURES
+1. Open General > Homepage company figures.
+2. Edit the number, suffix and label for Years of experience, Clients, Google rating and Projects.
+3. Enter 12 as the number and + as the suffix to display 12+.
+4. Save draft, then Publish.
+
+MOBILE
+The sidebar moves below the article and image/text sections stack on smaller screens.
+
+LANGUAGE AND READING DIRECTION
+Website labels, headings and dates follow the English/Arabic switch. Articles remain in the language in which they were written; there is no automatic translation service or API fee. English content reads left to right; Arabic content reads right to left. This applies to the feature, recent posts, article body and related posts.
+In Blog articles > Article details, use Article language / reading direction to select automatic detection, English or Arabic. Use an explicit language for mixed-language content.

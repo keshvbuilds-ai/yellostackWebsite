@@ -68,7 +68,15 @@ export function validateContent(value: unknown): asserts value is SiteContent {
     if(page.group!==undefined && typeof page.group!=='string') throw new Error('Invalid service group');
     page.sections.forEach(section=>{if(section.items!==undefined)shape(section.items,[''],'section.items');if(section.image!==undefined&&(typeof section.image!=='string'||!safeUrl(section.image,true)))throw new Error('Invalid section image');if(section.imageAlt!==undefined&&typeof section.imageAlt!=='string')throw new Error('Invalid image description');});
   }
-  for(const post of content.posts) {if(!/^\d{4}-\d{2}-\d{2}$/.test(post.date)||!Number.isFinite(Date.parse(post.date)))throw new Error('Use valid YYYY-MM-DD dates');if(post.coverImage!==undefined&&(typeof post.coverImage!=='string'||!safeUrl(post.coverImage,true)))throw new Error('Invalid cover image');if(post.galleryImages!==undefined){shape(post.galleryImages,[{image:'',imageAlt:''}],'galleryImages');if(post.galleryImages.length>12)throw new Error('Use at most 12 gallery images');for(const image of post.galleryImages)if(!safeUrl(image.image,true))throw new Error('Invalid gallery image');}if(post.galleryImages!==undefined){shape(post.galleryImages,[{image:'',imageAlt:''}],'galleryImages');if(post.galleryImages.length>12)throw new Error('Use at most 12 gallery images');for(const image of post.galleryImages)if(!safeUrl(image.image,true))throw new Error('Invalid gallery image');}}
+  for(const post of content.posts) {
+    if(post.language!==undefined&&! ['auto','en','ar'].includes(post.language))throw new Error('Choose a valid article language');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(post.date)||!Number.isFinite(Date.parse(post.date)))throw new Error('Use valid YYYY-MM-DD dates');
+    if(post.coverImage!==undefined&&(typeof post.coverImage!=='string'||!safeUrl(post.coverImage,true)))throw new Error('Invalid cover image');
+    if(post.sections!==undefined){shape(post.sections,[{heading:'',body:'',image:'',imageAlt:'',layout:''}],'Article sections');if(post.sections.length>60)throw new Error('Use at most 60 article sections');for(const section of post.sections){if(!['text','image-left','image-right','image-wide'].includes(section.layout)||!safeUrl(section.image,true))throw new Error('Invalid article section image or layout');}}
+    if(post.galleryImages!==undefined){shape(post.galleryImages,[{image:'',imageAlt:''}],'galleryImages');if(post.galleryImages.length>12)throw new Error('Use at most 12 gallery images');for(const image of post.galleryImages)if(!safeUrl(image.image,true))throw new Error('Invalid gallery image');}
+  }
+  for(let i=0;i<4;i++){const value=content.copy[`profile.stats.${i}.value`];if(value!==undefined&&(!value.trim()||!Number.isFinite(Number(value))||Number(value)<0||Number(value)>1000000000))throw new Error('Company figures: enter a number from 0 to 1,000,000,000');}
+
   for(const client of content.clients) {
     if(!safeUrl(client.image,true)||!client.image||!safeUrl(client.url))throw new Error('Invalid client logo or link');
     if(client.sector!==undefined && !['','Enterprise','Healthcare','Oil & Gas','Transport','Retail','Government'].includes(client.sector))throw new Error('Choose a valid client sector');

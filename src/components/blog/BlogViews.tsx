@@ -1,0 +1,7 @@
+﻿'use client';
+import {createContext,useContext,useEffect,useState,type ReactNode} from 'react';
+import {useLocale,useTranslate} from '@/components/cms/ContentProvider';
+import {Eye} from 'lucide-react';
+const Counts=createContext<Record<string,number>>({});
+export function BlogViewCounts({children,article}:{children:ReactNode;article?:string}){const [counts,setCounts]=useState<Record<string,number>>({});useEffect(()=>{let active=true;fetch('/api/blog/views').then(r=>r.ok?r.json():null).then(data=>{if(active&&data?.counts)setCounts(data.counts);}).catch(()=>{});return()=>{active=false;};},[]);useEffect(()=>{if(!article)return;const timer=setTimeout(()=>{if(document.visibilityState!=='visible')return;fetch('/api/blog/views',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:article})}).then(r=>r.ok?r.json():null).then(data=>{if(typeof data?.count==='number')setCounts(old=>({...old,[article]:data.count}));}).catch(()=>{});},2000);return()=>clearTimeout(timer);},[article]);return <Counts.Provider value={counts}>{children}</Counts.Provider>;}
+export default function BlogViews({slug}:{slug:string}){const count=useContext(Counts)[slug],locale=useLocale(),t=useTranslate();return <span className="journal-views" dir={locale==='ar'?'rtl':'ltr'} title={t('Recorded article views; repeat visits from the same browser count once per day')}><Eye size={15} aria-hidden="true"/>{count===undefined?'—':count.toLocaleString(locale)}<span>{t('views')}</span></span>;}

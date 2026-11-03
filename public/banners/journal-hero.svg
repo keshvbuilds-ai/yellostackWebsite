@@ -1,0 +1,10 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="650" viewBox="0 0 1600 650" fill="none">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1600" y2="650" gradientUnits="userSpaceOnUse"><stop stop-color="#10170f"/><stop offset="1" stop-color="#253020"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="500" y2="150" gradientUnits="userSpaceOnUse"><stop stop-color="#ffe67b"/><stop offset=".5" stop-color="#ffcf00"/><stop offset="1" stop-color="#a98300"/></linearGradient><linearGradient id="side"><stop stop-color="#8a6900"/><stop offset=".6" stop-color="#e5b600"/><stop offset="1" stop-color="#6f5300"/></linearGradient><radialGradient id="glow"><stop stop-color="#ffcf00" stop-opacity=".16"/><stop offset="1" stop-color="#ffcf00" stop-opacity="0"/></radialGradient><pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80" stroke="#e2e9c8" stroke-opacity=".06"/></pattern></defs>
+<path fill="url(#bg)" d="M0 0h1600v650H0z"/><path fill="url(#grid)" d="M0 0h1600v650H0z"/><ellipse cx="1200" cy="360" rx="550" ry="360" fill="url(#glow)"/>
+<g stroke="#ffcf00" stroke-opacity=".18"><path d="M720 0v110l130 75v120l160 90v255M1600 60l-170 100v130l-120 70v290M680 650l240-140h680"/><circle cx="850" cy="185" r="5" fill="#ffcf00"/><circle cx="1430" cy="160" r="5" fill="#ffcf00"/></g>
+<g transform="translate(940 150)">
+<g transform="translate(0 210)"><path d="M0 80 235 0 470 80v20l-235 85L0 100Z" fill="url(#side)"/><path d="M8 76 226 2q9-3 18 0l218 74q16 5 0 11l-218 76q-9 3-18 0L8 87q-16-6 0-11Z" fill="url(#gold)"/></g>
+<g transform="translate(0 110)"><path d="M0 80 235 0 470 80v20l-235 85L0 100Z" fill="url(#side)"/><path d="M8 76 226 2q9-3 18 0l218 74q16 5 0 11l-218 76q-9 3-18 0L8 87q-16-6 0-11Z" fill="url(#gold)"/></g>
+<path d="M0 80 235 0 470 80v20l-235 85L0 100Z" fill="url(#side)"/><path d="M8 76 226 2q9-3 18 0l218 74q16 5 0 11l-218 76q-9 3-18 0L8 87q-16-6 0-11Z" fill="url(#gold)"/>
+</g><g stroke="#f6e6a1" stroke-opacity=".35"><path d="M920 85h14m-7-7v14M1480 520h14m-7-7v14M1380 90h8m-4-4v8"/></g>
+</svg>

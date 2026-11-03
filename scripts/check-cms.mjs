@@ -118,3 +118,22 @@ assert.equal(restoreProjectCategory({...legacyGrocery,category:'booking-on-deman
 assert.equal(restoreProjectCategory({...legacyGrocery,title:'Unclassified app'}).category,undefined);
 validateContent({...structuredClone(defaultContent),workProjectsManaged:true,workProjects:[restoreProjectCategory(legacyGrocery)]});
 console.log('Legacy grocery category migration passes without overwriting selected categories.');
+
+const sectionContent=structuredClone(defaultContent);
+sectionContent.posts[0].sections=[{heading:'A useful heading',body:'First paragraph.\n\nSecond paragraph.',image:'/banners/web.svg',imageAlt:'Website illustration',layout:'image-left'}];
+sectionContent.copy['profile.stats.0.value']='12';validateContent(sectionContent);
+for(const mutate of [c=>c.posts[0].sections[0].image='javascript:alert(1)',c=>c.posts[0].sections[0].layout='unknown',c=>c.copy['profile.stats.0.value']='NaN',c=>c.copy['profile.stats.0.value']='-5']){const bad=structuredClone(sectionContent);mutate(bad);assert.throws(()=>validateContent(bad));}
+const {articleSections,newestPosts,relatedPosts}=await import(pathToFileURL(path.join(out,'blog.mjs')).href);
+assert.equal(articleSections(sectionContent.posts[0])[0].heading,'A useful heading');assert.equal(articleSections(defaultContent.posts[0])[0].body,defaultContent.posts[0].paragraphs[0]);
+const sample=[{...defaultContent.posts[0],slug:'old',date:'2020-01-01',category:'AI'},{...defaultContent.posts[0],slug:'new',date:'2026-01-01',category:'Cloud'},{...defaultContent.posts[0],slug:'similar',date:'2025-01-01',category:'AI'}];
+assert.equal(newestPosts(sample)[0].slug,'new');assert.equal(relatedPosts(sample,sample[0])[0].slug,'similar');assert.ok(!relatedPosts(sample,sample[0]).some(p=>p.slug==='old'));
+console.log('Blog checks: section compatibility, image validation, figure validation, date sorting and related articles passed.');
+
+const {blogLanguage,blogDirection,formatBlogDate}=await import(pathToFileURL(path.join(out,'blog.mjs')).href);
+const englishPost={...defaultContent.posts[0],title:'A new English article',summary:'An English introduction.',paragraphs:['English article content.']};
+const arabicPost={...englishPost,slug:'arabic-example',title:'مقال جديد باللغة العربية',summary:'مقدمة المقال باللغة العربية',paragraphs:['هذا محتوى المقال المكتوب باللغة العربية.']};
+const bilingualContent={...defaultContent,posts:[englishPost,arabicPost]};
+assert.deepEqual(localizeContent(bilingualContent,'ar').posts,bilingualContent.posts);
+assert.equal(blogDirection(englishPost),'ltr');assert.equal(blogDirection(arabicPost),'rtl');assert.equal(blogLanguage({...englishPost,language:'ar'}),'ar');
+assert.match(formatBlogDate('2026-11-03','ar'),/[\u0600-\u06ff]/);
+console.log('Blog language checks passed: original text preservation, automatic/explicit direction and Arabic dates.');

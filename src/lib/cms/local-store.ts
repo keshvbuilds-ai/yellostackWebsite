@@ -9,7 +9,7 @@ import { defaultContent } from './defaults';
 import type { SiteContent } from './types';
 export const localMode = () => process.env.CMS_BACKEND !== 'supabase';
 export const dataDirectory = () => {const dir=path.resolve(/* turbopackIgnore: true */ process.env.CMS_DATA_DIR || '.cms-data');const relative=path.relative(path.resolve('public'),dir);if(!relative||(!relative.startsWith('..'+path.sep)&&relative!=='..'&&!path.isAbsolute(relative)))throw new Error('CMS_DATA_DIR must be outside the public directory');return dir;};
-type State = { smtpEncrypted?:string; smtpTestAt?:number; content:SiteContent; published:SiteContent; revision:number; enquiries:Record<string,unknown>[]; sessions:Record<string,number>; attempts:number[] };
+type State = { blogViews?:Record<string,number>; blogSeen?:{day:string;keys:Record<string,boolean>}; smtpEncrypted?:string; smtpTestAt?:number; content:SiteContent; published:SiteContent; revision:number; enquiries:Record<string,unknown>[]; sessions:Record<string,number>; attempts:number[] };
 const initialState=():State=>({content:structuredClone(defaultContent),published:structuredClone(defaultContent),revision:0,enquiries:[],sessions:{},attempts:[]});
 async function read():Promise<State>{if(remoteMode())return remoteRead(initialState);try{return JSON.parse(await readFile(path.join(dataDirectory(),'store.json'),'utf8'));}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;return initialState();}}
 // An exclusive filesystem lock also serializes multiple Node workers on the same volume.
@@ -42,3 +42,5 @@ export async function listMedia(){if(remoteMode())return remoteList();try{return
 export async function deleteMedia(url:string){if(!/^\/api\/media\/[a-f0-9-]+\.(png|jpg|webp|avif)$/.test(url))throw new Error('Invalid media URL');if(remoteMode())return remoteDelete(url);await transaction(async s=>{if(JSON.stringify([s.content,s.published]).includes(url))throw new Error('This image is used in saved content. Replace it and publish before deleting.');await unlink(path.join(dataDirectory(),'media',path.basename(url)));});}
 
 export async function readMedia(name:string){return remoteMode()?remoteMedia(name):readFile(path.join(dataDirectory(),'media',name));}
+
+export async function blogViewCounts(slugs:string[]){const state=await read();return Object.fromEntries(slugs.map(slug=>[slug,typeof state.blogViews?.[slug]==='number'?state.blogViews[slug]:0]));}

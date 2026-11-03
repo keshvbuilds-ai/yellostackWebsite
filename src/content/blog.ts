@@ -1,5 +1,8 @@
+export type BlogSection = {heading:string;body:string;image:string;imageAlt:string;layout:"text"|"image-left"|"image-right"|"image-wide"};
 export type BlogPost = {
   slug: string; title: string; date: string; category: string;
+  language?: "auto"|"en"|"ar";
+  sections?: BlogSection[];
   summary: string; paragraphs: string[]; source: string; coverImage?: string; galleryImages?: {image:string;imageAlt:string}[];
 };
 
@@ -39,7 +42,8 @@ const entries: [string, string, string, string][] = [
   ['tips-to-create-new-mobile-app-development', 'Tips to Create New Mobile App Development', '2020-11-17', 'Mobile apps'],
 ];
 
-const summaries: Record<string, { summary: string; paragraphs: string[] }> = {
+const summaries: Record<string, { sections?: BlogSection[];
+  summary: string; paragraphs: string[] }> = {
   'from-hype-to-reality-ai-in-2025': {
     summary: 'A perspective on AI moving from ambitious promises into everyday business workflows.',
     paragraphs: ['This 2025 article explores the shift from experimentation to practical uses of artificial intelligence. It discusses applications across business, education, healthcare and everyday digital experiences.', 'Its central argument is about helping people work with AI: automating repetitive tasks so there is more room for creative and strategic work. The article also identifies privacy, ethics and responsible use as considerations for adoption.'],
@@ -89,6 +93,19 @@ export const blogPosts: BlogPost[] = entries.map(([slug, title, date, category])
   paragraphs: summaries[slug]?.paragraphs ?? [],
 }));
 
-export function formatBlogDate(date: string) {
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
+export function formatBlogDate(date: string, locale: 'en'|'ar' = 'en') {
+  return new Intl.DateTimeFormat(locale==='ar'?'ar-SA-u-ca-gregory':'en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
 }
+
+export function articleSections(post:BlogPost):BlogSection[]{return post.sections??post.paragraphs.map(body=>({heading:"",body,image:"",imageAlt:"",layout:"text"}));}
+export function newestPosts(posts:BlogPost[]){return [...posts].sort((a,b)=>b.date.localeCompare(a.date)||a.slug.localeCompare(b.slug));}
+export function relatedPosts(posts:BlogPost[],post:BlogPost){return newestPosts(posts).filter(p=>p.slug!==post.slug).sort((a,b)=>Number(b.category===post.category)-Number(a.category===post.category)).slice(0,3);}
+
+export function blogLanguage(post:BlogPost):'en'|'ar'{
+ if(post.language==='en'||post.language==='ar')return post.language;
+ const text=[post.title,post.summary,...articleSections(post).map(s=>s.heading+' '+s.body)].join(' ');
+ const arabic=(text.match(/[\u0620-\u063f\u0641-\u064a\u066e-\u06d3\u06fa-\u06ff]/g)||[]).length;
+ const latin=(text.match(/[a-z]/gi)||[]).length;
+ return arabic>latin?'ar':'en';
+}
+export function blogDirection(post:BlogPost){return blogLanguage(post)==='ar'?'rtl':'ltr';}

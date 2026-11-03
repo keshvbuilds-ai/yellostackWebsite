@@ -1,3 +1,4 @@
+import BlogJournal from '@/components/blog/BlogJournal';
 import PublishedCollections from '@/components/cms/PublishedCollections';
 import WorkExperience from '@/components/work/WorkExperience';
 import { capabilityLinks, productSlugs } from '@/content/catalogue';
@@ -24,7 +25,7 @@ import Navigation from '@/components/Navigation';
 import InnerHero from '@/components/inner/InnerHero';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { innerPages as defaultPages, routeAliases } from '@/content/inner-pages';
-import { blogPosts as defaultPosts, formatBlogDate } from '@/content/blog';
+import { blogPosts as defaultPosts } from '@/content/blog';
 
 type Props = { params: Promise<{ slug: string[] }> };
 
@@ -52,14 +53,15 @@ export default async function Page({ params }: Props) {
   const page = innerPages.find(p => p.slug === path);
   const post = blogPosts.find(p => `blog/${p.slug}` === path);
   if (!page && !post && path !== 'blog') notFound();
+  if(path==='blog'||post)return <><Navigation solid/><main id="page-content"><BlogJournal posts={blogPosts} post={post}/></main><Footer/></>;
   if(path === 'portfolio' && page)return <><Navigation solid/><main id="page-content"><WorkExperience title={page.title} intro={page.intro} sections={page.sections}/></main><Footer/></>;
   const directoryPages = path === 'products' ? servicePages.filter(item=>productSlugs.includes(item.slug)) : capabilityLinks.map(item=>({...servicePages.find(page=>page.slug===item.slug)!,title:item.title})).filter(item=>item.slug);
-  const title = page?.title ?? post?.title ?? 'Ideas worth building on.';
+  const title = page?.title ?? 'Ideas worth building on.';
   return <div className="ys-inner-page min-h-screen text-[#171c11]">
     <a href="#page-content" className="fixed left-4 top-4 z-50 -translate-y-24 bg-[#ffcf00] p-4 focus:translate-y-0"><LocalText text={"Skip to content"} /></a>
     <Navigation solid />
     <main id="page-content">
-      {path === 'artificial-intelligence' ? <AIExperience title={title} intro={page?.intro || ''} /> : <InnerHero title={title} intro={page?.intro ?? post?.summary ?? 'Explore design, technology and business perspectives from the Yellostack archive.'} eyebrow={page?.eyebrow ?? 'Journal'} article={!!post} />}
+      {path === 'artificial-intelligence' ? <AIExperience title={title} intro={page?.intro || ''} /> : <InnerHero title={title} intro={page?.intro ?? 'Explore design, technology and business perspectives from the Yellostack archive.'} eyebrow={page?.eyebrow ?? 'Journal'} />}
       {path === 'about-us' && <><StackConvergence /><div className="gm-opening"><GMMessage /></div></>}
       {path === 'team' && <TeamExperience />}
       {path === 'mobile-application-development-company-saudi-arabia' && <DevelopmentExperience kind="mobile" />}
@@ -67,9 +69,6 @@ export default async function Page({ params }: Props) {
       {path === 'medical-coding' && <><MedicalExperience /><MedicalServices /></>}
       {path !== 'artificial-intelligence' && <div className="ys-inner-body">
         {page && path !== 'team' && path !== 'medical-coding' && path !== 'artificial-intelligence' && page.kind !== 'contact' && page.slug !== 'clients' && page.slug !== 'products' && <MediaPanel topic={page.slug} film={page.slug === 'about-us' || page.slug === 'team'} />}
-        {post && <p className="ys-inner-date">{post.category} / <time dateTime={post.date}>{formatBlogDate(post.date)}</time></p>}
-        {path === 'blog' && <div className="grid gap-x-10 gap-y-12 py-14 md:grid-cols-2 xl:grid-cols-3">{blogPosts.map((item, index) => <article key={item.slug} className="border-t border-black/20 pt-6"><Link href={'/blog/' + item.slug} tabIndex={-1} aria-hidden="true" className="mb-6 block overflow-hidden rounded-xl bg-[#e0e5d1]"><Image cmsPath={['posts',String(content.posts.findIndex(post=>post.slug===item.slug)),'coverImage']} src={item.coverImage || pageMedia(item.slug).src} alt="" width={600} height={420} className="aspect-[16/10] w-full object-cover transition-transform duration-500 motion-safe:hover:scale-105" /></Link><div className="font-mono text-xs text-[#626851]">{item.category} · {formatBlogDate(item.date)}</div><Link href={`/blog/${item.slug}`} className="group"><h2 className="mt-4 text-2xl leading-tight group-hover:underline">{item.title}</h2><p className="mt-4 text-sm leading-7 text-[#626851]">{item.summary}</p><span className="mt-6 inline-block font-mono text-xs"><LocalText text={item.paragraphs.length ? 'READ OVERVIEW' : 'VIEW ARCHIVE ENTRY'} /> ↗</span></Link></article>)}</div>}
-        {post && <article className="mx-auto max-w-3xl py-14">{post.coverImage && <Image cmsPath={['posts',String(content.posts.findIndex(item=>item.slug===post.slug)),'coverImage']} src={post.coverImage} alt={post.title} width={1000} height={650} className="mb-10 w-full rounded-xl object-cover" />}<p className="mb-8 font-mono text-xs uppercase text-[#626851]">{post.paragraphs.length ? (post.source ? 'Article overview' : 'Journal') : 'From the archive'}</p>{post.paragraphs.length ? post.paragraphs.map(p => <p key={p} className="mb-6 text-lg leading-9">{p}</p>) : <p className="mb-8 text-lg leading-9"><LocalText text={"This entry preserves an article from Yellostack’s published archive. Its full text is not hosted here; you can visit the original publication using the link below."} /></p>}{post.source && <a href={post.source} target="_blank" rel="noreferrer" className="mt-6 inline-flex bg-[#171c11] px-7 py-5 font-mono text-xs text-[#ffcf00]"><LocalText text={"OPEN ORIGINAL PUBLICATION ↗"} /></a>}<p className="mt-8 text-sm text-[#626851]"><LocalText text={"Published content reflects its original date."} /></p>{post.galleryImages?.some(item=>item.image)&&<section aria-label="Article images" className="mt-10 border-t border-black/15 pt-6"><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{post.galleryImages.map((item,i)=>item.image&&<a key={i} href={item.image} target="_blank" rel="noopener noreferrer" aria-label={item.imageAlt||`Open article image ${i+1}`}><Image cmsPath={['posts',String(content.posts.findIndex(item=>item.slug===post.slug)),'galleryImages',String(i),'image']} src={item.image} alt={item.imageAlt||''} width={400} height={300} className="aspect-[4/3] w-full rounded-lg object-cover transition-opacity hover:opacity-80"/></a>)}</div></section>}<Link href="/blog" className="mt-10 block text-sm underline"><LocalText text={"← All articles"} /></Link></article>}
         {path !== 'artificial-intelligence' && page?.sections.map((section, index) => <section key={section.title} className="ys-inner-detail"><div><p className="mb-5 font-mono text-xs text-[#626851]">{String(index + 1).padStart(2, '0')}<LocalText text={"/ YELLOSTACK"} /></p><h2 className="max-w-md text-3xl leading-tight tracking-tight">{section.title}</h2></div><div>{section.image && <Image src={section.image} alt={section.imageAlt || section.title} width={900} height={600} className="mb-7 aspect-[3/2] w-full rounded-lg object-cover" />}<p className="max-w-2xl text-lg leading-8 text-[#535b46]">{section.body}</p>{section.items && <ul className="mt-7 grid gap-3 sm:grid-cols-2">{section.items.map(item => <li key={item} className="border-t border-black/15 pt-3 text-sm">{item}</li>)}</ul>}</div></section>)}
         {page?.slug === 'clients' && <ClientLogos />}
         {path==='products'&&<PublishedCollections kind="products"/>}

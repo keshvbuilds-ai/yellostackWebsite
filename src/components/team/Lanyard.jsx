@@ -727,7 +727,7 @@ const Lanyard = ({
   const settingsRef = useRef(null);
   const applyRef = useRef(null);
 
-  settingsRef.current = {
+  useEffect(() => { settingsRef.current = {
     frontImage,
     backImage,
     imageFit: imageFit === 'contain' ? 'contain' : 'cover',
@@ -748,7 +748,7 @@ const Lanyard = ({
     breeze,
     interactive,
     intro
-  };
+  }; });
 
   useEffect(() => {
     applyRef.current?.();

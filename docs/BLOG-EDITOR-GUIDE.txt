@@ -1,4 +1,4 @@
-﻿YELLOSTACK - BLOG AND COMPANY FIGURES
+ï»¿YELLOSTACK - BLOG AND COMPANY FIGURES
 
 BLOG ARTICLES
 1. Sign in at /admin. Choose Blog articles.
@@ -35,5 +35,6 @@ MOBILE
 The sidebar moves below the article and image/text sections stack on smaller screens.
 
 LANGUAGE AND READING DIRECTION
-Website labels, headings and dates follow the English/Arabic switch. Articles remain in the language in which they were written; there is no automatic translation service or API fee. English content reads left to right; Arabic content reads right to left. This applies to the feature, recent posts, article body and related posts.
-In Blog articles > Article details, use Article language / reading direction to select automatic detection, English or Arabic. Use an explicit language for mixed-language content.
+Website labels, headings, dates and article content follow the English/Arabic switch. Arabic articles read right to left.
+In the CMS, use the English / Arabic header buttons, then Blog articles, to edit each version. Titles, introductions, section headings, paragraphs and image captions can be translated. Save draft and Publish.
+Existing archive translations are included. For new English content, enter its reviewed Arabic translation in Arabic mode before publishing. There is no automatic translation service or API fee. English originals are preserved.

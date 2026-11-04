@@ -127,7 +127,7 @@ export default function TearTicket({
     [width, height, stubSize, radius, holes, holeSize, notch, roughness, vertical]
   );
   const cfg = useRef({});
-  cfg.current = { geo, tearAngle, stretch, resistance, height, notch, reduce, onTear, controlled };
+  useEffect(() => { cfg.current = { geo, tearAngle, stretch, resistance, height, notch, reduce, onTear, controlled }; });
   const sim = useRef({
     raf: 0,
     last: 0,
@@ -384,6 +384,8 @@ export default function TearTicket({
       if (s.phase === 'idle' && stubRef.current) stubRef.current.style.visibility = 'hidden';
       return;
     }
+    // Reset the imperative tear simulation when its controlled state changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setInstant(false);
     reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps

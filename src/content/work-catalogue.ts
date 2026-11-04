@@ -12,4 +12,4 @@ export function restoreProjectCategory(project:WorkProject):WorkProject{
  if(['grocery delivery','grocery delivery app','grocery delivery app - concept','grocery & delivery'].includes(title))return {...project,category:'grocery-delivery'};
  return project;
 }
-export function workProjects(content:SiteContent):WorkProject[]{return (content.workProjectsManaged?content.workProjects??[]:Array.from(new Map([...bundled,...(content.workProjects??[])].map(p=>[p.service+':'+p.title.trim().toLowerCase(),p])).values())).map(restoreProjectCategory);}
+export function workProjects(content:SiteContent):WorkProject[]{return (content.workProjectsManaged?content.workProjects??[]:Array.from(new Map([...bundled,...(content.workProjects??[])].map(p=>[p.id||p.service+':'+p.title.trim().toLowerCase(),p])).values())).map(restoreProjectCategory);}

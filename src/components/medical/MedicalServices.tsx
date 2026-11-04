@@ -1,4 +1,6 @@
 'use client';
+import {LocalText} from '@/components/cms/ContentProvider';
+
 import { useEffect,useRef } from 'react';
 import { Network, CodeXml, ClipboardCheck, ShieldCheck, UserRoundCheck } from 'lucide-react';
 import gsap from 'gsap';
@@ -35,7 +37,7 @@ export default function MedicalServices(){
  return <section ref={root} className="medical-services" data-no-gradient>
   <div className="medical-services-art">
    <div className="medical-services-orbit" aria-hidden="true"><svg viewBox="0 0 520 520">{items.map((_,i)=>{const angle=-103+i*41;const [x,y]=point(188,angle+19);const Icon=icons[i];return <g key={i}><path className="medical-arc-segment" d={sector(angle,angle+40)} fill="#ffcc02"/><foreignObject x={x-20} y={y-20} width="40" height="40"><Icon size={40} strokeWidth={1.5}/></foreignObject></g>;})}</svg></div>
-   <div className="medical-services-title"><p className="medical-service-kicker">YELLOSTACK / HEALTHCARE</p><h2><CmsText id="medical.services.referenceTitle" fallback="Medical Coding & Healthcare Technology"/></h2><p><CmsText id="medical.services.intro" fallback="YelloStack combines accurate medical coding with intelligent healthcare technology."/></p></div>
+   <div className="medical-services-title"><p className="medical-service-kicker"><LocalText text={"YELLOSTACK / HEALTHCARE"}/></p><h2><CmsText id="medical.services.referenceTitle" fallback="Medical Coding & Healthcare Technology"/></h2><p><CmsText id="medical.services.intro" fallback="YelloStack combines accurate medical coding with intelligent healthcare technology."/></p></div>
   </div>
   <div className="medical-services-list">{items.map((item,i)=>{const Icon=icons[i];return <article key={i} className="medical-service-card"><span className="medical-card-number">0{i+1}</span><div><h3>{item.title}</h3><p>{item.body}</p></div><Icon className="medical-card-icon" size={25} strokeWidth={1.5} aria-hidden="true"/></article>;})}</div>
  </section>;

@@ -1,0 +1,82 @@
+YELLOSTACK ? PRODUCTION READINESS AUDIT
+4 November 2026
+
+Scope
+English and Arabic public pages, responsive layouts, CMS isolation/editing,
+contact and offer submissions, application security, dependencies and public
+deployment health. Blog translation behavior was not changed in this audit.
+Existing uncommitted blog and Arabic work remains in the working tree.
+
+Fixes in this audit
+- Private visual-preview forms now stop React submit handlers as well as native
+  submission. Previously preventDefault alone could still allow a request.
+- Contact CTA displays the CMS-configured email instead of a fixed address.
+- Offer percentage labels translate for any configured discount, rather than
+  relying on dictionary entries for a particular percentage.
+- Arabic contact/offer validation and connection-error messages added.
+- Email and phone fields remain left-to-right inside Arabic forms.
+- Phone-demo canvas text now follows the selected language.
+- Animation configuration refs update after commit instead of during rendering.
+- Internal navigation uses Next Link where lint identified plain anchors.
+- Converted the UTF-16 utility source file to UTF-8.
+- Lint excludes generated audit/data artifacts. Explicit, documented exceptions
+  cover imperative WebGL state and browser-only initialization, not all hooks.
+
+Validation
+- Production webpack build and TypeScript checks pass.
+- Lint: zero errors; remaining warnings primarily concern native image usage,
+  unused values and animation effect dependencies.
+- CMS validation, safe URLs, locale handling and content editing checks pass.
+- Security API suite passes: authentication, CSRF/origin rejection, login rate
+  limits, HttpOnly/Secure/SameSite cookies, logout revocation, revision conflict,
+  draft/public isolation, media validation and upload/delete permissions.
+- SMTP credentials remain private, masked and isolated from published content.
+- Contact and offer validation, server-owned discount values, duplicate
+  suppression and email HTML escaping tests pass. No real emails were sent.
+- Public route sweep: 39 routes in English/Arabic at 390px and 1440px.
+  Tests check HTTP status, horizontal overflow and uncaught browser errors.
+  Includes default content and a fresh read-only snapshot of published content.
+- Work animation checks pass in both locales, mobile/desktop, normal/reduced
+  motion, with scroll and resize.
+- CMS tests exercise independent locale, Arabic preview, save/create/delete and
+  publish in temporary storage. Production content is not modified.
+- Contact browser tests use mock delivery; actual SMTP delivery is separate.
+
+Dependency findings
+npm audit --omit=dev: zero known vulnerabilities reported.
+Full npm audit: 16 moderate development-tool dependency findings, all associated
+with minimatch advisory GHSA-g3hv-75wg-m249. No high/critical findings.
+npm's suggested forced fixes downgrade ESLint/Next lint packages across major
+versions; these were not applied. Track compatible upstream fixes. This result
+does not establish that unknown vulnerabilities cannot exist.
+
+Live read-only checks
+Both yellostack.com and www.yellostack.com resolve to 194.164.77.188.
+HTTPS homepage and CMS status endpoints return 200.
+Unauthenticated /api/cms/content returns 401.
+The checked /.env and /.cms-data/store.json paths return 404.
+HSTS is present. These checks do not constitute a VPS configuration audit.
+
+Before release
+1. Commit/review the accumulated changes and build the exact commit in a new VPS
+   release directory; do not overwrite the active release.
+2. Back up /var/lib/yellostack, including smtp.key and the encrypted SMTP state;
+   retain /etc/yellostack/environment securely and record the previous symlink.
+3. Activate the release, restart yellostack, and repeat public health checks.
+4. Verify SMTP Test Connection in CMS reaches the configured sales inbox.
+5. Check both languages on an actual phone and confirm media files remain
+   available from persistent storage.
+6. Verify VPS backups, restore procedure, security updates, firewall and TLS
+   renewal using the connected server terminal.
+
+Limitations
+No production files, DNS records or VPS service settings were changed.
+No fresh Lighthouse performance score or exhaustive accessibility certification
+is claimed. Tests cover the listed routes and workflows, not every possible
+browser, custom CMS value, animation state or future content change.
+New custom English content still requires a reviewed Arabic translation.
+The server-side filesystem lock can require recovery after an abrupt process
+termination during a write; investigate a stale write.lock if saves remain busy,
+and only remove it after stopping the application and confirming no writer runs.
+This audit is application QA and a targeted security review, not a guarantee that
+the system is free of vulnerabilities.

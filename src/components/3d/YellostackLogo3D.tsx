@@ -38,7 +38,7 @@ export function YellostackLogo3D({ journey, scale = 1, story = false, heroStory 
   const glints = useRef<(THREE.Mesh | null)[]>([]);
   const assembly = useRef<THREE.Group>(null);
   const highlightTime = useRef(0);
-  const geometry = useMemo(makePlate, []);
+  const geometry = useMemo(() => makePlate(), []);
   const perimeter = useMemo(() => plateOutline(4.77, .4).getSpacedPoints(320), []);
   const trim = useMemo(() => {
     const curve = new THREE.CatmullRomCurve3(perimeter.slice(0, -1).map(p => new THREE.Vector3(p.x, .125, -p.y)), true);

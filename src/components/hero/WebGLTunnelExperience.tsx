@@ -1,4 +1,5 @@
 ﻿"use client";
+/* eslint-disable react-hooks/immutability -- R3F frame callbacks intentionally mutate Three.js objects and animation refs outside React rendering. */
 
 import { useMemo, useRef, type MutableRefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";

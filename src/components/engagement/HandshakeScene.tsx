@@ -31,6 +31,8 @@ export default function HandshakeScene({progress}:{progress:MutableRefObject<{va
  const host=useRef<HTMLDivElement>(null);const [failed,setFailed]=useState(false);
  useEffect(()=>{
   const mount=host.current;if(!mount)return;let renderer:THREE.WebGLRenderer;
+ // Display the fallback if the browser cannot create a WebGL context.
+ // eslint-disable-next-line react-hooks/set-state-in-effect
   try{renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});}catch{setFailed(true);return;}
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setClearColor(0xffffff,0);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;mount.appendChild(renderer.domElement);
   const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(32,1,.1,50);camera.position.set(0,.8,9);camera.lookAt(0,0,0);

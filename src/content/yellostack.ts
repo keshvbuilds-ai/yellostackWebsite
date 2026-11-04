@@ -4,6 +4,7 @@
         words: ["Rooted", "Built", "Promised"],
     },
     capabilities: [
+        { id: "marketing", title: "Digital marketing", description: "Reach the right people with a clear brand story, useful content and measurable digital campaigns.", items: ["Content marketing", "Social media campaigns", "Search engine optimisation", "Campaign analytics"], label: "GROW WITH PURPOSE" },
         { id: "ai", title: "AI & automation", description: "Bring AI into your products and everyday workflows, from conversational experiences to knowledge tools and business automation.", items: ["AI assistants", "Workflow automation", "Knowledge tools", "AI integration"], label: "INTELLIGENCE IN ACTION" },
         { id: "medical-coding", title: "Medical coding", description: "Support healthcare teams with medical coding services and organized documentation workflows, with a focus on accuracy and clear review processes.", items: ["Medical coding", "Documentation review", "Coding workflows", "Quality review"], label: "CONNECTED HEALTHCARE" },
         { id: "applications", title: "Mobile App Development", description: "Build mobile experiences for Android and iOS, from customer-facing applications to connected business tools.", items: ["Android & iOS", "Cross-platform applications", "Enterprise mobility", "Mobile commerce"], label: "CONNECTED EXPERIENCES" },

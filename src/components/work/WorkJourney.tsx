@@ -3,7 +3,7 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import {motion} from 'framer-motion';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {CmsText,LocalText,useVisualEditing} from '../cms/ContentProvider';
+import {CmsText,LocalText,useLocale,useVisualEditing} from '../cms/ContentProvider';
 import {journeyPlan,phase,smooth} from './journey-motion';
 import './work-journey.css';
 import {workServices} from '@/content/work-catalogue';
@@ -12,7 +12,7 @@ type DepthFrame={depth:number;visibility:number;finale?:number};
 const show=(element:HTMLElement,opacity:number)=>{element.style.opacity=String(opacity);element.style.visibility=opacity>.001?'visible':'hidden';};
 
 export default function WorkJourney(){
- const editing=useVisualEditing();
+ const editing=useVisualEditing();const locale=useLocale();
  const [listView,setListView]=useState(false);
  const root=useRef<HTMLElement>(null),stage=useRef<HTMLDivElement>(null),canvas=useRef<HTMLDivElement>(null);
  const depthFrame=useRef<DepthFrame>({depth:0,visibility:0});
@@ -24,11 +24,12 @@ export default function WorkJourney(){
   const section=sectionRef,viewport=viewportRef;
   const media=gsap.matchMedia();
   media.add('(prefers-reduced-motion: no-preference)',()=>{
-   section.classList.add('is-animated');
    const find=(selector:string)=>section.querySelector<HTMLElement>(selector)!;
-   const question=find('.y-question'),anchor=find('.y-question-anchor'),floating=find('.y-flight-center'),glyph=find('.y-flight-glyph');
+   const question=find('.y-question'),anchor=section.querySelector<HTMLElement>('.y-question-anchor')??question,floating=find('.y-flight-center'),glyph=find('.y-flight-glyph');
    const intro=find('.y-intro'),white=find('.y-white-world'),outro=find('.y-outro'),brandAnchor=find('.y-brand-anchor'),brandLetter=find('.y-brand-letter'),suffix=find('.y-brand-rest'),invitation=find('.y-invitation');
    const tools=find('.y-tools'),progress=find('.y-scroll-progress'),sheet=find('.y-services'),goldSheet=find('.y-gold-sheet');
+   if(!question||!anchor||!floating||!glyph||!brandAnchor)return;
+   section.classList.add('is-animated');
    const ornaments=Array.from(section.querySelectorAll<HTMLElement>('.y-question-orbit'));
    const disappearing=Array.from(section.querySelectorAll<HTMLElement>('.y-question-vanish,.y-intro-note'));
    const panels=Array.from(section.querySelectorAll<HTMLElement>('.y-service')).map(element=>({element,track:element.querySelector<HTMLElement>('.y-project-track')!,cards:Array.from(element.querySelectorAll<HTMLElement>('.y-project'))}));
@@ -49,7 +50,7 @@ export default function WorkJourney(){
     show(goldSheet,0);
     disappearing.forEach((el,i)=>{show(el,1-isolate);el.style.transform=`translate3d(${i===0?-isolate*55:isolate*55}px,${-isolate*15}px,${-isolate*180}px)`;el.style.filter=`blur(${isolate*8}px)`;});
     glyph.style.transform=`translate3d(${fromX*(1-isolate)}px,${fromY*(1-isolate)}px,${enter*200}px)`;
-    show(floating,1-smooth(phase(t,1.35,2.05)));
+    show(floating,locale==='ar'?0:1-smooth(phase(t,1.35,2.05)));
     show(question,1-phase(t,1.6,1.75));
     ornaments.forEach((el,i)=>{show(el,1-smooth(phase(t,1.8,2.8)));el.style.transform=`translateZ(${isolate*420}px) rotate(${(i?-1:1)*isolate*100}deg)`;});
     panels.forEach(({element,track,cards},i)=>{
@@ -89,7 +90,7 @@ export default function WorkJourney(){
    document.fonts.ready.then(refresh);
    return()=>{alive=false;trigger.kill();tween.kill();section.classList.remove('is-animated');section.style.removeProperty('height');delete section.dataset.journeyTime;[...ornaments,...Array.from(section.querySelectorAll<HTMLElement>('.y-service-title,.y-project-window')),sheet,goldSheet,intro,white,question,floating,glyph,brandLetter,suffix,invitation,outro,tools,progress,...disappearing,...panels.flatMap(p=>[p.element,p.track])].forEach(el=>el.removeAttribute('style'));section.querySelectorAll<HTMLElement>('[inert],[aria-hidden]').forEach(el=>{if(!el.classList.contains('y-canvas')&&!el.classList.contains('y-flight')){el.inert=false;if(el.classList.contains('y-service'))el.removeAttribute('aria-hidden');}});};
   });return()=>media.revert();
- },[groups,plan,editing,listView]);
+ },[groups,plan,editing,listView,locale]);
  useEffect(()=>{
   const host=canvas.current;if(!host||editing||listView||!groups.length||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   let disposed=false,cleanup=()=>{};
@@ -101,15 +102,15 @@ export default function WorkJourney(){
  if(!groups.length)return null;
  return <section id="selected-work" className="y-journey" ref={root} data-no-gradient data-duration={plan.total} data-exit={plan.exit} aria-label="Selected work: why choose Yellostack">
   <div ref={stage} className="y-stage">
-   <div className="y-tools"><span>YELLOSTACK / <LocalText text="SELECTED WORK"/></span><button type="button" onClick={()=>{setListView(v=>!v);requestAnimationFrame(()=>{const el=root.current;if(el)window.dispatchEvent(new CustomEvent('ys:page-jump',{detail:{y:el.getBoundingClientRect().top+scrollY}}));});}}>{listView?'Scroll experience':'Browse services'}</button><a href="#after-y-journey"><LocalText text="Skip to next section"/> ↓</a></div>
+   <div className="y-tools"><span><LocalText text={"YELLOSTACK /"}/><LocalText text="SELECTED WORK"/></span><button type="button" onClick={()=>{setListView(v=>!v);requestAnimationFrame(()=>{const el=root.current;if(el)window.dispatchEvent(new CustomEvent('ys:page-jump',{detail:{y:el.getBoundingClientRect().top+scrollY}}));});}}><LocalText text={listView?'Scroll experience':'Browse services'}/></button><a href="#after-y-journey"><LocalText text="Skip to next section"/> ↓</a></div>
    <div className="y-white-world" aria-hidden="true"/>
-   <div className="y-intro"><span className="y-question-orbit left" aria-hidden="true">?</span><span className="y-question-orbit right" aria-hidden="true">?</span><div className="y-intro-copy"><p className="y-intro-note"><CmsText id="work.projects.heading" fallback="Ideas, brought to life."/></p><h2 className="y-question" aria-label="Why choose us?"><span className="y-question-first"><span className="y-question-vanish">Wh</span><span className="y-question-anchor">y</span></span><span className="y-question-vanish y-question-end">choose us?</span></h2><div className="y-intro-note y-intro-description"><CmsText id="work.projects.invite" fallback="The answer is in what we build."/><span><LocalText text="Scroll. Step inside. See for yourself."/> ↓</span></div></div></div>
+   <div className="y-intro"><span className="y-question-orbit left" aria-hidden="true">?</span><span className="y-question-orbit right" aria-hidden="true">?</span><div className="y-intro-copy"><p className="y-intro-note"><CmsText id="work.projects.heading" fallback="Ideas, brought to life."/></p><h2 className="y-question" aria-label="Why choose us?">{locale==='ar'?<span>لماذا تختارنا؟</span>:<><span className="y-question-first"><span className="y-question-vanish">Wh</span><span className="y-question-anchor">y</span></span><span className="y-question-vanish y-question-end">choose us?</span></>}</h2><div className="y-intro-note y-intro-description"><CmsText id="work.projects.invite" fallback="The answer is in what we build."/><span><LocalText text="Scroll. Step inside. See for yourself."/> ↓</span></div></div></div>
    <div className="y-flight" aria-hidden="true"><div className="y-flight-center"><span className="y-flight-glyph">y</span></div></div>
    <div ref={canvas} className="y-canvas" aria-hidden="true"/>
    <div className="y-sheet-space"><div className="y-gold-sheet" aria-hidden="true"/><div className="y-services">{groups.map((group,gi)=><section className="y-service" key={group.service} aria-label={group.title}>
-    <header className="y-service-heading"><span className="y-service-number">{String(gi+1).padStart(2,'0')}<i>/ {String(groups.length).padStart(2,'0')}</i></span><div className="y-service-kicker"><LocalText text="APPLICATION EXPERIENCES"/><span>{group.title}</span></div><motion.a whileHover={{y:-2}} href={`/${group.service}`}><LocalText text="Explore service"/> <span>↗</span></motion.a></header>
-    <h3 className="y-service-title">{group.title}</h3><div className="y-project-window"><div className="y-project-track"><article className="y-project y-service-overview"><p>{group.description}</p><a className="work-project-link" href={`/portfolio/projects/${group.slug}`}>View projects <span aria-hidden="true">&#8599;</span></a></article></div></div>
-    <div className="y-service-footer"><span>{group.items.length>1?'SCROLL TO EXPLORE PROJECTS →':'SCROLL TO CONTINUE ↓'}</span><span>{gi+1<groups.length?`NEXT / ${groups[gi+1].title}`:'YOUR NEXT CHAPTER STARTS HERE.'}</span></div>
+    <header className="y-service-heading"><span className="y-service-number">{String(gi+1).padStart(2,'0')}<i>/ {String(groups.length).padStart(2,'0')}</i></span><div className="y-service-kicker"><LocalText text="APPLICATION EXPERIENCES"/><span><LocalText text={group.title}/></span></div><motion.a whileHover={{y:-2}} href={`/${group.service}`}><LocalText text="Explore service"/> <span>↗</span></motion.a></header>
+    <h3 className="y-service-title"><LocalText text={group.title}/></h3><div className="y-project-window"><div className="y-project-track"><article className="y-project y-service-overview"><p><LocalText text={group.description}/></p><a className="work-project-link" href={`/portfolio/projects/${group.slug}`}><LocalText text={"View projects"}/><span aria-hidden="true">&#8599;</span></a></article></div></div>
+    <div className="y-service-footer"><span><LocalText text={group.items.length>1?'SCROLL TO EXPLORE PROJECTS →':'SCROLL TO CONTINUE ↓'}/></span><span>{gi+1<groups.length?<><LocalText text="NEXT"/> / <LocalText text={groups[gi+1].title}/></>:<LocalText text="YOUR NEXT CHAPTER STARTS HERE."/>}</span></div>
    </section>)}</div></div>
    <div className="y-outro" aria-label="YelloStack"><div className="y-wordmark" aria-hidden="true"><span className="y-brand-anchor"><span className="y-brand-letter">Y</span></span><span className="y-brand-rest">elloStack</span></div><div className="y-invitation"><p className="y-outro-caption"><CmsText id="work.projects.closing" fallback="You have seen what we build. What could we build for you?"/></p><motion.a className="y-outro-cta" href="/contact" whileHover={{scale:1.035}} whileTap={{scale:.98}}><CmsText id="work.projects.cta" fallback="Contact us"/><span>↗</span></motion.a></div></div>
    <div className="y-scroll-progress" aria-hidden="true"/>

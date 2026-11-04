@@ -17,6 +17,8 @@ export default function ContactExperience(){
  const progress=useRef({value:0});
  const section=useRef<HTMLElement>(null);const form=useRef<HTMLElement>(null);
  const [mode,setMode]=useState(false);const [greeted,setGreeted]=useState(false);const site=useSiteData();
+ // Read browser-only saved preferences after hydration.
+ // eslint-disable-next-line react-hooks/set-state-in-effect
  useEffect(()=>{try{setMode(localStorage.getItem('yellostack-mode')==='on');}catch{}},[]);
  useEffect(()=>{
   const mm=gsap.matchMedia();

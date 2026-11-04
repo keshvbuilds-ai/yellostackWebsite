@@ -1,4 +1,5 @@
 ﻿"use client";
+/* eslint-disable react-hooks/immutability -- R3F frame callbacks intentionally mutate Three.js objects and animation refs outside React rendering. */
 import { CmsText, useEditedList } from "@/components/cms/ContentProvider";
 
 import { Component, useEffect, useRef, useState, type MutableRefObject, type ReactNode } from "react";

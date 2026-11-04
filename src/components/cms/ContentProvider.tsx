@@ -14,15 +14,16 @@ export function LocalText({text}:{text:string}){const content=useContent();retur
 const ContentContext = createContext<SiteContent>(defaultContent);
 export function ContentProvider({ content, children, locale='en' }: { content: SiteContent; children: ReactNode;locale?:Locale }) {
   const router=useRouter();const pathname=usePathname();
+  const [previewLocale,setPreviewLocale]=useState<Locale>('en');
   const [preview,setPreview]=useState<SiteContent|null>(null);const [editing,setEditing]=useState(false);
   useEffect(()=>{
     if(window.parent===window)return;
-    const receive=(event:MessageEvent)=>{if(event.origin!==window.location.origin||event.source!==window.parent||event.data?.type!=='ys-cms-preview')return;setPreview(event.data.content);setEditing(event.data.editing===true);};
+    const receive=(event:MessageEvent)=>{if(event.origin!==window.location.origin||event.source!==window.parent||event.data?.type!=='ys-cms-preview')return;setPreview(event.data.content);setPreviewLocale(event.data.locale==='ar'?'ar':'en');document.documentElement.lang=event.data.locale==='ar'?'ar':'en';document.documentElement.dir=event.data.locale==='ar'?'rtl':'ltr';setEditing(event.data.editing===true);};
     window.addEventListener('message',receive);document.documentElement.dataset.cmsHydrated='true';window.parent.postMessage({type:'ys-cms-ready'},window.location.origin);
     return()=>window.removeEventListener('message',receive);
   },[]);
   useEffect(()=>{if(pathname.startsWith('/admin'))return;const refresh=(event:StorageEvent)=>{if(event.key==='ys-content-published')router.refresh();};window.addEventListener('storage',refresh);return()=>window.removeEventListener('storage',refresh);},[router,pathname]);
-  return <LocaleContext.Provider value={preview?'en':locale}><ContentContext.Provider value={preview||content}><VisualEditingContext.Provider value={editing}>{children}</VisualEditingContext.Provider></ContentContext.Provider></LocaleContext.Provider>;
+  return <LocaleContext.Provider value={pathname.startsWith('/admin')?'en':preview?previewLocale:locale}><ContentContext.Provider value={preview||content}><VisualEditingContext.Provider value={editing}>{children}</VisualEditingContext.Provider></ContentContext.Provider></LocaleContext.Provider>;
 }
 export function useContent() { return useContext(ContentContext); }
 export function useSiteData() { return useContent().site; }
@@ -36,5 +37,5 @@ export function CmsText({ id, fallback }: { id: string; fallback: string }) {
 export function CmsImage({cmsKey,cmsPath,...props}: ImageProps & {cmsKey?:string;cmsPath?:string[]}) {
   const content = useContent();
   const src = cmsKey&&content.media[cmsKey] ? content.media[cmsKey] : typeof props.src === 'string' ? content.media[props.src] || props.src : props.src;
-  return <Image {...props} data-cms-path={cmsPath?JSON.stringify(cmsPath):undefined} data-cms-image={cmsKey||(typeof props.src==='string'?props.src:undefined)} src={src} unoptimized={typeof src === 'string' && src.startsWith('https://') || props.unoptimized} />;
+  return <Image {...props} alt={props.alt} data-cms-path={cmsPath?JSON.stringify(cmsPath):undefined} data-cms-image={cmsKey||(typeof props.src==='string'?props.src:undefined)} src={src} unoptimized={typeof src === 'string' && src.startsWith('https://') || props.unoptimized} />;
 }

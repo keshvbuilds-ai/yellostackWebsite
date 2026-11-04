@@ -8,14 +8,14 @@ type Target={path:string[];value:string;kind:'text'|'image';label:string};
 const names:Record<string,string>={'about-us':'About us',team:'Our team',portfolio:'Work',contact:'Contact us',services:'Services',products:'Products',clients:'Clients','website-design-company':'Web development','mobile-application-development-company-saudi-arabia':'Mobile app development','artificial-intelligence':'AI & automation','medical-coding':'Medical coding'};
 const read=(content:SiteContent,path:string[])=>path.reduce<unknown>((node,key)=>node&&typeof node==='object'?(node as Record<string,unknown>)[key]:undefined,content);
 function write(content:SiteContent,path:string[],value:string){const next=structuredClone(content);let node=next as unknown as Record<string,unknown>;for(const key of path.slice(0,-1))node=node[key] as Record<string,unknown>;node[path.at(-1)!]=value;return next;}
-export default function VisualStudio({content,onChange,busy}:{content:SiteContent;onChange:(content:SiteContent)=>void;busy:boolean}){
+export default function VisualStudio({content,onChange,busy,locale='en'}:{locale?:'en'|'ar';content:SiteContent;onChange:(content:SiteContent)=>void;busy:boolean}){
  const frame=useRef<HTMLIFrameElement>(null),latest=useRef(content),published=useRef<SiteContent|null>(null),cleanup=useRef<()=>void>(()=>{});
  const [sectionEditor,setSectionEditor]=useState(false),[expanded,setExpanded]=useState(false);
  const [route,setRoute]=useState('/'),[mobile,setMobile]=useState(false),[editing,setEditing]=useState(true),[selection,setSelection]=useState<Target|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState('Scroll the website. Click any highlighted text or image to change it.');
  const mode=useRef(editing);mode.current=editing;
  latest.current=content;
  useEffect(()=>{fetch('/api/cms/public').then(r=>r.json()).then(data=>{published.current=data;window.dispatchEvent(new Event('ys-visual-update'));}).catch(()=>{});},[]);
- const send=()=>frame.current?.contentWindow?.postMessage({type:'ys-cms-preview',content:latest.current,editing:mode.current},window.location.origin);
+ const send=()=>frame.current?.contentWindow?.postMessage({type:'ys-cms-preview',content:latest.current,locale,editing:mode.current},window.location.origin);
  useEffect(()=>{send();},[content]);
  useEffect(()=>{const receive=(event:MessageEvent)=>{if(event.origin===location.origin&&event.source===frame.current?.contentWindow&&event.data?.type==='ys-cms-ready')connect();};window.addEventListener('message',receive);return()=>window.removeEventListener('message',receive);},[]);
  useEffect(()=>()=>cleanup.current(),[]);
@@ -24,7 +24,7 @@ export default function VisualStudio({content,onChange,busy}:{content:SiteConten
  cleanup.current();const doc=frame.current?.contentDocument,win=frame.current?.contentWindow;if(!doc||!win||!doc.documentElement.dataset.cmsHydrated)return;
  // This is the real site, isolated from editor controls. Never submit its forms from a preview.
  const guardLink=(event:MouseEvent)=>{if(editing)return;const anchor=(event.target as HTMLElement).closest?.('a');if(!anchor)return;const url=new URL(anchor.href,doc.location.href);if(url.origin!==location.origin||url.pathname.startsWith('/admin')){event.preventDefault();event.stopImmediatePropagation();setNotice('Use the public website for external links.');}};doc.addEventListener('click',guardLink,true);
- const preventSubmit=(event:Event)=>{event.preventDefault();setNotice('Forms are disabled in this private preview.');};doc.addEventListener('submit',preventSubmit,true);
+ const preventSubmit=(event:Event)=>{event.preventDefault();event.stopImmediatePropagation();setNotice('Forms are disabled in this private preview.');};doc.addEventListener('submit',preventSubmit,true);
  const style=doc.createElement('style');style.textContent='[data-cms-hover]{outline:2px solid #ffcc02!important;outline-offset:5px!important;cursor:pointer!important}.brand-curtain{display:none!important}.cms-editing canvas,.cms-editing .industry-hover-preview{pointer-events:none!important}.cms-editing [data-cms-copy],.cms-editing [data-cms-path]{pointer-events:auto!important}.cms-editing .premium-cursor,.cms-editing .industry-hover-preview{display:none!important}.cms-editing .industry-row-reveal{grid-template-rows:1fr!important;visibility:visible!important}';doc.head.appendChild(style);
  const bound=new Map<Text,Target>();const images=new Map<HTMLImageElement,Target>();let hovering:HTMLElement|null=null;let timer:ReturnType<typeof setTimeout>|undefined;
  const records=()=>{

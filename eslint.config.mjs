@@ -5,10 +5,13 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {files: ["tests/**/*.cjs", "scrape_cerebrium.js"], rules: {"@typescript-eslint/no-require-imports": "off"}},
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".cms-check/**",
+    ".cms-data/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

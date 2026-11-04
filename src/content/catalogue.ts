@@ -1,4 +1,5 @@
 export const capabilityLinks = [
+ { title: 'Digital marketing', slug: 'digital-marketing-agency', image: 'design' },
  { title: 'AI & Automation', slug: 'artificial-intelligence', image: 'robotics' },
  { title: 'Medical Coding', slug: 'medical-coding', image: 'healthcare' },
  { title: 'Mobile App Development', slug: 'mobile-application-development-company-saudi-arabia', image: 'engineering' },

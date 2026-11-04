@@ -133,7 +133,30 @@ const {blogLanguage,blogDirection,formatBlogDate}=await import(pathToFileURL(pat
 const englishPost={...defaultContent.posts[0],title:'A new English article',summary:'An English introduction.',paragraphs:['English article content.']};
 const arabicPost={...englishPost,slug:'arabic-example',title:'مقال جديد باللغة العربية',summary:'مقدمة المقال باللغة العربية',paragraphs:['هذا محتوى المقال المكتوب باللغة العربية.']};
 const bilingualContent={...defaultContent,posts:[englishPost,arabicPost]};
-assert.deepEqual(localizeContent(bilingualContent,'ar').posts,bilingualContent.posts);
+assert.equal(localizeContent(bilingualContent,'ar').posts[0].language,'ar');assert.deepEqual(localizeContent(bilingualContent,'en').posts,bilingualContent.posts);
 assert.equal(blogDirection(englishPost),'ltr');assert.equal(blogDirection(arabicPost),'rtl');assert.equal(blogLanguage({...englishPost,language:'ar'}),'ar');
 assert.match(formatBlogDate('2026-11-03','ar'),/[\u0600-\u06ff]/);
 console.log('Blog language checks passed: original text preservation, automatic/explicit direction and Arabic dates.');
+
+const {mergeArabicEdits}=await import(pathToFileURL(path.join(out,'i18n.mjs')).href);
+const source=structuredClone(defaultContent),arabicDraft=localizeContent(source,'ar');
+arabicDraft.teamMembers[0].bio='Arabic bio test';
+arabicDraft.copy['label:New static label']='Arabic label test';
+arabicDraft.teamMembers.splice(1,1);
+const merged=mergeArabicEdits(source,arabicDraft);validateContent(merged);
+assert.equal(merged.teamMembers[0].bio,source.teamMembers[0].bio);
+assert.equal(localizeContent(merged,'ar').teamMembers[0].bio,'Arabic bio test');
+assert.equal(merged.teamMembers[1].id,source.teamMembers[2].id);
+assert.equal(merged.teamMembers[1].bio,source.teamMembers[2].bio);
+assert.equal(merged.copy['label:New static label'],undefined);
+assert.equal(merged.copy['ar:New static label'],'Arabic label test');
+console.log('Arabic editing: English preservation, deletion identity and visual label overrides passed.');
+
+for(const value of Object.values(defaultContent.copy))assert.ok(!/\?{2,}/.test(value),'Corrupted bundled translation');
+assert.equal(translate('الخبر','ar'),'الدمام');assert.equal(translate('الحسيني','ar'),'الحصيني');
+const numericDraft=localizeContent(source,'ar');numericDraft.copy['profile.stats.0.value']='15';const numeric=mergeArabicEdits(source,numericDraft);assert.equal(numeric.copy['profile.stats.0.value'],'15');
+
+const blogDraft=localizeContent(source,'ar');blogDraft.posts[0].title='عنوان عربي للاختبار';blogDraft.posts[0].paragraphs[0]='محتوى عربي للاختبار';
+const blogMerged=mergeArabicEdits(source,blogDraft);validateContent(blogMerged);assert.equal(blogMerged.posts[0].title,source.posts[0].title);assert.equal(blogMerged.posts[0].paragraphs[0],source.posts[0].paragraphs[0]);assert.equal(localizeContent(blogMerged,'ar').posts[0].title,'عنوان عربي للاختبار');assert.equal(localizeContent(blogMerged,'ar').posts[0].paragraphs[0],'محتوى عربي للاختبار');
+for(const post of localizeContent(defaultContent,'ar').posts){assert.match(post.title,/[\u0600-\u06ff]/);assert.match(post.summary,/[\u0600-\u06ff]/);for(const paragraph of post.paragraphs)assert.match(paragraph,/[\u0600-\u06ff]/);}
+console.log('Full Arabic blog translation and independent Arabic article edits passed.');

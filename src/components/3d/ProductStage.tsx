@@ -1,31 +1,36 @@
 ﻿"use client";
-import { LocalText } from '@/components/cms/ContentProvider';
+import { LocalText, useLocale, useContent } from '@/components/cms/ContentProvider';
 
 import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Lightformer, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
+import {translate} from "@/lib/i18n";
 
 function Phone({active,reduced}:{active:number;reduced:boolean}) {
+  const locale=useLocale();const {copy}=useContent();
   const rig=useRef<THREE.Group>(null);
   const [texture,setTexture]=useState<THREE.CanvasTexture|null>(null);
   useEffect(()=>{
     const canvas=document.createElement("canvas");canvas.width=512;canvas.height=1024;
     const ctx=canvas.getContext("2d");if(!ctx)return;
+    const t=(text:string)=>translate(text,locale,copy);
     const titles=["Fresh picks.","Keep learning.","Your workspace.","Care, connected.","Find your table."];
     const labels=[["Fresh produce","Pantry essentials","Your basket"],["Your courses","Design foundations","Continue learning"],["Your projects","Team activity","Weekly overview"],["Appointments","Care services","Your documents"],["Nearby dining","Your reservations","Explore places"]];
     ctx.fillStyle="#eff0e7";ctx.fillRect(0,0,512,1024);
     ctx.fillStyle="#11190e";ctx.font="500 23px sans-serif";ctx.fillText("YELLO / DIGITAL",36,94);
-    ctx.font="600 44px sans-serif";ctx.fillText(titles[active],36,179);
-    ctx.fillStyle="#77806b";ctx.font="21px sans-serif";ctx.fillText("A little more possibility, every day.",36,218);
+    ctx.font="600 44px sans-serif";ctx.fillText(t(titles[active]),36,179);
+    ctx.fillStyle="#77806b";ctx.font="21px sans-serif";ctx.fillText(t("A little more possibility, every day."),36,218);
     ctx.fillStyle="#ffcf00";ctx.beginPath();ctx.roundRect(30,262,452,262,22);ctx.fill();
     ctx.strokeStyle="#26341e";ctx.lineWidth=2;
     for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(256,363+i*27,110,47,-.22,0,Math.PI*2);ctx.stroke();}
-    labels[active].forEach((label,i)=>{const y=559+i*116;ctx.fillStyle="#ffffff";ctx.beginPath();ctx.roundRect(30,y,452,96,14);ctx.fill();ctx.fillStyle="#dddcc7";ctx.beginPath();ctx.roundRect(48,y+20,55,55,10);ctx.fill();ctx.fillStyle="#283222";ctx.font="500 23px sans-serif";ctx.fillText(label,124,y+45);ctx.fillStyle="#91987f";ctx.font="17px sans-serif";ctx.fillText("Explore your possibilities",124,y+72);});
-    ctx.fillStyle="#182111";ctx.beginPath();ctx.roundRect(30,936,452,58,29);ctx.fill();ctx.fillStyle="#fff7cc";ctx.font="19px sans-serif";ctx.fillText("Home        Explore        Account",66,973);
+    labels[active].forEach((label,i)=>{const y=559+i*116;ctx.fillStyle="#ffffff";ctx.beginPath();ctx.roundRect(30,y,452,96,14);ctx.fill();ctx.fillStyle="#dddcc7";ctx.beginPath();ctx.roundRect(48,y+20,55,55,10);ctx.fill();ctx.fillStyle="#283222";ctx.font="500 23px sans-serif";ctx.fillText(t(label),124,y+45);ctx.fillStyle="#91987f";ctx.font="17px sans-serif";ctx.fillText(t("Explore your possibilities"),124,y+72);});
+    ctx.fillStyle="#182111";ctx.beginPath();ctx.roundRect(30,936,452,58,29);ctx.fill();ctx.fillStyle="#fff7cc";ctx.font="19px sans-serif";ctx.fillText(t("Home        Explore        Account"),66,973);
+ // Publish the browser-created GPU texture after mounting; it cannot be created on the server.
+ // eslint-disable-next-line react-hooks/set-state-in-effect
     const next=new THREE.CanvasTexture(canvas);next.colorSpace=THREE.SRGBColorSpace;next.anisotropy=4;setTexture(next);
     return()=>next.dispose();
-  },[active]);
+  },[active,locale,copy]);
   useFrame(({pointer,clock},delta)=>{
     if(!rig.current)return;const dt=Math.min(delta,.05);
     rig.current.rotation.y=THREE.MathUtils.damp(rig.current.rotation.y,reduced?.12:.12+(active-2)*.1+pointer.x*.18,3,dt);

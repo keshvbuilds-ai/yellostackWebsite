@@ -1,4 +1,5 @@
 "use client";
+import Link from 'next/link';
 import { stockMedia } from "@/content/media";
 import { CmsImage } from "@/components/cms/ContentProvider";
 import { CmsText, useEditedList } from "@/components/cms/ContentProvider";
@@ -166,7 +167,7 @@ export default function LayerGallery() {
   },[]);
   return <section ref={root} className={`layer-gallery ${animated ? "is-animated" : ""}`} aria-label="Three layers of Yellostack">
     <div ref={stage} className="layer-gallery-stage">
-      <header><span><CmsText id="LayerGallery.text.0" fallback="YELLOSTACK / OTHER SERVICES"/></span><a href="/contact"><CmsText id="LayerGallery.text.1" fallback="LET’S MAKE IT HAPPEN ↗"/></a></header>
+      <header><span><CmsText id="LayerGallery.text.0" fallback="YELLOSTACK / OTHER SERVICES"/></span><Link href="/contact"><CmsText id="LayerGallery.text.1" fallback="LET’S MAKE IT HAPPEN ↗"/></Link></header>
       <div className="layer-gallery-intro"><span><CmsText id="LayerGallery.text.2" fallback="MORE WAYS TO BUILD TOGETHER."/></span><h2><CmsText id="LayerGallery.text.3" fallback="There’s more"/><br/><CmsText id="LayerGallery.text.4" fallback="we can offer."/></h2><p><CmsText id="LayerGallery.text.5" fallback="Scroll to unfold the story →"/></p></div>
       <div className="layer-gallery-canvas" aria-hidden="true"><GalleryBoundary>{animated && <Canvas camera={{position:[0,0,10],fov:42}} dpr={[1,1.5]} frameloop={visible?"always":"never"} style={{touchAction:"pan-y"}}><Cards playhead={playhead} destination={destination}/></Canvas>}</GalleryBoundary></div>
       <div className="layer-gallery-track">{stories.map((story,i)=><article key={story.tag} className="layer-gallery-panel"><img src={story.image} alt="Yellostack capability illustration"/><div><figure className="layer-story-photo"><CmsImage src={layerPhotos[i].src} alt={layerPhotos[i].alt} fill sizes="(max-width:800px) 85vw, 180px"/></figure><span>{story.tag}</span><h3>{story.title}</h3><p>{story.body}</p><small>{story.detail}</small></div></article>)}</div>

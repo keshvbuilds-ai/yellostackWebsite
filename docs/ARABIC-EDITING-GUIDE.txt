@@ -1,0 +1,12 @@
+YelloStack: English and Arabic content editing
+
+1. Open /admin and sign in. The editor starts in English, independently of the public website language.
+2. Use English / Arabic in the top header to select the content language.
+3. In Arabic mode, edit translated text in the visual editor or Content lists & settings. English source text is preserved.
+4. Save draft, review the preview, then Publish. Preview forms cannot send enquiries.
+5. Adding, deleting and reordering items applies to both language versions. Links, images, categories, contact numbers and numeric company figures are shared.
+6. New English wording needs a reviewed Arabic entry: switch to Arabic and enter the translation. This does not use an automatic translation API.
+7. Blog articles display their Arabic version when Arabic is selected. In Blog articles, use the header language buttons to edit Arabic titles, introductions, sections and captions separately from English.
+8. Digital marketing is available in Services, the main services menu and the homepage service list. Its page is /digital-marketing-agency.
+
+Public Arabic wording uses Dammam and the corrected Arabic spelling of Al-Husaini requested by the team.

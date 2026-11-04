@@ -94,6 +94,8 @@ export default function IntelligenceScene({kind, progress, active=0}:{kind:'robo
   };frame=requestAnimationFrame(render);
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;},{rootMargin:'100px'});observer.observe(el);
   const lost=(event:Event)=>{event.preventDefault();setReady(false);};renderer.domElement.addEventListener('webglcontextlost',lost);
+ // Publish readiness after the imperative WebGL scene has been initialized.
+ // eslint-disable-next-line react-hooks/set-state-in-effect
   setReady(true);
   return()=>{cancelAnimationFrame(frame);observer.disconnect();ro.disconnect();surface.removeEventListener('pointermove',move as EventListener);surface.removeEventListener('pointerleave',reset);renderer.domElement.removeEventListener('webglcontextlost',lost);const geometries=new Set<THREE.BufferGeometry>();const materials=new Set<THREE.Material>();scene.traverse(object=>{if(object instanceof THREE.Mesh||object instanceof THREE.Points){geometries.add(object.geometry);(Array.isArray(object.material)?object.material:[object.material]).forEach(m=>materials.add(m));}});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();};
  },[kind,progress]);

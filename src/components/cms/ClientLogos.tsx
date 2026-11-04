@@ -22,5 +22,5 @@ export default function ClientLogos({home=false}:{home?:boolean}){
 }
 export function ClientInvitation(){
  const pathname=usePathname();if(pathname!=='/clients')return null;
- return <section className="client-invitation"><span>YELLOSTACK / YOUR NEXT CHAPTER</span><h2><CmsText id="clients.invitation.title" fallback="Your logo belongs here."/></h2><p><CmsText id="clients.invitation.body" fallback="Let’s build what’s next for your business, together."/></p><Link href="/contact"><LocalText text="LET’S BUILD TOGETHER"/> ↗</Link></section>;
+ return <section className="client-invitation"><span><LocalText text={"YELLOSTACK / YOUR NEXT CHAPTER"}/></span><h2><CmsText id="clients.invitation.title" fallback="Your logo belongs here."/></h2><p><CmsText id="clients.invitation.body" fallback="Let’s build what’s next for your business, together."/></p><Link href="/contact"><LocalText text="LET’S BUILD TOGETHER"/> ↗</Link></section>;
 }

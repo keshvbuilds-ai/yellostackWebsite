@@ -1,4 +1,6 @@
 "use client";
+import {LocalText} from '@/components/cms/ContentProvider';
+
 import {useEffect,useRef} from 'react';
 import gsap from 'gsap';
 import './intro-sequence.css';
@@ -14,5 +16,5 @@ export default function IntroSequence({onComplete}:{onComplete:()=>void}){
   Promise.all([minimum,Promise.race([ready,cap])]).then(()=>{if(disposed)return;exit=gsap.to(curtain.current,{opacity:0,yPercent:reduced?0:-5,duration:reduced?0:.55,ease:'power2.inOut',onComplete:()=>complete.current()});});
   return()=>{disposed=true;exit?.kill();};
  },[]);
- return <div ref={curtain} className="ys-loading-screen" role="status" aria-label="Loading YelloStack"><div className="ys-loading-center"><div className="ys-loading-stack" aria-hidden="true"><i/><i/><i/></div><div className="ys-loading-name">YelloStack</div><p>Ideas taking shape.</p><div className="ys-loading-track" aria-hidden="true"><span/></div></div></div>;
+ return <div ref={curtain} className="ys-loading-screen" role="status" aria-label="Loading YelloStack"><div className="ys-loading-center"><div className="ys-loading-stack" aria-hidden="true"><i/><i/><i/></div><div className="ys-loading-name">YelloStack</div><p><LocalText text={"Ideas taking shape."}/></p><div className="ys-loading-track" aria-hidden="true"><span/></div></div></div>;
 }

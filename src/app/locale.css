@@ -17,3 +17,11 @@ html[dir=rtl] body{font-family:var(--font-cairo),Arial,sans-serif;letter-spacing
 
 /* Override component font shorthands, including mono labels and serif accents. */
 html[lang=ar] body,html[lang=ar] body *{font-family:var(--font-cairo),Arial,sans-serif!important;letter-spacing:0!important}
+
+/* Cairo's descenders need room beyond Latin display-font line boxes. */
+html[lang=ar] :is(main,footer) :is(h1,h2,h3){line-height:1.45}
+html[lang=ar] :is(main,footer) :is(h1,h2,h3).scroll-gold-text{
+  background-image:none;
+  -webkit-text-fill-color:currentColor;
+  overflow:visible;
+}

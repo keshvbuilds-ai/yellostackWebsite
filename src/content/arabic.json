@@ -1127,7 +1127,7 @@
   "WEB / DESIGN / DEVELOPMENT": "الويب / التصميم / التطوير",
   "Explore design, technology and business perspectives from the Yellostack archive.": "استكشف رؤى التصميم والتقنية والأعمال من أرشيف يلوستاك.",
   "Marketing": "التسويق",
-  "All app experiences": "كل تجارب التطبيقات",
+  "All app experiences": "جميع التطبيقات",
   "Back to Work": "العودة إلى أعمالنا",
   "SELECTED PROJECTS": "مشاريع مختارة",
   "Scroll experience": "تجربة التمرير",
@@ -1210,5 +1210,11 @@
   "Empty request.": "الطلب فارغ.",
   "Offer claims are available on our Node.js CMS deployment only.": "طلب العرض غير متاح حاليًا. يرجى التواصل مع فريقنا.",
   "Please wait before submitting again.": "يرجى الانتظار قبل الإرسال مجددًا.",
-  "We couldn’t save your enquiry. Please try again or email hello@yellostack.com.": "تعذر حفظ استفسارك. يرجى المحاولة مجددًا أو مراسلتنا على hello@yellostack.com."
+  "We couldn’t save your enquiry. Please try again or email hello@yellostack.com.": "تعذر حفظ استفسارك. يرجى المحاولة مجددًا أو مراسلتنا على hello@yellostack.com.",
+  "See more": "عرض المزيد",
+  "App categories": "فئات التطبيقات",
+  "TAKE THE NEXT STEP": "اتخذ الخطوة التالية",
+  "Experience the app": "جرّب التطبيق",
+  "Get it on Google Play": "احصل عليه من Google Play",
+  "Download on the App Store": "نزّله من App Store"
 }

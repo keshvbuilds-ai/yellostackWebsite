@@ -5,7 +5,8 @@ export type Role = { id: string; title: string; location: string; type: string; 
 export type ClientLogo = { id: string; name: string; image: string; url: string; sector?: string; recent?: boolean; projectSummary?: string };
 export type TeamMember={id:string;name:string;role:string;bio:string;image:string;demo:boolean};
 export type Product={id:string;title:string;description:string;image:string;features:string[];url:string};
-export type WorkProject={category?:string;id:string;title:string;description:string;image:string;service:string;url:string};
+export type ProjectSection={heading:string;body:string;image:string;imageAlt:string};
+export type WorkProject={shortDescription?:string;sections?:ProjectSection[];playStoreUrl?:string;appStoreUrl?:string;category?:string;id:string;title:string;description:string;image:string;service:string;url:string};
 export type IndustryEntry={id:string;title:string;category:string;headline:string;body:string;use1:string;use2:string;use3:string;service:string;solution:string;image:string};
 export type SiteContent = {
   general?: {salesEmail:string;salesPhone:string;mapUrl:string;offerEnabled:boolean;offerPercent:number;offerCode:string;offerTerms:string;offerExpires:string};

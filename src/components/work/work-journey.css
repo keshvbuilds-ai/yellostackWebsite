@@ -130,3 +130,5 @@
 
 
 .y-service-overview{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:28px;padding:24px!important}.y-service-overview p{font-size:clamp(17px,1.6vw,24px);line-height:1.65;max-width:690px;color:#596050}.work-project-link{display:inline-flex;gap:55px;align-items:center;padding:18px 26px;border:1px solid #182014;border-radius:5px;color:#182014;background:linear-gradient(#ffcc00,#ffcc00) no-repeat left bottom/0% 100%;transition:background-size .35s}.work-project-link:hover,.work-project-link:focus-visible{background-size:100% 100%}.y-service .y-project-window{border:0;background:transparent}.y-service-overview .work-project-link{flex-shrink:0}@media(max-height:600px){.y-service-overview{gap:10px;padding:10px!important}.y-service-overview p{font-size:15px}.work-project-link{padding:12px 22px}}
+
+.y-service-overview .work-project-link:hover,.y-service-overview .work-project-link:focus-visible,.y-service-overview .work-project-link:active{background:#ffcc00;color:#182014}

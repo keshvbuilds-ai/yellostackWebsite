@@ -51,6 +51,9 @@ export function validateContent(value: unknown): asserts value is SiteContent {
   const content = value as unknown as SiteContent;
   if(content.workProjectsManaged!==undefined&&typeof content.workProjectsManaged!=='boolean')throw new Error('Invalid project publishing mode');
   for(const project of content.workProjects??[]){
+   if(project.shortDescription!==undefined&&(typeof project.shortDescription!=='string'||project.shortDescription.length>180||/[\r\n]/.test(project.shortDescription)))throw new Error('App card description must be a single line of at most 180 characters');
+   for(const key of ['playStoreUrl','appStoreUrl'] as const){const url=project[key];if(url!==undefined&&(typeof url!=='string'||url.length>2048||url!==''&&(!/^https:\/\//.test(url)||!safeUrl(url))))throw new Error('Store links must use a full HTTPS address');}
+   if(project.sections!==undefined){shape(project.sections,[{heading:'',body:'',image:'',imageAlt:''}],'Project sections');if(project.sections.length>60)throw new Error('Use at most 60 project sections');for(const section of project.sections)if(!safeUrl(section.image,true))throw new Error('Invalid project section image');}
    if(project.category && !appCategories.some(c=>c.slug===project.category))throw new Error('Choose a valid app category');
    if(content.workProjectsManaged&&project.service==='mobile-application-development-company-saudi-arabia'&&!project.category)throw new Error(`${project.title.trim()}: open Work projects, select an App category, then save`);
   }

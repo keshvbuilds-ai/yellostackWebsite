@@ -1,17 +1,18 @@
 "use client";
-import {LocalText} from '@/components/cms/ContentProvider';
-
 import Link from 'next/link';
-import {useContent,CmsImage} from '@/components/cms/ContentProvider';
+import {ArrowUpRight} from 'lucide-react';
+import {useContent,CmsImage,LocalText,useTranslate} from '@/components/cms/ContentProvider';
 import {appCategories,workServices,workProjects} from '@/content/work-catalogue';
 import './project-collection.css';
 export default function ProjectCollection({collection,category}:{collection:string;category?:string}){
- const content=useContent();const service=workServices.find(s=>s.slug===collection)!;
- const selected=appCategories.find(c=>c.slug===category);
- const sections=content.pages.find(p=>p.slug==='portfolio')?.sections??[];
- const projects=workProjects(content).filter(p=>p.service===service.service&&(!category||p.category===category));
- const categories=collection==='mobile-apps'&&!category;
- return <main className="project-collection" id="page-content"><header className="collection-intro"><Link href={category?'/portfolio/projects/mobile-apps':'/portfolio'}>&#8592; <LocalText text={category?'All app experiences':'Back to Work'}/></Link><p className="collection-eyebrow"><LocalText text={"YELLOSTACK /"}/><LocalText text={categories?'APPLICATION EXPERIENCES':'SELECTED PROJECTS'}/></p><h1><LocalText text={selected?.title??service.title}/></h1><p><LocalText text={(selected?sections[appCategories.indexOf(selected)]?.body:service.description)??''}/></p></header>
- {categories?<div className="collection-categories">{appCategories.map((c,i)=>{const section=sections[i];return <section className="collection-category" key={c.slug}><div><span className="collection-eyebrow">{String(i+1).padStart(2,'0')}<LocalText text={"/ APPLICATION EXPERIENCES"}/></span><h2><LocalText text={c.title}/></h2><p>{section?.body}</p><ul>{section?.items?.map(item=><li key={item}>{item}</li>)}</ul><Link className="work-project-link" href={`/portfolio/projects/mobile-apps/${c.slug}`}><LocalText text={"Let's build something like this"}/><span>&#8599;</span></Link></div><CmsImage src={section?.image||['/banners/retail.svg','/banners/mobile.svg','/banners/medical.svg','/banners/web.svg','/banners/travel.svg'][i]} alt={section?.imageAlt||c.title} width={650} height={480}/></section>})}</div>:<><div className="collection-grid">{projects.map((p,i)=><article className="collection-card" key={p.id}><div className="collection-card-art">{p.image&&<CmsImage src={p.image} alt={p.title} width={900} height={600}/>}<span>{String(i+1).padStart(2,'0')}</span></div><div className="collection-card-copy"><h2><LocalText text={p.title}/></h2><p><LocalText text={p.description}/></p>{p.url?<a href={p.url} target="_blank" rel="noopener noreferrer" className="work-project-link"><LocalText text={"View project"}/><span>&#8599;</span></a>:<Link href={`/contact?interest=${encodeURIComponent(selected?.title??p.title)}`} className="work-project-link"><LocalText text={"Discuss this app"}/><span>&#8599;</span></Link>}</div></article>)}</div>{!projects.length&&<section className="collection-empty"><h2><LocalText text={"Your next idea could be here."}/></h2><p><LocalText text={"No projects have been published in this category yet."}/></p><Link className="work-project-link" href={`/contact?interest=${encodeURIComponent(selected?.title??service.title)}`}><LocalText text={"Discuss your project"}/><span>&#8599;</span></Link></section>}</>}
+ const t=useTranslate();const content=useContent(),service=workServices.find(s=>s.slug===collection)!;
+ const mobile=collection==='mobile-apps';
+ const all=workProjects(content).filter(p=>p.service===service.service);
+ const projects=all.filter(p=>!category||p.category===category);
+ return <main className={`project-collection ${mobile?'app-collection':''}`} id="page-content" data-no-gradient>
+ <header className="collection-intro"><Link href="/portfolio"><LocalText text="Back to Work"/></Link><p className="collection-eyebrow">YELLOSTACK / <LocalText text="SELECTED PROJECTS"/></p><h1><LocalText text={service.title}/></h1><p><LocalText text={service.description}/></p></header>
+ {mobile&&<nav className="app-filters" aria-label={t("App categories")}>{[{slug:'',title:'All'},...appCategories].map(c=><Link key={c.slug} href={'/portfolio/projects/mobile-apps'+(c.slug?'/'+c.slug:'')} scroll={false} aria-current={(category||'')===c.slug?'page':undefined}><LocalText text={c.title}/><span>{c.slug?all.filter(p=>p.category===c.slug).length:all.length}</span></Link>)}</nav>}
+ <div className="collection-grid">{projects.map(p=><article className="collection-card" key={p.id}><div className="collection-card-art">{p.image&&<CmsImage src={p.image} alt={p.title} width={900} height={600}/>}</div><div className="collection-card-copy"><p className="app-category-label"><LocalText text={appCategories.find(c=>c.slug===p.category)?.title??service.title}/></p><h2><LocalText text={p.title}/></h2><p><LocalText text={mobile?(p.shortDescription||p.description):p.description}/></p>{mobile?<Link className="work-project-link" href={'/portfolio/projects/mobile-apps/app/'+encodeURIComponent(p.id)}><LocalText text="See more"/><ArrowUpRight size={20} aria-hidden="true"/></Link>:p.url?<a href={p.url} target="_blank" rel="noopener noreferrer" className="work-project-link"><LocalText text="View project"/><ArrowUpRight size={20}/></a>:<Link className="work-project-link" href="/contact"><LocalText text="Discuss your project"/><ArrowUpRight size={20}/></Link>}</div></article>)}</div>
+ {!projects.length&&<section className="collection-empty" role="status"><h2><LocalText text="Your next idea could be here."/></h2><p><LocalText text="No projects have been published in this category yet."/></p></section>}
  </main>;
 }

@@ -1,0 +1,12 @@
+MOBILE APP PROJECTS
+
+1. Open /admin and sign in. Select Mobile apps immediately after Work projects.
+2. Click Add mobile app or open an existing app.
+3. Select its app category, enter the app name and one-line card description, and upload its image/logo. This image appears on both the gallery card and detail hero.
+4. Add the introduction, then click Add content section. Add sections with optional headings, paragraphs and full-width images. Leave a blank line between paragraphs. Use Move up to reorder sections.
+5. Enter Google Play and Apple App Store HTTPS links. Leave unavailable links empty; their buttons will be hidden.
+6. Use the CMS header language buttons to enter reviewed Arabic content separately. Store links and images are shared across languages.
+7. Save draft, then Publish. All published mobile projects appear under All; category buttons filter them. See more opens the app detail page.
+
+Desktop uses three columns (nine apps form three rows); smaller screens use two or one column. More than nine apps continue in additional rows.
+Existing project IDs keep page links stable when you rename an app. Deleting and publishing an app removes its detail page.

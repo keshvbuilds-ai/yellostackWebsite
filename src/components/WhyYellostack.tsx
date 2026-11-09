@@ -1,4 +1,5 @@
 ﻿"use client";
+import {ArrowUpRight} from "lucide-react";
 import { CmsText } from "@/components/cms/ContentProvider";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
@@ -18,5 +19,5 @@ export default function WhyYellostack() {
       }, root.current!);return()=>context.revert();
     });return()=>mm.revert();
   },[]);
-  return <section ref={root} className="business-section process-section"><div className="section-heading"><span className="section-index"><CmsText id="WhyYellostack.text.0" fallback="04 / OUR APPROACH"/></span><h2><CmsText id="WhyYellostack.text.1" fallback="A clear process."/><br /><em><CmsText id="WhyYellostack.text.2" fallback="A shared ambition."/></em></h2></div><div className="process-list">{yellostackData.process.map((step, i) => <article key={step.step}><div className="process-row-content"><span>0{i + 1}</span><h3>{step.step}</h3><p>{step.details}</p><span aria-hidden="true">↗</span></div><div className="process-row-content process-row-ink" aria-hidden="true"><span>0{i + 1}</span><h3>{step.step}</h3><p>{step.details}</p><span aria-hidden="true">↗</span></div></article>)}</div></section>;
+  return <section ref={root} className="business-section process-section"><div className="section-heading"><span className="section-index"><CmsText id="WhyYellostack.text.0" fallback="04 / OUR APPROACH"/></span><h2><CmsText id="WhyYellostack.text.1" fallback="A clear process."/><br /><em><CmsText id="WhyYellostack.text.2" fallback="A shared ambition."/></em></h2></div><div className="process-list">{yellostackData.process.map((step, i) => <article key={step.step}><div className="process-row-content"><span>0{i + 1}</span><h3>{step.step}</h3><p>{step.details}</p><span className="process-arrow" aria-hidden="true"><ArrowUpRight size={18}/></span></div><div className="process-row-content process-row-ink" aria-hidden="true"><span>0{i + 1}</span><h3>{step.step}</h3><p>{step.details}</p><span className="process-arrow" aria-hidden="true"><ArrowUpRight size={18}/></span></div></article>)}</div></section>;
 }

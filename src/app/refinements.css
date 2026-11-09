@@ -43,3 +43,9 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
  [dir=rtl] .layer-gallery.is-animated .layer-gallery-panel>div{direction:rtl;text-align:right}
 }
 @media(max-width:800px) and (prefers-reduced-motion:reduce){.layer-gallery-destination{display:none}}
+
+/* Use vector arrows so changing the text font cannot change icon metrics. */
+.service-active-arrow{margin-left:0;margin-inline-start:auto;flex:0 0 24px;width:24px;height:24px;line-height:1}
+.service-active-arrow svg{display:block;width:24px;height:24px}
+.process-row-content>.process-arrow{display:inline-flex;justify-self:end;width:18px;height:18px;margin-block-start:6px;line-height:1}
+.process-arrow svg{display:block;width:18px;height:18px;flex:none}

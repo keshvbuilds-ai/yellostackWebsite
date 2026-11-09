@@ -9,7 +9,7 @@ export function translate(text:string,locale:Locale,copy:Record<string,string>={
  if(!value&&text.includes('\n'))return text.split(/(\n+)/).map(part=>/^\n+$/.test(part)?part:translate(part,locale,copy)).join('');
  return (value?text.replace(text.trim(),value):text).replaceAll('الخبر','الدمام').replaceAll('الحسيني','الحصيني');
 }
-const preserved=new Set(['id','slug','kind','source','image','coverImage','layout','email','telephone','telephoneHref','applyEmail','url','date','number','service','category','sector','whatsappNumber','salesEmail','salesPhone','mapUrl','offerCode','offerExpires']);
+const preserved=new Set(['playStoreUrl','appStoreUrl','id','slug','kind','source','image','coverImage','layout','email','telephone','telephoneHref','applyEmail','url','date','number','service','category','sector','whatsappNumber','salesEmail','salesPhone','mapUrl','offerCode','offerExpires']);
 export function localizeContent(content:SiteContent,locale:Locale):SiteContent{
  if(locale==='en')return content;
  const walk=(value:unknown,key=''):unknown=>{

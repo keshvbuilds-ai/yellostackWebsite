@@ -1,4 +1,5 @@
 ﻿"use client";
+import {ArrowUpRight} from "lucide-react";
 import { stockMedia } from "@/content/media";
 import { CmsImage } from "@/components/cms/ContentProvider";
 import { CmsText } from "@/components/cms/ContentProvider";
@@ -31,12 +32,32 @@ export default function Services() {
     if (root.current) observer.observe(root.current);
     return () => { alive = false; cancelAnimationFrame(refreshFrame); observer.disconnect(); context.revert(); };
   }, []);
+  function selectCapability(event:React.MouseEvent<HTMLAnchorElement>,id:string,index:number){
+    if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    const article=document.getElementById('story-'+id);
+    const photo=article?.querySelector<HTMLElement>('.capability-photo');
+    const copy=article?.querySelector<HTMLElement>('.story-copy');
+    const heading=copy?.querySelector('h3');
+    if(!article||!photo||!copy||!heading)return;
+    event.preventDefault();event.stopPropagation();
+    const headerBottom=document.querySelector('.site-navigation')?.getBoundingClientRect().bottom??100;
+    const mobile=window.matchMedia('(max-width:800px)').matches;
+    const indexHeight=mobile?(root.current?.querySelector('.services-sticky-index')?.getBoundingClientRect().height??0):0;
+    const top=headerBottom+indexHeight+24;
+    const headingBottom=photo.offsetHeight+parseFloat(getComputedStyle(photo).marginBottom)+parseFloat(getComputedStyle(copy).paddingTop)+heading.getBoundingClientRect().height;
+    // Keep as much of the image as fits, with the complete heading above the fold.
+    const y=window.scrollY+article.getBoundingClientRect().top-top+Math.max(0,headingBottom-(window.innerHeight*.82-top));
+    setActive(index);
+    history.replaceState(history.state,'','#story-'+id);
+    const jump=new CustomEvent('ys:page-jump',{detail:{y:Math.max(0,y)},cancelable:true});
+    if(window.dispatchEvent(jump))window.scrollTo({top:Math.max(0,y),behavior:'instant'});
+  }
   return <section ref={root} id="services" className="scroll-services">
     <header className="services-intro"><p><CmsText id="Services.text.0" fallback="From your first idea"/><br /><CmsText id="Services.text.1" fallback="to your next stage of growth."/></p><h2><CmsText id="Services.text.2" fallback="Intelligence. Experience."/><br /><em><CmsText id="Services.text.3" fallback="Real-world impact."/></em></h2></header>
     <div className="services-story-layout">
       <nav className="services-sticky-index" aria-label="Explore our capabilities">
         <span className="section-index"><CmsText id="Services.text.4" fallback="● OUR CAPABILITIES"/></span>
-        {yellostackData.capabilities.map((service, i) => <a key={service.id} href={`#story-${service.id}`} aria-current={active === i ? "location" : undefined} className={active === i ? "is-active" : ""}><small>0{i + 1}</small><span>{service.title}</span><span className="service-active-arrow" aria-hidden="true">↗</span></a>)}
+        {yellostackData.capabilities.map((service, i) => <a key={service.id} href={`#story-${service.id}`} onClick={event=>selectCapability(event,service.id,i)} aria-current={active === i ? "location" : undefined} className={active === i ? "is-active" : ""}><small>0{i + 1}</small><span>{service.title}</span><span className="service-active-arrow" aria-hidden="true"><ArrowUpRight size={24}/></span></a>)}
         <p className="services-index-note"><CmsText id="Services.text.5" fallback="STRATEGY. DESIGN. DEVELOPMENT."/></p>
       </nav>
       <div className="services-stories">{yellostackData.capabilities.map((service) => <article key={service.id} id={`story-${service.id}`} className="service-story" aria-labelledby={`story-title-${service.id}`}>

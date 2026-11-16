@@ -8,7 +8,7 @@ import {serviceBanners} from '@/content/service-banners';
 import {Field,type Value} from './ContentField';
 import ImageField from './ImageField';
 type Section={title:string;prefixes?:string[];data?:string;images?:{key:string;label:string;fallback?:string}[];pageIndex?:number;sectionIndex?:number;hero?:boolean};
-const pageNames:Record<string,string>={'about-us':'About us','team':'Our team','portfolio':'Work','contact':'Contact us','services':'Services','products':'Products','clients':'Clients','website-design-company':'Web development','mobile-application-development-company-saudi-arabia':'Mobile app development','artificial-intelligence':'AI & automation','medical-coding':'Medical coding'};
+const pageNames:Record<string,string>={'oracle-apex':'Oracle APEX','about-us':'About us','team':'Our team','portfolio':'Work','contact':'Contact us','services':'Services','products':'Products','clients':'Clients','website-design-company':'Web development','mobile-application-development-company-saudi-arabia':'Mobile app development','artificial-intelligence':'AI & automation','medical-coding':'Medical coding'};
 const photo=(key:string,label:string,fallback?:string)=>({key,label,fallback});
 const home:Section[]=[
  {title:'Banner — Building intelligent technology',prefixes:['hero.','HeroAtmosphere.'],data:'site.hero'},
@@ -41,8 +41,10 @@ export default function PageStudio({content,onChange,busy,previewVersion,initial
  if(page==='artificial-intelligence')sections.push({title:'AI experience',prefixes:['ai.'],images:['vision-inspection','learning-model','knowledge-search'].map(key=>photo('/banners/'+key+'.svg',key+' image'))});
  if(page==='medical-coding')sections.push({title:'Connected healthcare — 3D experience',prefixes:['medical.scene.']},{title:'Medical coding services',prefixes:['medical.services.']});
  if(page==='website-design-company'||page==='mobile-application-development-company-saudi-arabia')sections.push({title:'Interactive development experience',prefixes:[page==='website-design-company'?'development.web.':'development.mobile.']});
- if(!['team','medical-coding','artificial-intelligence','portfolio','clients','products'].includes(page)&&entry.kind!=='contact')sections.push({title:'Editorial photo / film',images:[photo('page.'+page+'.photo','Section photograph',pageMedia(page).src)]});
+ if(!['oracle-apex','team','medical-coding','artificial-intelligence','portfolio','clients','products'].includes(page)&&entry.kind!=='contact')sections.push({title:'Editorial photo / film',images:[photo('page.'+page+'.photo','Section photograph',pageMedia(page).src)]});
  if(page!=='artificial-intelligence')entry.sections.forEach((s,i)=>sections.push({title:s.title||'Content section '+(i+1),data:`pages.${index}.sections.${i}`,pageIndex:index,sectionIndex:i}));
+ if(entry.partner)sections.push({title:'Partner company',data:`pages.${index}.partner`});
+ if(page==='oracle-apex')sections.push({title:'Oracle logo',images:[photo('/oracle-logo.svg','Oracle logo')]});
  if(page==='clients')sections.push({title:'Our clients',data:'clients'});
  if(entry.kind==='directory')sections.push({title:'Service / product cards — edit linked page content',data:'pages'});
  if(page==='products')sections.push({title:'Product showcase',data:'products'});

@@ -8,7 +8,7 @@ import { CmsImage as Image } from '@/components/cms/ContentProvider';
 import DecryptedText from './animations/DecryptedText';
 import './navigation.css';
 import { capabilityLinks } from '@/content/catalogue';
-const previewImages=['/banners/marketing.svg','/banners/learning-model.svg','/banners/medical.svg','/banners/mobile.svg','/banners/enterprise.svg','/banners/web.svg','/banners/cloud.svg','/banners/ux.svg','/banners/communication.svg','/banners/devops.svg'];
+const previewImages=['/banners/learning-model.svg','/banners/medical.svg','/banners/mobile.svg','/banners/enterprise.svg','/banners/web.svg','/banners/cloud.svg','/banners/ux.svg','/banners/communication.svg','/banners/devops.svg','/oracle-logo.svg','/banners/marketing.svg'];
 import LanguageToggle from './LanguageToggle';
 
 export default function Navigation({ solid = false }: { solid?: boolean }) {

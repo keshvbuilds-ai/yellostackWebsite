@@ -5,7 +5,7 @@ import ImageField from './ImageField';
 import PageStudio from './PageStudio';
 import {defaultContent} from '@/lib/cms/defaults';
 type Target={path:string[];value:string;kind:'text'|'image';label:string};
-const names:Record<string,string>={'about-us':'About us',team:'Our team',portfolio:'Work',contact:'Contact us',services:'Services',products:'Products',clients:'Clients','website-design-company':'Web development','mobile-application-development-company-saudi-arabia':'Mobile app development','artificial-intelligence':'AI & automation','medical-coding':'Medical coding'};
+const names:Record<string,string>={'oracle-apex':'Oracle APEX','about-us':'About us',team:'Our team',portfolio:'Work',contact:'Contact us',services:'Services',products:'Products',clients:'Clients','website-design-company':'Web development','mobile-application-development-company-saudi-arabia':'Mobile app development','artificial-intelligence':'AI & automation','medical-coding':'Medical coding'};
 const read=(content:SiteContent,path:string[])=>path.reduce<unknown>((node,key)=>node&&typeof node==='object'?(node as Record<string,unknown>)[key]:undefined,content);
 function write(content:SiteContent,path:string[],value:string){const next=structuredClone(content);let node=next as unknown as Record<string,unknown>;for(const key of path.slice(0,-1))node=node[key] as Record<string,unknown>;node[path.at(-1)!]=value;return next;}
 export default function VisualStudio({content,onChange,busy,locale='en'}:{locale?:'en'|'ar';content:SiteContent;onChange:(content:SiteContent)=>void;busy:boolean}){

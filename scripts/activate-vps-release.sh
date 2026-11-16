@@ -49,7 +49,7 @@ for attempt in {1..20}; do
  sleep 2
 done
 test "$healthy" = true
-for route in / /admin /portfolio/projects/mobile-apps; do
+for route in / /admin /portfolio/projects/mobile-apps /oracle-apex; do
  curl -fsS --max-time 30 "http://127.0.0.1:3000$route" >/dev/null
 done
 # Confirm saved drafts, published content, media and private settings match the backup.

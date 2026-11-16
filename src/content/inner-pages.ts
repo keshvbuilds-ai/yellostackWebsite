@@ -1,7 +1,9 @@
+import {oracleApexPage} from './oracle-apex';
 export type ContentSection = { title: string; body: string; items?: string[]; image?: string; imageAlt?: string };
 export type InnerPage = {
   slug: string; title: string; eyebrow: string; intro: string;
   kind: 'company' | 'service' | 'directory' | 'contact' | 'portfolio';
+  partner?: {title:string;body:string;buttonLabel:string;url:string};
   group?: string; source: string; sections: ContentSection[];
 };
 
@@ -10,6 +12,7 @@ const service = (slug: string, title: string, group: string, intro: string, sect
 });
 
 export const servicePages: InnerPage[] = [
+  oracleApexPage,
   {"slug":"devops-services","title":"DevOps services","eyebrow":"Cloud","group":"Cloud","kind":"service","source":"","intro":"Connect your development and operations teams with repeatable delivery practices.","sections":[{"title":"From code to continuous delivery.","body":"Yellostack’s DevOps offering brings infrastructure as code, version control and continuous delivery into your software workflow. Build a foundation that can adapt as your product and operations change.","items":["Infrastructure as code","Continuous delivery","Version control","Flexible delivery workflows"]}]},
   {"slug":"startup-services","title":"Startup services","eyebrow":"Applications","group":"Applications","kind":"service","source":"","intro":"Turn an early idea into a focused product and a practical technology plan.","sections":[{"title":"Start with insight. Validate with a product.","body":"Industry research and IT consulting help align your technology choices with business objectives. Develop an MVP to test the concept, gather user feedback and guide the next iteration.","items":["Industry insight and research","IT consulting and strategy","MVP development","User feedback and iteration"]}]},
   {"slug":"communication-services","title":"Communication services","eyebrow":"Enterprise software","group":"Enterprise software","kind":"service","source":"","intro":"Connect your workplace with the communication and infrastructure services it needs.","sections":[{"title":"Support the connected workplace.","body":"The Yellostack company profile includes networking, CCTV, biometric systems and telecommunications. Discuss your site, existing infrastructure and operational requirements to define the appropriate scope.","items":["Networking","CCTV","Biometric systems","Telecommunications"]}]},

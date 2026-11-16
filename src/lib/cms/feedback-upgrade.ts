@@ -1,3 +1,4 @@
+import {withOracleApex} from './service-upgrade';
 import changes from '@/content/feedback-copy-migration.json';
 import { defaultContent } from './defaults';
 import type { SiteContent } from './types';
@@ -11,7 +12,7 @@ export function upgradeFeedback(content:SiteContent):SiteContent {
  if(!pages.some(page=>page.slug==='digital-marketing-agency'))pages.push(defaultContent.pages.find(page=>page.slug==='digital-marketing-agency')!);
  if(!pages.some(page=>page.slug==='products'))pages.push(defaultContent.pages.find(page=>page.slug==='products')!);
  const legacyCapabilities=content.site.capabilities.map(item=>item.id).join(',')==='ai,medical-coding,applications,software,branding,marketing,cloud';
- return {...content,pages,copy,site:{...content.site,
+ return {...content,pages:withOracleApex(pages),copy,site:{...content.site,
  contact:{...defaultContent.site.contact,...content.site.contact},
  hero:{...content.site.hero,words:content.site.hero.words.join(',')==='Discover,Strategize,Execute'?defaultContent.site.hero.words:content.site.hero.words},
  capabilities:legacyCapabilities?defaultContent.site.capabilities:content.site.capabilities.some(c=>c.id==='marketing')?content.site.capabilities:[...content.site.capabilities,defaultContent.site.capabilities.find(c=>c.id==='marketing')!]},

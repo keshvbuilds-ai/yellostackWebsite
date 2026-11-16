@@ -1,5 +1,4 @@
 export const capabilityLinks = [
- { title: 'Digital marketing', slug: 'digital-marketing-agency', image: 'design' },
  { title: 'AI & Automation', slug: 'artificial-intelligence', image: 'robotics' },
  { title: 'Medical Coding', slug: 'medical-coding', image: 'healthcare' },
  { title: 'Mobile App Development', slug: 'mobile-application-development-company-saudi-arabia', image: 'engineering' },
@@ -9,5 +8,7 @@ export const capabilityLinks = [
  { title: 'UI/UX & Product Design Service', slug: 'ui-ux-design', image: 'design' },
  { title: 'Communication Services', slug: 'communication-services', image: 'collaboration' },
  { title: 'DevOps Services', slug: 'devops-services', image: 'cloud' },
+ { title: 'Oracle APEX', slug: 'oracle-apex', image: 'analytics' },
+ { title: 'Digital marketing', slug: 'digital-marketing-agency', image: 'design' },
 ] as const;
 export const productSlugs = ['travel-dynamic', 'freight-dynamic', 'retail-dynamic', 'enterprise-dynamic-plus', 'facilities-management'];

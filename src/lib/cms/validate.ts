@@ -66,6 +66,7 @@ export function validateContent(value: unknown): asserts value is SiteContent {
     }
   }
   for(const page of content.pages) {
+    if(page.partner!==undefined){shape(page.partner,{title:'',body:'',buttonLabel:'',url:''},'Page partner');if(!/^https:\/\//.test(page.partner.url)||!safeUrl(page.partner.url))throw new Error('Partner link must use HTTPS');}
     if(['admin','api','careers','blog'].includes(page.slug)) throw new Error('Reserved page slug');
     if(!['company','service','directory','contact','portfolio'].includes(page.kind)) throw new Error('Invalid page kind');
     if(page.group!==undefined && typeof page.group!=='string') throw new Error('Invalid service group');

@@ -1,3 +1,4 @@
+import OracleApex from '@/components/OracleApex';
 import BlogJournal from '@/components/blog/BlogJournal';
 import PublishedCollections from '@/components/cms/PublishedCollections';
 import WorkExperience from '@/components/work/WorkExperience';
@@ -54,6 +55,7 @@ export default async function Page({ params }: Props) {
   const post = blogPosts.find(p => `blog/${p.slug}` === path);
   if (!page && !post && path !== 'blog') notFound();
   if(path==='blog'||post)return <><Navigation solid/><main id="page-content"><BlogJournal posts={blogPosts} post={post}/></main><Footer/></>;
+  if(path==='oracle-apex'&&page)return <><Navigation solid/><OracleApex/><Footer/></>;
   if(path === 'portfolio' && page)return <><Navigation solid/><main id="page-content"><WorkExperience title={page.title} intro={page.intro} sections={page.sections}/></main><Footer/></>;
   const directoryPages = path === 'products' ? servicePages.filter(item=>productSlugs.includes(item.slug)) : capabilityLinks.map(item=>({...servicePages.find(page=>page.slug===item.slug)!,title:item.title})).filter(item=>item.slug);
   const title = page?.title ?? 'Ideas worth building on.';

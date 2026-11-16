@@ -1,0 +1,15 @@
+Oracle APEX service update
+
+Menu and footer order: Oracle APEX immediately before Digital marketing, which is last.
+Page: /oracle-apex
+
+CMS: Visual website editor > Page > Oracle APEX. Click text or logo to edit it.
+For the partner button destination: Edit section text & images > Partner company > Destination link.
+The Inner pages content list also exposes the page, content sections and partner fields.
+Use the CMS language toggle for English and Arabic edits. Save draft, then Publish.
+
+The release adds Oracle APEX to older CMS data only when the page is missing. Existing page content and media are preserved; customized Oracle APEX content is never replaced on restart.
+
+Content supplied in our_services_summary.docx. Licensing and data-residency wording clarified to avoid implying free hosting or automatic compliance.
+Oracle logo source: https://www.oracle.com/a/ocom/img/oracle-logo.svg
+Partner URL supplied by the owner: https://www.nexanor.ai

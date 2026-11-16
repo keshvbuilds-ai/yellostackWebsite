@@ -1,5 +1,5 @@
 import {generalDefaults} from './general';
-import {appCategories} from '@/content/work-catalogue';
+import {appCategories,workServices} from '@/content/work-catalogue';
 import type { SiteContent } from './types';
 import { defaultContent } from './defaults';
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
@@ -49,6 +49,20 @@ export function validateContent(value: unknown): asserts value is SiteContent {
     if(g.offerExpires&&(!/^\d{4}-\d{2}-\d{2}$/.test(g.offerExpires)||!Number.isFinite(Date.parse(g.offerExpires))))throw new Error('General: invalid expiry date');
   }
   const content = value as unknown as SiteContent;
+  if(content.workSections!==undefined){
+    shape(content.workSections,[{slug:'',service:'',title:'',description:'',serviceUrl:''}],'Work sections');
+    if(!content.workSections.length||content.workSections.length>30)throw new Error('Use between 1 and 30 Work sections');
+    if(workServices.some(original=>!content.workSections!.some(s=>s.slug===original.slug&&s.service===original.service)))throw new Error('Keep the original Web design and Mobile apps sections');
+    for(const key of ['slug','service'] as const)if(new Set(content.workSections.map(s=>s[key])).size!==content.workSections.length)throw new Error('Work sections must have unique URLs and project groups');
+    for(const section of content.workSections){
+      if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(section.slug)||section.slug.length>100||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(section.service)||section.service.length>100)throw new Error('Invalid Work section URL or group');
+      if(!section.title.trim()||section.title.length>200)throw new Error('Work sections need a title of at most 200 characters');
+      if(section.serviceUrl&&!safeUrl(section.serviceUrl,true))throw new Error('Service page link must be local or HTTPS');
+      const original=workServices.find(s=>s.slug===section.slug||s.service===section.service);
+      if(original&&(original.slug!==section.slug||original.service!==section.service))throw new Error('Keep existing Work section URLs and groups unchanged');
+    }
+    for(const project of content.workProjects??[])if(!content.workSections.some(s=>s.service===project.service))throw new Error('Move or remove projects before deleting their Work section');
+  }
   if(content.workProjectsManaged!==undefined&&typeof content.workProjectsManaged!=='boolean')throw new Error('Invalid project publishing mode');
   for(const project of content.workProjects??[]){
    if(project.shortDescription!==undefined&&(typeof project.shortDescription!=='string'||project.shortDescription.length>180||/[\r\n]/.test(project.shortDescription)))throw new Error('App card description must be a single line of at most 180 characters');

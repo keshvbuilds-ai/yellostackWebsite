@@ -1,0 +1,52 @@
+﻿WHY CHOOSE US - CMS GUIDE
+
+1. Sign in at /admin and click Why choose us in the top CMS button row.
+2. Select an existing section to edit it, or click + Add Work section.
+3. Enter its title and introduction. Optionally enter a service page link.
+4. Click + Add project to this section. Open the project to edit its title,
+   description, image and destination link. Project collection moves it to
+   another section. Mobile app details remain available in Mobile apps.
+5. Use the English / Arabic header buttons to enter each language separately.
+   This does not automatically machine-translate newly written content.
+6. Save draft, review, then Publish. New section galleries are private until
+   published. Public galleries show three columns on desktop, two on tablets
+   and one on phones. Nine projects form three rows on desktop; more are allowed.
+7. Move section up/down changes its order in the Work scroll experience.
+   Custom sections can be removed only after their projects are moved/deleted.
+   The original Web design and Mobile apps sections retain their URLs.
+
+CONTENT AND DEPLOYMENT
+Existing CMS data uses the original two sections as a fallback. No migration
+script or replacement of live content is required. Adding sections does not
+reset existing posts, projects, pages, uploads, credentials or SMTP settings.
+Deploy code using the existing release/backup process and keep CMS_DATA_DIR
+pointing to /var/lib/yellostack. Never copy the local .cms-data or .env.local
+over the VPS data. These changes have not been deployed by this task.
+
+SECURITY REVIEW - 16 NOVEMBER 2026
+Scope: repository code, dependency audit and local production-build tests with
+an isolated temporary CMS data directory. No live customer data was changed.
+
+Fixed: seven moderate dependency findings traced to minimatch in TypeScript
+ESLint tooling. Updated the TypeScript ESLint dependency family and pinned
+minimatch 11.0.1 only under @typescript-eslint/typescript-estree. Full lint
+still passes (20 existing warnings, no errors). This is a development-tool
+exception; review/remove it when upstream supports the patched version.
+Advisory: https://github.com/advisories/GHSA-g3hv-75wg-m249
+Final npm audit and npm audit --omit=dev: zero known vulnerabilities.
+
+Verified: authenticated editor access; cross-origin mutation rejection;
+secure, HttpOnly, SameSite=Strict session cookies; login limits; logout token
+revocation; private drafts; revision conflicts; publication; streamed body
+limits; malformed image rejection and image re-encoding; media deletion;
+SMTP authorization/password masking/publication isolation; server-owned
+coupon values; duplicate enquiries; blog view origin checks and deduplication.
+New Work sections reject invalid URLs, duplicate identifiers, route traversal,
+changes to original collection mappings and orphaning existing projects.
+
+Limits: an audit cannot guarantee that a site has no vulnerabilities. VPS OS
+patches, SSH/firewall/nginx configuration, TLS configuration, backup recovery,
+production environment settings and hosted-provider permissions were not
+verified here. Existing CSP is baseline framing/object protection, not a strict
+script policy. Login throttling is global and can temporarily affect all
+editors during repeated failed attempts. No external penetration test was run.

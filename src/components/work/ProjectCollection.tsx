@@ -2,10 +2,11 @@
 import Link from 'next/link';
 import {ArrowUpRight} from 'lucide-react';
 import {useContent,CmsImage,LocalText,useTranslate} from '@/components/cms/ContentProvider';
-import {appCategories,workServices,workProjects} from '@/content/work-catalogue';
+import {appCategories,workSections,workProjects} from '@/content/work-catalogue';
 import './project-collection.css';
 export default function ProjectCollection({collection,category}:{collection:string;category?:string}){
- const t=useTranslate();const content=useContent(),service=workServices.find(s=>s.slug===collection)!;
+ const t=useTranslate();const content=useContent(),service=workSections(content).find(s=>s.slug===collection);
+ if(!service)return null;
  const mobile=collection==='mobile-apps';
  const all=workProjects(content).filter(p=>p.service===service.service);
  const projects=all.filter(p=>!category||p.category===category);

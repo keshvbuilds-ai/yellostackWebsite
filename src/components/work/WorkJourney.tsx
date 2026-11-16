@@ -3,21 +3,22 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import {motion} from 'framer-motion';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {CmsText,LocalText,useLocale,useVisualEditing} from '../cms/ContentProvider';
+import {CmsText,LocalText,useContent,useLocale,useVisualEditing} from '../cms/ContentProvider';
 import {journeyPlan,phase,smooth} from './journey-motion';
 import './work-journey.css';
-import {workServices} from '@/content/work-catalogue';
+import {workSections} from '@/content/work-catalogue';
 gsap.registerPlugin(ScrollTrigger);
 type DepthFrame={depth:number;visibility:number;finale?:number};
 const show=(element:HTMLElement,opacity:number)=>{element.style.opacity=String(opacity);element.style.visibility=opacity>.001?'visible':'hidden';};
 
 export default function WorkJourney(){
+ const content=useContent();
  const editing=useVisualEditing();const locale=useLocale();
  const [listView,setListView]=useState(false);
  const root=useRef<HTMLElement>(null),stage=useRef<HTMLDivElement>(null),canvas=useRef<HTMLDivElement>(null);
  const depthFrame=useRef<DepthFrame>({depth:0,visibility:0});
  const draw=useRef<(frame:DepthFrame)=>void>(()=>{});
- const groups=useMemo(()=>workServices.map(s=>({...s,items:[s]})),[]);
+ const groups=useMemo(()=>workSections(content).map(s=>({...s,items:[s]})),[content]);
  const plan=useMemo(()=>journeyPlan(groups.map(group=>group.items.length)),[groups]);
  useEffect(()=>{
   const sectionRef=root.current,viewportRef=stage.current;if(!sectionRef||!viewportRef||!groups.length||editing||listView)return;
@@ -108,7 +109,7 @@ export default function WorkJourney(){
    <div className="y-flight" aria-hidden="true"><div className="y-flight-center"><span className="y-flight-glyph">y</span></div></div>
    <div ref={canvas} className="y-canvas" aria-hidden="true"/>
    <div className="y-sheet-space"><div className="y-gold-sheet" aria-hidden="true"/><div className="y-services">{groups.map((group,gi)=><section className="y-service" key={group.service} aria-label={group.title}>
-    <header className="y-service-heading"><span className="y-service-number">{String(gi+1).padStart(2,'0')}<i>/ {String(groups.length).padStart(2,'0')}</i></span><div className="y-service-kicker"><LocalText text="APPLICATION EXPERIENCES"/><span><LocalText text={group.title}/></span></div><motion.a whileHover={{y:-2}} href={`/${group.service}`}><LocalText text="Explore service"/> <span>↗</span></motion.a></header>
+    <header className="y-service-heading"><span className="y-service-number">{String(gi+1).padStart(2,'0')}<i>/ {String(groups.length).padStart(2,'0')}</i></span><div className="y-service-kicker"><LocalText text="APPLICATION EXPERIENCES"/><span><LocalText text={group.title}/></span></div>{group.serviceUrl&&<motion.a whileHover={{y:-2}} href={group.serviceUrl}><LocalText text="Explore service"/> <span>↗</span></motion.a>}</header>
     <h3 className="y-service-title"><LocalText text={group.title}/></h3><div className="y-project-window"><div className="y-project-track"><article className="y-project y-service-overview"><p><LocalText text={group.description}/></p><a className="work-project-link" href={`/portfolio/projects/${group.slug}`}><LocalText text={"View projects"}/><span aria-hidden="true">&#8599;</span></a></article></div></div>
     <div className="y-service-footer"><span><LocalText text={group.items.length>1?'SCROLL TO EXPLORE PROJECTS →':'SCROLL TO CONTINUE ↓'}/></span><span>{gi+1<groups.length?<><LocalText text="NEXT"/> / <LocalText text={groups[gi+1].title}/></>:<LocalText text="YOUR NEXT CHAPTER STARTS HERE."/>}</span></div>
    </section>)}</div></div>

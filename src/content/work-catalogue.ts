@@ -1,5 +1,5 @@
 import bundled from './published-work.json';
-import type {SiteContent,WorkProject} from '@/lib/cms/types';
+import type {SiteContent,WorkProject,WorkSection} from '@/lib/cms/types';
 export const workServices=[
  {slug:'web-design',service:'website-design-company',title:'Web design & development',description:'Thoughtful design meets reliable engineering. We build clear, responsive websites that express your brand and make every interaction feel effortless.'},
  {slug:'mobile-apps',service:'mobile-application-development-company-saudi-arabia',title:'Mobile app development',description:'Useful, intuitive applications built around real people. Explore experiences for everyday essentials, learning, healthcare and on-demand services.'}
@@ -13,3 +13,6 @@ export function restoreProjectCategory(project:WorkProject):WorkProject{
  return project;
 }
 export function workProjects(content:SiteContent):WorkProject[]{return (content.workProjectsManaged?content.workProjects??[]:Array.from(new Map([...bundled,...(content.workProjects??[])].map(p=>[p.id||p.service+':'+p.title.trim().toLowerCase(),p])).values())).map(restoreProjectCategory);}
+
+/** Legacy sites retain their existing collections until edited in the CMS. */
+export function workSections(content:SiteContent):WorkSection[]{return content.workSections??workServices.map(s=>({...s,serviceUrl:`/${s.service}`}));}

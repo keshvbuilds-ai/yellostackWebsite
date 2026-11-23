@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
+ experimental: { agentUpgrade: "security" },
  poweredByHeader:false,
  async headers(){return [{source:'/:path*',headers:[
  {key:'X-Content-Type-Options',value:'nosniff'},
